@@ -1,5 +1,7 @@
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MenuUi : MonoBehaviour
@@ -54,6 +56,12 @@ public class MenuUi : MonoBehaviour
 
     public void StartGame()
     {
-        Debug.Log("START GAME");
+        if (!NetworkManager.Singleton.IsHost)
+            return;
+
+        NetworkManager.Singleton.SceneManager.LoadScene(
+            "GameScene",
+            LoadSceneMode.Single
+        );
     }
 }
