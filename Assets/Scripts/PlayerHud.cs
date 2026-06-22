@@ -10,8 +10,6 @@ public class PlayerHud : MonoBehaviour
 
     public Button add10Button;
     public Button remove10Button;
-    public Button add100Button;
-    public Button remove100Button;
 
     private PlayerMoney myPlayer;
     private PlayerMoney enemyPlayer;
@@ -20,8 +18,6 @@ public class PlayerHud : MonoBehaviour
     {
         add10Button.onClick.AddListener(() => AddMoney(10));
         remove10Button.onClick.AddListener(() => AddMoney(-10));
-        add100Button.onClick.AddListener(() => AddMoney(100));
-        remove100Button.onClick.AddListener(() => AddMoney(-100));
     }
 
     private void Update()
@@ -39,15 +35,15 @@ public class PlayerHud : MonoBehaviour
     {
         PlayerMoney[] players = FindObjectsByType<PlayerMoney>();
 
-        Debug.Log("FOUND PLAYERS: " + players.Length);
+        //Debug.Log("FOUND PLAYERS: " + players.Length);
 
         foreach (PlayerMoney player in players)
         {
-            Debug.Log(
-                "PlayerMoney: OwnerClientId=" + player.OwnerClientId +
-                " IsOwner=" + player.IsOwner +
-                " IsSpawned=" + player.IsSpawned
-            );
+            //Debug.Log(
+            //    "PlayerMoney: OwnerClientId=" + player.OwnerClientId +
+            //    " IsOwner=" + player.IsOwner +
+            //    " IsSpawned=" + player.IsSpawned
+            //);
 
             if (player.IsOwner)
                 myPlayer = player;

@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: -980195464051740146}
   - component: {fileID: 4960568229739716409}
   - component: {fileID: -6183522602637102626}
+  - component: {fileID: 8369850093113022817}
   m_Layer: 0
   m_Name: PlayerPrefab
   m_TagString: Untagged
@@ -200,3 +201,21 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &8369850093113022817
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1690475201074372748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4ecca7d116518f4eb487f43f60a9dcc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMoney
+  ShowTopMostFoldoutHeaderGroup: 1
+  money:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 100
