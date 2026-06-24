@@ -5,7 +5,9 @@ public class ShipSelectionController : MonoBehaviour
 {
     [SerializeField] private float shipFlightHeight = 0.5f;
 
-    private ShipUnit selectedShip;
+    private GameObject selectedObject;
+    private SelectionTarget selectedSelection;
+    private UnitMovement selectedMovement;
 
     private void Update()
     {
@@ -14,8 +16,6 @@ public class ShipSelectionController : MonoBehaviour
 
         if (Mouse.current.rightButton.wasPressedThisFrame)
             TryMove();
-
-
     }
 
     private void TrySelect()
@@ -28,9 +28,18 @@ public class ShipSelectionController : MonoBehaviour
             return;
         }
 
-        ShipUnit ship = hit.collider.GetComponent<ShipUnit>();
+        UnitOwner owner = hit.collider.GetComponentInParent<UnitOwner>();
 
-        if (ship == null || !ship.IsMine())
+        if (owner == null || !owner.IsMine())
+        {
+            ClearSelection();
+            return;
+        }
+
+        SelectionTarget selection = owner.GetComponent<SelectionTarget>();
+        UnitMovement movement = owner.GetComponent<UnitMovement>();
+
+        if (selection == null || movement == null)
         {
             ClearSelection();
             return;
@@ -38,13 +47,16 @@ public class ShipSelectionController : MonoBehaviour
 
         ClearSelection();
 
-        selectedShip = ship;
-        selectedShip.SetSelectedLocal(true);
+        selectedObject = owner.gameObject;
+        selectedSelection = selection;
+        selectedMovement = movement;
+
+        selectedSelection.SetSelected(true);
     }
 
     private void TryMove()
     {
-        if (selectedShip == null)
+        if (selectedMovement == null)
             return;
 
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
@@ -55,14 +67,16 @@ public class ShipSelectionController : MonoBehaviour
         Vector3 target = hit.point;
         target.y = shipFlightHeight;
 
-        selectedShip.MoveToServerRpc(target);
+        selectedMovement.MoveToServerRpc(target);
     }
 
     private void ClearSelection()
     {
-        if (selectedShip != null)
-            selectedShip.SetSelectedLocal(false);
+        if (selectedSelection != null)
+            selectedSelection.SetSelected(false);
 
-        selectedShip = null;
+        selectedObject = null;
+        selectedSelection = null;
+        selectedMovement = null;
     }
 }

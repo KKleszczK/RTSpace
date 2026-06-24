@@ -25,7 +25,7 @@ public class ShipSpawner : NetworkBehaviour
         NetworkObject netObj = shipObj.GetComponent<NetworkObject>();
         netObj.Spawn();
 
-        ShipUnit ship = shipObj.GetComponent<ShipUnit>();
-        ship.ownerId.Value = ownerClientId;
+        UnitOwner owner = shipObj.GetComponent<UnitOwner>();
+        owner.SetOwner(ownerClientId);
     }
 }
