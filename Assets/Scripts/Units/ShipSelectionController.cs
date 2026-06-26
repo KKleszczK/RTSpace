@@ -1,9 +1,14 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 public class ShipSelectionController : MonoBehaviour
 {
     [SerializeField] private float shipFlightHeight = 0.5f;
+
+    [SerializeField] private GameObject basePanel;
+
+    private PlayerBaseUnit selectedBase;
 
     private GameObject selectedObject;
     private SelectionTarget selectedSelection;
@@ -20,6 +25,9 @@ public class ShipSelectionController : MonoBehaviour
 
     private void TrySelect()
     {
+        if (EventSystem.current.IsPointerOverGameObject())
+            return;
+
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
 
         if (!Physics.Raycast(ray, out RaycastHit hit))
@@ -39,7 +47,7 @@ public class ShipSelectionController : MonoBehaviour
         SelectionTarget selection = owner.GetComponent<SelectionTarget>();
         UnitMovement movement = owner.GetComponent<UnitMovement>();
 
-        if (selection == null || movement == null)
+        if (selection == null)
         {
             ClearSelection();
             return;
@@ -50,12 +58,18 @@ public class ShipSelectionController : MonoBehaviour
         selectedObject = owner.gameObject;
         selectedSelection = selection;
         selectedMovement = movement;
-
         selectedSelection.SetSelected(true);
+
+        selectedBase = owner.GetComponent<PlayerBaseUnit>();
+
+        if (basePanel != null)
+            basePanel.SetActive(selectedBase != null);
     }
 
     private void TryMove()
     {
+        if (EventSystem.current.IsPointerOverGameObject())
+            return;
         if (selectedMovement == null)
             return;
 
@@ -75,8 +89,14 @@ public class ShipSelectionController : MonoBehaviour
         if (selectedSelection != null)
             selectedSelection.SetSelected(false);
 
+
+
         selectedObject = null;
         selectedSelection = null;
         selectedMovement = null;
+        selectedBase = null;
+
+        if (basePanel != null)
+            basePanel.SetActive(false);
     }
 }
