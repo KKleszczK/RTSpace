@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 1948882628905582310}
   - component: {fileID: 5275905237399048324}
   - component: {fileID: 7255661195706103383}
+  - component: {fileID: 1858631242123608463}
   m_Layer: 0
   m_Name: SpaceShipFigher
   m_TagString: Untagged
@@ -456,6 +457,23 @@ MonoBehaviour:
   attack: {fileID: 2464542257941816670}
   currentCooldownBar: {fileID: 5618449646592473979}
   maxBarWidth: 1920
+--- !u!114 &1858631242123608463
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6042983090851272288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e461c1c700b978144aba474f5870713f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShipStats
+  baseMaxHp: 100
+  baseMoveSpeed: 5
+  baseAttackDamage: 10
+  baseAttackRange: 5
+  baseAttackCooldown: 1
 --- !u!1001 &17433953484683058
 PrefabInstance:
   m_ObjectHideFlags: 0

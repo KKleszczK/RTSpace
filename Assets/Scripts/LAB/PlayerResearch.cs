@@ -130,6 +130,13 @@ public class PlayerResearch : NetworkBehaviour
     {
         completedResearches.Add(research.researchId);
 
+        
+
+        PlayerUpgradeStats upgrades = GetComponent<PlayerUpgradeStats>();
+
+        if (upgrades != null)
+            upgrades.ApplyResearch(research);
+
         Debug.Log("Research complete: " + research.displayName);
     }
 

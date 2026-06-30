@@ -3,15 +3,21 @@ using UnityEngine;
 
 public class NetworkHealth : NetworkBehaviour
 {
-    [SerializeField] private int maxHp = 100;
+    private ShipStats shipStats;
 
-    public NetworkVariable<int> hp = new NetworkVariable<int>(
+    public NetworkVariable<int> hp = new(
         100,
         NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Server
     );
 
-    public NetworkVariable<bool> isDead = new NetworkVariable<bool>(
+    public NetworkVariable<int> maxHp = new(
+        100,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server
+    );
+
+    public NetworkVariable<bool> isDead = new(
         false,
         NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Server
@@ -24,23 +30,46 @@ public class NetworkHealth : NetworkBehaviour
 
     public int GetMaxHealth()
     {
-        return maxHp;
+        return maxHp.Value;
     }
 
     public override void OnNetworkSpawn()
     {
+        shipStats = GetComponent<ShipStats>();
+
         if (IsServer)
+            RecalculateHealthFromStats(true);
+    }
+
+
+
+    public void RecalculateHealthFromStats(bool fullHeal = false)
+    {
+        if (!IsServer)
+            return;
+
+        int oldMaxHp = maxHp.Value;
+
+        if (shipStats != null)
+            maxHp.Value = shipStats.MaxHp;
+
+        if (fullHeal)
         {
-            hp.Value = maxHp;
+            hp.Value = maxHp.Value;
+        }
+        else
+        {
+            int diff = maxHp.Value - oldMaxHp;
+            hp.Value += diff;
+
+            if (hp.Value > maxHp.Value)
+                hp.Value = maxHp.Value;
         }
     }
 
     public void TakeDamage(int damage)
     {
-        if (!IsServer)
-            return;
-
-        if (isDead.Value)
+        if (!IsServer || isDead.Value)
             return;
 
         hp.Value -= damage;
@@ -54,27 +83,21 @@ public class NetworkHealth : NetworkBehaviour
 
     public void Heal(int amount)
     {
-        if (!IsServer)
-            return;
-
-        if (isDead.Value)
+        if (!IsServer || isDead.Value)
             return;
 
         hp.Value += amount;
 
-        if (hp.Value > maxHp)
-            hp.Value = maxHp;
+        if (hp.Value > maxHp.Value)
+            hp.Value = maxHp.Value;
     }
 
     private void Die()
     {
         isDead.Value = true;
-
-        NetworkObject networkObject = GetComponent<NetworkObject>();
-
-        if (networkObject != null)
-        {
-            networkObject.Despawn(true);
-        }
+        NetworkObject.Despawn(true);
     }
+
+
+    
 }

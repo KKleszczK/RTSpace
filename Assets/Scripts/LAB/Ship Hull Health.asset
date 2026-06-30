@@ -19,5 +19,5 @@ MonoBehaviour:
   researchedIcon: {fileID: 21300000, guid: f07cdb837fd9bdb4b9b133ffcff6a800, type: 3}
   baseMetalCost: 100
   baseEnergyCost: 50
-  baseResearchTime: 10
-  upgradeValue: 0.2
+  baseResearchTime: 3
+  upgradeValue: 20
