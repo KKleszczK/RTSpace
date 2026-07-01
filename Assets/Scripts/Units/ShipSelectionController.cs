@@ -7,12 +7,15 @@ public class ShipSelectionController : MonoBehaviour
     [SerializeField] private float shipFlightHeight = 0.5f;
 
     [SerializeField] private GameObject basePanel;
+    [SerializeField] private CorePanelUI corePanelUI;
+    [SerializeField] private CoreEnergyUI coreEnergyUI;
 
     private PlayerBaseUnit selectedBase;
 
     private GameObject selectedObject;
     private SelectionTarget selectedSelection;
     private UnitMovement selectedMovement;
+    [SerializeField] private CoreGeneratorUI[] generatorUIs;
 
     private void Update()
     {
@@ -64,6 +67,26 @@ public class ShipSelectionController : MonoBehaviour
 
         if (basePanel != null)
             basePanel.SetActive(selectedBase != null);
+
+        if (corePanelUI != null && selectedBase != null)
+        {
+            corePanelUI.SetCore(selectedBase.GetComponent<BaseCore>());
+
+            if (coreEnergyUI != null)
+                coreEnergyUI.SetEnergyProduction(
+                    selectedBase.GetComponent<BaseEnergyProduction>());
+            BaseEnergyGenerator[] generators =
+                selectedBase.GetComponents<BaseEnergyGenerator>();
+
+            foreach (BaseEnergyGenerator generator in generators)
+            {
+                int index = generator.GetGeneratorIndex() - 1;
+
+                if (generatorUIs != null && index >= 0 && index < generatorUIs.Length)
+                    generatorUIs[index].SetGenerator(generator);
+            }
+        }
+
     }
 
     private void TryMove()
@@ -98,5 +121,14 @@ public class ShipSelectionController : MonoBehaviour
 
         if (basePanel != null)
             basePanel.SetActive(false);
+
+        if (corePanelUI != null)
+            corePanelUI.SetCore(null);
+
+        if (coreEnergyUI != null)
+            coreEnergyUI.SetEnergyProduction(null);
+
+        foreach (CoreGeneratorUI ui in generatorUIs)
+            ui.SetGenerator(null);
     }
 }

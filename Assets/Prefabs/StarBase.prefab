@@ -122,6 +122,11 @@ GameObject:
   - component: {fileID: 3883900935357975945}
   - component: {fileID: 8741085580866989857}
   - component: {fileID: 6798362953943304543}
+  - component: {fileID: 2520353419286221697}
+  - component: {fileID: 2684553389713563295}
+  - component: {fileID: 1731094536751094707}
+  - component: {fileID: 8704846793198574920}
+  - component: {fileID: 3597091184765902973}
   m_Layer: 0
   m_Name: StarBase
   m_TagString: Untagged
@@ -239,7 +244,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 4004284659
+  GlobalObjectIdHash: 2790202906
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -284,8 +289,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NetworkHealth
   ShowTopMostFoldoutHeaderGroup: 1
-  maxHp: 100
   hp:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 100
+  maxHp:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
@@ -353,6 +362,121 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 502356222847d1840b4f35044f98b7d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerBaseUnit
+--- !u!114 &2520353419286221697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 847718449950176969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8dd7cbcade444d64db3abcfd0d8134c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BaseCore
+  ShowTopMostFoldoutHeaderGroup: 1
+  tier:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 1
+  progress:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+  isUpgrading:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+--- !u!114 &2684553389713563295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 847718449950176969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce39d40a50a3c9f41bd62e3706340ca6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BaseEnergyProduction
+  ShowTopMostFoldoutHeaderGroup: 1
+  baseEnergyPerSecond: 20
+  generator3FlatBonus: 0
+--- !u!114 &1731094536751094707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 847718449950176969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c5b75b9086dda1429f47c86a70e9e0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BaseEnergyGenerator
+  ShowTopMostFoldoutHeaderGroup: 1
+  generatorIndex: 1
+  requiredCoreTier: 1
+  fullChargeTime: 60
+  givesFlatBonus: 0
+  maxFlatBonus: 0
+  maxPercentBonus: 0.5
+  chargeProgress:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+--- !u!114 &8704846793198574920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 847718449950176969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c5b75b9086dda1429f47c86a70e9e0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BaseEnergyGenerator
+  ShowTopMostFoldoutHeaderGroup: 1
+  generatorIndex: 2
+  requiredCoreTier: 2
+  fullChargeTime: 60
+  givesFlatBonus: 0
+  maxFlatBonus: 0
+  maxPercentBonus: 1
+  chargeProgress:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+--- !u!114 &3597091184765902973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 847718449950176969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c5b75b9086dda1429f47c86a70e9e0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BaseEnergyGenerator
+  ShowTopMostFoldoutHeaderGroup: 1
+  generatorIndex: 3
+  requiredCoreTier: 3
+  fullChargeTime: 60
+  givesFlatBonus: 1
+  maxFlatBonus: 40
+  maxPercentBonus: 0
+  chargeProgress:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
 --- !u!1 &1463253415074095854
 GameObject:
   m_ObjectHideFlags: 0
