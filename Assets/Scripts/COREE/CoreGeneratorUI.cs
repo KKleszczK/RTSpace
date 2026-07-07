@@ -18,6 +18,17 @@ public class CoreGeneratorUI : MonoBehaviour
         if (generator == null)
             return;
 
+        if (!generator.IsUnlocked())
+        {
+            progressText.text = "LOCKED";
+            bonusText.text = "";
+
+            for (int i = 0; i < segmentImages.Length; i++)
+                segmentImages[i].color = inactiveColor;
+
+            return;
+        }
+
         float progress = generator.chargeProgress.Value;
         int percent = Mathf.FloorToInt(progress * 100f);
 
