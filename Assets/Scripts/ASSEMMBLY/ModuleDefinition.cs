@@ -53,6 +53,10 @@ public class ModuleDefinition : ScriptableObject
     public int energyCost = 50;
     public float craftTime = 10f;
 
+    [Header("Restrictions")]
+    [Min(1)]
+    public int maxCopiesPerPlayer = 1;
+
     [Header("Stat Modifiers")]
     public float shieldFlat;
     public float shieldPercent;

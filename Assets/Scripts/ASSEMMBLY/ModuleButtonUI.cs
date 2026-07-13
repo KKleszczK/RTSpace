@@ -2,34 +2,110 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ModuleButtonUI : MonoBehaviour, IPointerEnterHandler
+public class ModuleButtonUI : MonoBehaviour,
+    IPointerEnterHandler,
+    IPointerExitHandler
 {
     [SerializeField] private Image iconImage;
     [SerializeField] private Button button;
 
     private ModuleDefinition module;
-    private AssemblyPanelUI assemblyPanel;
+    private AssemblyPanelUI panel;
 
-    public void Setup(ModuleDefinition newModule, AssemblyPanelUI newPanel)
+    private void Awake()
+    {
+        if (button == null)
+            button = GetComponent<Button>();
+
+        if (button == null)
+        {
+            Debug.LogError(
+                "[CRAFT ERROR] ModuleButtonUI nie ma komponentu Button.",
+                gameObject);
+        }
+    }
+
+    public void Setup(
+        ModuleDefinition newModule,
+        AssemblyPanelUI newPanel)
     {
         module = newModule;
-        assemblyPanel = newPanel;
+        panel = newPanel;
 
-        iconImage.sprite = module.icon;
+        if (module == null)
+        {
+            Debug.LogError(
+                "[CRAFT ERROR] ModuleButtonUI.Setup: module == null",
+                gameObject);
 
-        button.onClick.RemoveAllListeners();
-        button.onClick.AddListener(OnClick);
+            return;
+        }
+
+        if (panel == null)
+        {
+            Debug.LogError(
+                "[CRAFT ERROR] ModuleButtonUI.Setup: panel == null",
+                gameObject);
+
+            return;
+        }
+
+        if (iconImage == null)
+        {
+            Debug.LogError(
+                "[CRAFT ERROR] ModuleButtonUI: iconImage nie jest przypisany.",
+                gameObject);
+        }
+        else
+        {
+            iconImage.sprite = module.icon;
+        }
+
+        if (button != null)
+        {
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(OnClicked);
+        }
     }
 
-    private void OnClick()
+    private void OnClicked()
     {
-        if (assemblyPanel != null)
-            assemblyPanel.SelectModule(module);
+        if (module == null)
+        {
+            Debug.LogError(
+                "[CRAFT ERROR] Klikniêto przycisk, ale module == null",
+                gameObject);
+
+            return;
+        }
+
+        if (panel == null)
+        {
+            Debug.LogError(
+                "[CRAFT ERROR] Klikniêto przycisk, ale panel == null",
+                gameObject);
+
+            return;
+        }
+
+        Debug.Log(
+            "[CRAFT 01] Klikniêto modu³: " +
+            module.moduleId +
+            " | " +
+            module.displayName);
+
+        panel.SelectModule(module);
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
+    public void OnPointerEnter(
+        PointerEventData eventData)
     {
-        if (assemblyPanel != null)
-            assemblyPanel.ShowModuleInfo(module);
+        if (module != null && panel != null)
+            panel.ShowModuleInfo(module);
+    }
+
+    public void OnPointerExit(
+        PointerEventData eventData)
+    {
     }
 }

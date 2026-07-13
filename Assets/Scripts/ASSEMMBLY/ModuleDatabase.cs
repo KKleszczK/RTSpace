@@ -12,11 +12,22 @@ public class ModuleDatabase : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-
         lookup = new Dictionary<string, ModuleDefinition>();
 
         foreach (ModuleDefinition module in modules)
         {
+            if (module == null)
+                continue;
+
+            if (string.IsNullOrWhiteSpace(module.moduleId))
+            {
+                Debug.LogError(
+                    $"ModuleDefinition {module.name} ma pusty moduleId",
+                    module);
+
+                continue;
+            }
+
             lookup[module.moduleId] = module;
         }
     }

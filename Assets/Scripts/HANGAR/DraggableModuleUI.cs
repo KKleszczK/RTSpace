@@ -20,9 +20,21 @@ public class DraggableModuleUI : MonoBehaviour,
 
     private void Awake()
     {
-        rectTransform = GetComponent<RectTransform>();
-        canvasGroup = GetComponent<CanvasGroup>();
-        canvas = GetComponentInParent<Canvas>();
+        rectTransform =
+            GetComponent<RectTransform>();
+
+        canvasGroup =
+            GetComponent<CanvasGroup>();
+
+        canvas =
+            GetComponentInParent<Canvas>();
+
+        if (canvasGroup == null)
+        {
+            Debug.LogError(
+                "DraggableModuleUI wymaga CanvasGroup.",
+                gameObject);
+        }
     }
 
     public void Setup(ModuleDefinition newModule)
@@ -30,7 +42,12 @@ public class DraggableModuleUI : MonoBehaviour,
         module = newModule;
 
         if (iconImage != null)
-            iconImage.sprite = module.icon;
+        {
+            iconImage.sprite =
+                module != null
+                    ? module.icon
+                    : null;
+        }
     }
 
     public ModuleDefinition GetModule()
@@ -38,39 +55,57 @@ public class DraggableModuleUI : MonoBehaviour,
         return module;
     }
 
-    public void OnBeginDrag(PointerEventData eventData)
+    public void OnBeginDrag(
+        PointerEventData eventData)
     {
-        startParent = transform.parent;
-        startPosition = rectTransform.anchoredPosition;
+        if (module == null ||
+            canvas == null ||
+            canvasGroup == null)
+        {
+            return;
+        }
 
-        transform.SetParent(canvas.transform);
+        startParent = transform.parent;
+        startPosition =
+            rectTransform.anchoredPosition;
+
+        transform.SetParent(
+            canvas.transform,
+            true);
+
+        transform.SetAsLastSibling();
 
         canvasGroup.alpha = 0.6f;
         canvasGroup.blocksRaycasts = false;
     }
 
-    public void OnDrag(PointerEventData eventData)
+    public void OnDrag(
+        PointerEventData eventData)
     {
-        rectTransform.position = eventData.position;
+        if (canvas == null)
+            return;
+
+        rectTransform.position =
+            eventData.position;
     }
 
-    public void OnEndDrag(PointerEventData eventData)
+    public void OnEndDrag(
+        PointerEventData eventData)
     {
-        canvasGroup.alpha = 1f;
-        canvasGroup.blocksRaycasts = true;
+        if (canvasGroup != null)
+        {
+            canvasGroup.alpha = 1f;
+            canvasGroup.blocksRaycasts = true;
+        }
 
-        transform.SetParent(startParent);
-        rectTransform.anchoredPosition = startPosition;
-    }
+        if (startParent != null)
+        {
+            transform.SetParent(
+                startParent,
+                false);
 
-    public void OnDroppedIntoSlot(ModuleSlotUI slot)
-    {
-        startParent = slot.transform;
-
-        transform.SetParent(slot.transform);
-        rectTransform.anchoredPosition = Vector2.zero;
-
-        canvasGroup.alpha = 1f;
-        canvasGroup.blocksRaycasts = true;
+            rectTransform.anchoredPosition =
+                startPosition;
+        }
     }
 }

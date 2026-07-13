@@ -14,6 +14,7 @@ public class ModuleDefinitionEditor : Editor
     private SerializedProperty metalCost;
     private SerializedProperty energyCost;
     private SerializedProperty craftTime;
+    private SerializedProperty maxCopiesPerPlayer;
 
     private SerializedProperty shieldFlat;
     private SerializedProperty shieldPercent;
@@ -88,6 +89,7 @@ public class ModuleDefinitionEditor : Editor
         metalCost = serializedObject.FindProperty("metalCost");
         energyCost = serializedObject.FindProperty("energyCost");
         craftTime = serializedObject.FindProperty("craftTime");
+        maxCopiesPerPlayer = serializedObject.FindProperty("maxCopiesPerPlayer");
 
         shieldFlat = serializedObject.FindProperty("shieldFlat");
         shieldPercent = serializedObject.FindProperty("shieldPercent");
@@ -167,6 +169,7 @@ public class ModuleDefinitionEditor : Editor
         EditorGUILayout.PropertyField(metalCost);
         EditorGUILayout.PropertyField(energyCost);
         EditorGUILayout.PropertyField(craftTime);
+        EditorGUILayout.PropertyField(maxCopiesPerPlayer);
 
         DrawHeader("STAT MODIFIERS");
         EditorGUILayout.PropertyField(shieldFlat);

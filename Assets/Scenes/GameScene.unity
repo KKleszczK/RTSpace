@@ -173,6 +173,7 @@ MonoBehaviour:
   iconImage: {fileID: 1843088797}
   lockOverlay: {fileID: 1108512815}
   emptySprite: {fileID: 21300000, guid: 4ec327f048fad3f448b263e7bca674ca, type: 3}
+  slotIndex: 0
 --- !u!225 &14152167
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -1384,7 +1385,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDatabase
   modules:
-  - {fileID: 11400000, guid: d218bf9c68d269844b122c0692c20ccd, type: 2}
+  - {fileID: 11400000, guid: 0da0395b1de187440b9b353fac6b1054, type: 2}
 --- !u!114 &162948379
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1888,6 +1889,11 @@ MonoBehaviour:
   - {fileID: 1557089411}
   - {fileID: 1261921989}
   - {fileID: 1020893872}
+  selectedShipPanel: {fileID: 0}
+  selectedShipIcon: {fileID: 0}
+  selectedShipName: {fileID: 0}
+  moduleSlots: []
+  inventoryPanel: {fileID: 0}
 --- !u!1 &219570219
 GameObject:
   m_ObjectHideFlags: 0
@@ -2175,6 +2181,7 @@ MonoBehaviour:
   iconImage: {fileID: 454026630}
   lockOverlay: {fileID: 1830166576}
   emptySprite: {fileID: 21300000, guid: 4ec327f048fad3f448b263e7bca674ca, type: 3}
+  slotIndex: 0
 --- !u!225 &244614435
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -5252,7 +5259,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AssemblyPanelUI
   modules:
-  - {fileID: 11400000, guid: d218bf9c68d269844b122c0692c20ccd, type: 2}
+  - {fileID: 11400000, guid: 0da0395b1de187440b9b353fac6b1054, type: 2}
   content: {fileID: 1311724249}
   buttonPrefab: {fileID: 387368249338007428, guid: b13266cf7c8a08d4fb55b41a7409c606, type: 3}
   nameText: {fileID: 372884052}
@@ -9148,6 +9155,7 @@ MonoBehaviour:
   iconImage: {fileID: 1514639408}
   lockOverlay: {fileID: 1281388727}
   emptySprite: {fileID: 21300000, guid: 4ec327f048fad3f448b263e7bca674ca, type: 3}
+  slotIndex: 0
 --- !u!225 &816570430
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -10008,6 +10016,7 @@ MonoBehaviour:
   iconImage: {fileID: 1112961328}
   lockOverlay: {fileID: 1302981049}
   emptySprite: {fileID: 21300000, guid: 4ec327f048fad3f448b263e7bca674ca, type: 3}
+  slotIndex: 0
 --- !u!225 &876446266
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -10074,6 +10083,7 @@ MonoBehaviour:
   iconImage: {fileID: 97903820}
   lockOverlay: {fileID: 1664483074}
   emptySprite: {fileID: 21300000, guid: 4ec327f048fad3f448b263e7bca674ca, type: 3}
+  slotIndex: 0
 --- !u!225 &879251128
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -10683,6 +10693,7 @@ GameObject:
   - component: {fileID: 951277084}
   - component: {fileID: 951277083}
   - component: {fileID: 951277082}
+  - component: {fileID: 951277085}
   m_Layer: 5
   m_Name: Scroll View
   m_TagString: Untagged
@@ -10780,6 +10791,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 951277080}
   m_CullTransparentMesh: 1
+--- !u!114 &951277085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 951277080}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9f022b3caf509546933e0cb708ee998, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ModuleInventoryPanelUI
+  content: {fileID: 686770959}
+  modulePrefab: {fileID: 7566147659762119011, guid: 8ded96c17c5a02a498aa5340121d8c5e, type: 3}
 --- !u!1 &956412589
 GameObject:
   m_ObjectHideFlags: 0
@@ -12618,6 +12643,7 @@ MonoBehaviour:
   iconImage: {fileID: 545304791}
   lockOverlay: {fileID: 1215006726}
   emptySprite: {fileID: 21300000, guid: 4ec327f048fad3f448b263e7bca674ca, type: 3}
+  slotIndex: 0
 --- !u!225 &1083366724
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -14150,6 +14176,7 @@ MonoBehaviour:
   iconImage: {fileID: 294633654}
   lockOverlay: {fileID: 1073631085}
   emptySprite: {fileID: 21300000, guid: 4ec327f048fad3f448b263e7bca674ca, type: 3}
+  slotIndex: 0
 --- !u!225 &1265311024
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -15276,6 +15303,7 @@ MonoBehaviour:
   iconImage: {fileID: 114953405}
   lockOverlay: {fileID: 1062310319}
   emptySprite: {fileID: 21300000, guid: 4ec327f048fad3f448b263e7bca674ca, type: 3}
+  slotIndex: 0
 --- !u!225 &1331167455
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -16399,6 +16427,7 @@ MonoBehaviour:
   iconImage: {fileID: 587324598}
   lockOverlay: {fileID: 1242387679}
   emptySprite: {fileID: 21300000, guid: 4ec327f048fad3f448b263e7bca674ca, type: 3}
+  slotIndex: 0
 --- !u!225 &1387639228
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -16899,6 +16928,7 @@ MonoBehaviour:
   iconImage: {fileID: 1201738576}
   lockOverlay: {fileID: 14766662}
   emptySprite: {fileID: 21300000, guid: 4ec327f048fad3f448b263e7bca674ca, type: 3}
+  slotIndex: 0
 --- !u!225 &1457880523
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -19734,6 +19764,7 @@ MonoBehaviour:
   iconImage: {fileID: 699091080}
   lockOverlay: {fileID: 1348130338}
   emptySprite: {fileID: 21300000, guid: 4ec327f048fad3f448b263e7bca674ca, type: 3}
+  slotIndex: 0
 --- !u!225 &1754217284
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -20041,6 +20072,7 @@ MonoBehaviour:
   iconImage: {fileID: 1583409735}
   lockOverlay: {fileID: 493880267}
   emptySprite: {fileID: 21300000, guid: 4ec327f048fad3f448b263e7bca674ca, type: 3}
+  slotIndex: 0
 --- !u!225 &1769454445
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -22936,6 +22968,7 @@ MonoBehaviour:
   iconImage: {fileID: 939843608}
   lockOverlay: {fileID: 1064549355}
   emptySprite: {fileID: 21300000, guid: 4ec327f048fad3f448b263e7bca674ca, type: 3}
+  slotIndex: 0
 --- !u!225 &2079603036
 CanvasGroup:
   m_ObjectHideFlags: 0

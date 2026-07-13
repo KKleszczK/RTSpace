@@ -10,20 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0024218ce9266a34694abb828c810cd2, type: 3}
-  m_Name: HullFlatHP
+  m_Name: FLAT HP
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
-  moduleId: 
-  displayName: 
-  description: 
-  icon: {fileID: 0}
+  moduleId: hpflatmodule1
+  displayName: HP flat MODULE T1
+  description: chuj
+  icon: {fileID: 21300000, guid: 64040e79f4521b144bb9ede9595edf8d, type: 3}
   tier: 1
   type: 1
   metalCost: 100
   energyCost: 50
-  craftTime: 10
+  craftTime: 2
+  maxCopiesPerPlayer: 3
   shieldFlat: 0
   shieldPercent: 0
-  hpFlat: 0
+  hpFlat: 100
   hpPercent: 0
   moveSpeedFlat: 0
   moveSpeedPercent: 0
@@ -41,7 +42,7 @@ MonoBehaviour:
   miningAmountAtFullDensity: 1
   densityRemovedPerHit: 1
   miningModuleDurability: 0
-  isWeapon: 1
+  isWeapon: 0
   weaponType: 0
   weaponRange: 5
   weaponAttackInterval: 1
