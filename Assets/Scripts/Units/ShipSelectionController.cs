@@ -9,6 +9,7 @@ public class ShipSelectionController : MonoBehaviour
     [SerializeField] private GameObject basePanel;
     [SerializeField] private CorePanelUI corePanelUI;
     [SerializeField] private CoreEnergyUI coreEnergyUI;
+    [SerializeField] private HangarPanelUI hangarPanelUI;
 
     private PlayerBaseUnit selectedBase;
 
@@ -87,6 +88,9 @@ public class ShipSelectionController : MonoBehaviour
             }
         }
 
+        if (hangarPanelUI != null && selectedBase != null)
+            hangarPanelUI.SetHangar(selectedBase.GetComponent<BaseHangar>());
+
     }
 
     private void TryMove()
@@ -124,6 +128,9 @@ public class ShipSelectionController : MonoBehaviour
 
         if (corePanelUI != null)
             corePanelUI.SetCore(null);
+
+        if (hangarPanelUI != null)
+            hangarPanelUI.SetHangar(null);
 
         if (coreEnergyUI != null)
             coreEnergyUI.SetEnergyProduction(null);

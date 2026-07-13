@@ -127,6 +127,7 @@ GameObject:
   - component: {fileID: 1731094536751094707}
   - component: {fileID: 8704846793198574920}
   - component: {fileID: 3597091184765902973}
+  - component: {fileID: 1223153920510780178}
   m_Layer: 0
   m_Name: StarBase
   m_TagString: Untagged
@@ -404,7 +405,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BaseEnergyProduction
   ShowTopMostFoldoutHeaderGroup: 1
   baseEnergyPerSecond: 20
-  generator3FlatBonus: 0
 --- !u!114 &1731094536751094707
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -473,6 +473,32 @@ MonoBehaviour:
   maxFlatBonus: 40
   maxPercentBonus: 0
   chargeProgress:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+--- !u!114 &1223153920510780178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 847718449950176969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5e0254a4490f27448e50952560889ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BaseHangar
+  ShowTopMostFoldoutHeaderGroup: 1
+  buildQueue:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+  dockedShips:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+  buildProgress:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0

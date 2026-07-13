@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0024218ce9266a34694abb828c810cd2, type: 3}
+  m_Name: HullFlatHP
+  m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
+  moduleId: 
+  displayName: 
+  description: 
+  icon: {fileID: 0}
+  tier: 1
+  type: 1
+  metalCost: 100
+  energyCost: 50
+  craftTime: 10
+  shieldFlat: 0
+  shieldPercent: 0
+  hpFlat: 0
+  hpPercent: 0
+  moveSpeedFlat: 0
+  moveSpeedPercent: 0
+  allWeaponsDamagePercent: 0
+  allWeaponsAttackSpeedPercent: 0
+  haveAura: 0
+  auraRange: 5
+  auraEffect: 0
+  auraEffectValue: 0
+  haveBaseBooster: 0
+  baseBoosterEffect: 0
+  baseBoosterValue: 0
+  isSocketMiner: 0
+  mineInterval: 1
+  miningAmountAtFullDensity: 1
+  densityRemovedPerHit: 1
+  miningModuleDurability: 0
+  isWeapon: 1
+  weaponType: 0
+  weaponRange: 5
+  weaponAttackInterval: 1
+  weaponHullDamage: 10
+  weaponShieldDamage: 10
+  projectileSpeed: 10
+  weaponHasMagazine: 0
+  magazineCapacity: 10
+  magazineCanReload: 1
+  magazineReloadTime: 3
+  weaponHasAoe: 0
+  weaponAoeRange: 2
+  weaponAoeDamageMultiplier: 1
+  weaponIsStacking: 0
+  weaponMaxStacks: 5
+  stackMovementSpeedPercent: 0
+  stackDamagePercent: 0
+  stackRangePercent: 0
+  stackAttackSpeedPercent: 0
+  stackInactiveTimeToReset: 3
+  maxTargets: 1
+  canChainAttack: 0
+  chainJumps: 0
+  chainDamageMultiplier: 0.5
+  canSlowOnHit: 0
+  slowPercent: 20
+  slowDuration: 2
+  selfHarmOnAttack: 0
+  selfDamage: 0
