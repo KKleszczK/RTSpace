@@ -26,6 +26,20 @@ public class BaseHangar : NetworkBehaviour
         dockedShips = new NetworkList<DockedShipData>();
     }
 
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        Debug.Log(
+            $"[HANGAR SPAWN] " +
+            $"name={gameObject.name}, " +
+            $"NetworkObjectId={NetworkObjectId}, " +
+            $"OwnerClientId={OwnerClientId}, " +
+            $"LocalClientId={NetworkManager.Singleton.LocalClientId}, " +
+            $"IsOwner={IsOwner}, " +
+            $"IsServer={IsServer}");
+    }
+
     private void Update()
     {
         if (!IsServer)
@@ -40,11 +54,28 @@ public class BaseHangar : NetworkBehaviour
 
     public void RequestBuildShip(ShipDefinition ship)
     {
+        Debug.Log(
+            $"[SHIP BUILD 01] Klikniêto budowê. " +
+            $"ship={(ship != null ? ship.shipId : "NULL")}, " +
+            $"hangarOwner={OwnerClientId}, " +
+            $"localClient={NetworkManager.Singleton.LocalClientId}, " +
+            $"IsOwner={IsOwner}");
+
         if (ship == null)
+        {
+            Debug.LogWarning(
+                "[SHIP BUILD BLOCKED 01] ShipDefinition == null.");
+
             return;
+        }
 
         if (string.IsNullOrWhiteSpace(ship.shipId))
+        {
+            Debug.LogWarning(
+                "[SHIP BUILD BLOCKED 02] shipId jest pusty.");
+
             return;
+        }
 
         RequestBuildShipServerRpc(ship.shipId);
     }
@@ -57,31 +88,83 @@ public class BaseHangar : NetworkBehaviour
         ulong senderClientId =
             rpcParams.Receive.SenderClientId;
 
+        Debug.Log(
+            $"[SHIP BUILD 02] ServerRpc odebrane. " +
+            $"ship={shipId}, " +
+            $"sender={senderClientId}, " +
+            $"hangarOwner={OwnerClientId}, " +
+            $"queue={buildQueue.Count}/{MaxQueue}, " +
+            $"docked={dockedShips.Count}/{MaxDockedShips}");
+
         if (!CanUseHangar(senderClientId))
+        {
+            Debug.LogWarning(
+                $"[SHIP BUILD BLOCKED 03] Gracz nie jest w³aœcicielem hangaru. " +
+                $"sender={senderClientId}, " +
+                $"hangarOwner={OwnerClientId}");
+
             return;
+        }
 
         if (buildQueue.Count >= MaxQueue)
+        {
+            Debug.LogWarning(
+                $"[SHIP BUILD BLOCKED 04] Kolejka jest pe³na. " +
+                $"queue={buildQueue.Count}/{MaxQueue}");
+
             return;
+        }
 
         if (ShipDatabase.Instance == null)
+        {
+            Debug.LogError(
+                "[SHIP BUILD BLOCKED 05] ShipDatabase.Instance == null.");
+
             return;
+        }
 
         ShipDefinition ship =
             ShipDatabase.Instance.GetShip(shipId);
 
         if (ship == null)
+        {
+            Debug.LogWarning(
+                $"[SHIP BUILD BLOCKED 06] Nie znaleziono statku: {shipId}");
+
             return;
+        }
 
         PlayerResources resources =
             FindPlayerResources(senderClientId);
 
         if (resources == null)
+        {
+            Debug.LogWarning(
+                $"[SHIP BUILD BLOCKED 07] Nie znaleziono PlayerResources. " +
+                $"clientId={senderClientId}");
+
+            DebugAllPlayerResources();
+
             return;
+        }
+
+        Debug.Log(
+            $"[SHIP BUILD 03] Znaleziono zasoby. " +
+            $"resourceOwner={resources.OwnerClientId}, " +
+            $"metal={resources.metal.Value}, " +
+            $"energy={resources.energy.Value}, " +
+            $"costMetal={ship.metalCost}, " +
+            $"costEnergy={ship.energyCost}");
 
         if (!resources.CanAfford(
                 ship.metalCost,
                 ship.energyCost))
         {
+            Debug.LogWarning(
+                $"[SHIP BUILD BLOCKED 08] Brak zasobów. " +
+                $"metal={resources.metal.Value}/{ship.metalCost}, " +
+                $"energy={resources.energy.Value}/{ship.energyCost}");
+
             return;
         }
 
@@ -91,6 +174,12 @@ public class BaseHangar : NetworkBehaviour
 
         buildQueue.Add(
             new FixedString64Bytes(shipId));
+
+        Debug.Log(
+            $"[SHIP BUILD 04] Dodano statek do kolejki. " +
+            $"ship={shipId}, " +
+            $"client={senderClientId}, " +
+            $"queue={buildQueue.Count}/{MaxQueue}");
     }
 
     private void ProcessBuildQueue()
@@ -111,6 +200,9 @@ public class BaseHangar : NetworkBehaviour
                 ShipDatabase.Instance != null
                     ? ShipDatabase.Instance.GetShip(shipId)
                     : null;
+
+            Debug.Log(
+                $"[SHIP BUILD PROCESS] Rozpoczêto budowê: {shipId}");
         }
 
         if (currentShip == null)
@@ -134,9 +226,14 @@ public class BaseHangar : NetworkBehaviour
 
         buildProgress.Value = 1f;
 
-        // Przy pe³nym hangarze statek czeka na 100%.
         if (dockedShips.Count >= MaxDockedShips)
+        {
+            Debug.LogWarning(
+                $"[SHIP BUILD WAITING] Hangar jest pe³ny. " +
+                $"docked={dockedShips.Count}/{MaxDockedShips}");
+
             return;
+        }
 
         DockedShipData newShip =
             new DockedShipData
@@ -159,7 +256,8 @@ public class BaseHangar : NetworkBehaviour
         buildQueue.RemoveAt(0);
 
         Debug.Log(
-            $"[HANGAR] Zbudowano statek: {currentShip.shipId}");
+            $"[HANGAR] Zbudowano statek: {currentShip.shipId}. " +
+            $"OwnerClientId={OwnerClientId}");
 
         currentShip = null;
         buildProgress.Value = 0f;
@@ -179,7 +277,13 @@ public class BaseHangar : NetworkBehaviour
             rpcParams.Receive.SenderClientId;
 
         if (!CanUseHangar(senderClientId))
+        {
+            Debug.LogWarning(
+                $"[QUEUE REMOVE BLOCKED] sender={senderClientId}, " +
+                $"hangarOwner={OwnerClientId}");
+
             return;
+        }
 
         if (index < 0 || index >= buildQueue.Count)
             return;
@@ -208,6 +312,9 @@ public class BaseHangar : NetworkBehaviour
             currentShip = null;
             buildProgress.Value = 0f;
         }
+
+        Debug.Log(
+            $"[QUEUE REMOVE] Usuniêto statek {shipId} z kolejki.");
     }
 
     // =========================================================
@@ -245,7 +352,8 @@ public class BaseHangar : NetworkBehaviour
         if (!CanUseHangar(senderClientId))
         {
             Debug.LogWarning(
-                "[MODULE INSTALL ERROR] Gracz nie jest w³aœcicielem hangaru.");
+                $"[MODULE INSTALL ERROR] Gracz nie jest w³aœcicielem hangaru. " +
+                $"sender={senderClientId}, owner={OwnerClientId}");
 
             return;
         }
@@ -298,12 +406,13 @@ public class BaseHangar : NetworkBehaviour
 
         int coreTier = core.tier.Value;
 
-        if (slotIndex >= 0 &&
-            slotIndex <= 2 &&
+        if (slotIndex >= NormalSlot1 &&
+            slotIndex <= NormalSlot3 &&
             slotIndex >= coreTier)
         {
             Debug.LogWarning(
-                $"[MODULE INSTALL] Slot {slotIndex} zablokowany. Core tier={coreTier}");
+                $"[MODULE INSTALL] Slot {slotIndex} zablokowany. " +
+                $"Core tier={coreTier}");
 
             return;
         }
@@ -355,7 +464,6 @@ public class BaseHangar : NetworkBehaviour
         FixedString64Bytes previousModuleId =
             shipData.GetModule(slotIndex);
 
-        // Najpierw zabieramy nowy modu³ z inventory.
         if (!inventory.RemoveOneModule(moduleId))
         {
             Debug.LogWarning(
@@ -364,7 +472,6 @@ public class BaseHangar : NetworkBehaviour
             return;
         }
 
-        // Je¿eli slot by³ zajêty, poprzedni modu³ wraca do inventory.
         if (!previousModuleId.IsEmpty)
         {
             inventory.AddModule(
@@ -375,7 +482,6 @@ public class BaseHangar : NetworkBehaviour
             slotIndex,
             new FixedString64Bytes(moduleId));
 
-        // DockedShipData jest struktur¹, wiêc wpisujemy j¹ ponownie.
         dockedShips[dockIndex] = shipData;
 
         Debug.Log(
@@ -391,16 +497,15 @@ public class BaseHangar : NetworkBehaviour
         bool isClassSlot =
             slotIndex == ClassSlot;
 
-        // Modu³ exclusive mo¿e wejœæ wy³¹cznie do slotu klasowego.
         if (module.exclusive && !isClassSlot)
         {
             Debug.LogWarning(
-                "[MODULE INSTALL ERROR] Modu³ exclusive mo¿e byæ montowany tylko w slocie klasowym.");
+                "[MODULE INSTALL ERROR] Modu³ exclusive mo¿e byæ montowany " +
+                "tylko w slocie klasowym.");
 
             return false;
         }
 
-        // Slot klasowy wymaga zgodnego typu.
         if (isClassSlot)
         {
             if (!IsModuleTypeCompatibleWithShip(module, ship))
@@ -415,7 +520,6 @@ public class BaseHangar : NetworkBehaviour
             return true;
         }
 
-        // Sloty 0–2 s¹ zwyk³e i nie przyjmuj¹ exclusive.
         if (slotIndex == NormalSlot1 ||
             slotIndex == NormalSlot2 ||
             slotIndex == NormalSlot3)
@@ -430,8 +534,6 @@ public class BaseHangar : NetworkBehaviour
         ModuleDefinition module,
         ShipDefinition ship)
     {
-        // Zak³adamy te same nazwy:
-        // Fighter, Utility, Miner.
         return string.Equals(
             module.type.ToString(),
             ship.shipType.ToString(),
@@ -461,7 +563,13 @@ public class BaseHangar : NetworkBehaviour
             rpcParams.Receive.SenderClientId;
 
         if (!CanUseHangar(senderClientId))
+        {
+            Debug.LogWarning(
+                $"[MODULE REMOVE BLOCKED] sender={senderClientId}, " +
+                $"hangarOwner={OwnerClientId}");
+
             return;
+        }
 
         if (!IsValidDockIndex(dockIndex))
             return;
@@ -524,6 +632,9 @@ public class BaseHangar : NetworkBehaviour
 
         foreach (PlayerResources player in players)
         {
+            if (!player.IsSpawned)
+                continue;
+
             if (player.OwnerClientId == clientId)
                 return player;
         }
@@ -540,6 +651,9 @@ public class BaseHangar : NetworkBehaviour
 
         foreach (PlayerModuleInventory inventory in inventories)
         {
+            if (!inventory.IsSpawned)
+                continue;
+
             if (inventory.OwnerClientId == clientId)
                 return inventory;
         }
@@ -547,7 +661,8 @@ public class BaseHangar : NetworkBehaviour
         return null;
     }
 
-    private BaseCore FindCoreForOwner(ulong clientId)
+    private BaseCore FindCoreForOwner(
+        ulong clientId)
     {
         BaseCore[] cores =
             FindObjectsByType<BaseCore>(
@@ -555,10 +670,34 @@ public class BaseHangar : NetworkBehaviour
 
         foreach (BaseCore core in cores)
         {
+            if (!core.IsSpawned)
+                continue;
+
             if (core.OwnerClientId == clientId)
                 return core;
         }
 
         return null;
+    }
+
+    private void DebugAllPlayerResources()
+    {
+        PlayerResources[] allResources =
+            FindObjectsByType<PlayerResources>(
+                FindObjectsSortMode.None);
+
+        Debug.Log(
+            $"[RESOURCES DEBUG] Znaleziono obiektów: {allResources.Length}");
+
+        foreach (PlayerResources resources in allResources)
+        {
+            Debug.Log(
+                $"[RESOURCES DEBUG] " +
+                $"name={resources.gameObject.name}, " +
+                $"spawned={resources.IsSpawned}, " +
+                $"owner={resources.OwnerClientId}, " +
+                $"metal={resources.metal.Value}, " +
+                $"energy={resources.energy.Value}");
+        }
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -39,8 +40,12 @@ public class HangarPanelUI : MonoBehaviour
     [SerializeField] private ModuleInventoryPanelUI inventoryPanel;
 
     private BaseHangar selectedHangar;
-    private int selectedDockIndex = -1;
     private BaseCore selectedCore;
+
+    private int selectedDockIndex = -1;
+
+    private float nextHangarSearchTime;
+    private const float HangarSearchInterval = 0.5f;
 
     private void Start()
     {
@@ -51,18 +56,153 @@ public class HangarPanelUI : MonoBehaviour
 
         ClearDockSelection();
         HideAllShipPanels();
+
+        TryAssignLocalHangar();
     }
 
     private void Update()
     {
+        ValidateSelectedHangar();
+
         UpdateProgress();
         UpdateQueue();
         UpdateDocked();
         RefreshSelectedShipPanel();
     }
 
+    // =========================================================
+    // LOCAL HANGAR
+    // =========================================================
+
+    private void ValidateSelectedHangar()
+    {
+        if (NetworkManager.Singleton == null)
+            return;
+
+        if (!NetworkManager.Singleton.IsListening)
+            return;
+
+        ulong localClientId =
+            NetworkManager.Singleton.LocalClientId;
+
+        bool selectedHangarIsCorrect =
+            selectedHangar != null &&
+            selectedHangar.IsSpawned &&
+            selectedHangar.OwnerClientId == localClientId;
+
+        if (selectedHangarIsCorrect)
+            return;
+
+        selectedHangar = null;
+        selectedCore = null;
+
+        if (Time.unscaledTime < nextHangarSearchTime)
+            return;
+
+        nextHangarSearchTime =
+            Time.unscaledTime + HangarSearchInterval;
+
+        TryAssignLocalHangar();
+    }
+
+    private void TryAssignLocalHangar()
+    {
+        BaseHangar localHangar =
+            FindLocalPlayerHangar();
+
+        if (localHangar == null)
+        {
+            if (NetworkManager.Singleton != null &&
+                NetworkManager.Singleton.IsListening)
+            {
+                Debug.LogWarning(
+                    $"[HANGAR UI] Nie znaleziono jeszcze hangaru lokalnego gracza. " +
+                    $"localClient={NetworkManager.Singleton.LocalClientId}");
+            }
+
+            return;
+        }
+
+        SetHangar(localHangar);
+    }
+
+    private BaseHangar FindLocalPlayerHangar()
+    {
+        if (NetworkManager.Singleton == null)
+            return null;
+
+        if (!NetworkManager.Singleton.IsListening)
+            return null;
+
+        ulong localClientId =
+            NetworkManager.Singleton.LocalClientId;
+
+        BaseHangar[] hangars =
+            FindObjectsByType<BaseHangar>(
+                FindObjectsSortMode.None);
+
+        foreach (BaseHangar hangar in hangars)
+        {
+            if (hangar == null)
+                continue;
+
+            if (!hangar.IsSpawned)
+                continue;
+
+            Debug.Log(
+                $"[HANGAR UI SEARCH] " +
+                $"localClient={localClientId}, " +
+                $"hangar={hangar.gameObject.name}, " +
+                $"hangarOwner={hangar.OwnerClientId}");
+
+            if (hangar.OwnerClientId == localClientId)
+                return hangar;
+        }
+
+        return null;
+    }
+
     public void SetHangar(BaseHangar hangar)
     {
+        if (hangar == null)
+        {
+            Debug.LogWarning(
+                "[HANGAR UI SET] Próba ustawienia hangaru null.");
+
+            return;
+        }
+
+        if (NetworkManager.Singleton == null)
+        {
+            Debug.LogWarning(
+                "[HANGAR UI SET] NetworkManager.Singleton == null.");
+
+            return;
+        }
+
+        ulong localClientId =
+            NetworkManager.Singleton.LocalClientId;
+
+        if (!hangar.IsSpawned)
+        {
+            Debug.LogWarning(
+                $"[HANGAR UI SET] Hangar nie jest zespawnowany. " +
+                $"hangar={hangar.gameObject.name}");
+
+            return;
+        }
+
+        if (hangar.OwnerClientId != localClientId)
+        {
+            Debug.LogWarning(
+                $"[HANGAR UI SET BLOCKED] Próba ustawienia cudzego hangaru. " +
+                $"localClient={localClientId}, " +
+                $"hangarOwner={hangar.OwnerClientId}, " +
+                $"hangar={hangar.gameObject.name}");
+
+            return;
+        }
+
         selectedHangar = hangar;
         selectedCore = FindCoreForHangar(hangar);
 
@@ -73,11 +213,14 @@ public class HangarPanelUI : MonoBehaviour
 
         if (inventoryPanel != null)
             inventoryPanel.Refresh();
-    }
 
-    // =========================================================
-    // SETUP
-    // =========================================================
+        Debug.Log(
+            $"[HANGAR UI SET OK] " +
+            $"localClient={localClientId}, " +
+            $"hangarOwner={selectedHangar.OwnerClientId}, " +
+            $"hangar={selectedHangar.gameObject.name}, " +
+            $"coreOwner={(selectedCore != null ? selectedCore.OwnerClientId : 999)}");
+    }
 
     private BaseCore FindCoreForHangar(BaseHangar hangar)
     {
@@ -87,19 +230,19 @@ public class HangarPanelUI : MonoBehaviour
         BaseCore core =
             hangar.GetComponent<BaseCore>();
 
-        if (core != null)
+        if (IsCorrectCore(core, hangar.OwnerClientId))
             return core;
 
         core =
             hangar.GetComponentInParent<BaseCore>();
 
-        if (core != null)
+        if (IsCorrectCore(core, hangar.OwnerClientId))
             return core;
 
         core =
             hangar.GetComponentInChildren<BaseCore>();
 
-        if (core != null)
+        if (IsCorrectCore(core, hangar.OwnerClientId))
             return core;
 
         BaseCore[] allCores =
@@ -108,18 +251,33 @@ public class HangarPanelUI : MonoBehaviour
 
         foreach (BaseCore candidate in allCores)
         {
-            if (candidate.OwnerClientId ==
-                hangar.OwnerClientId)
+            if (IsCorrectCore(
+                    candidate,
+                    hangar.OwnerClientId))
             {
                 return candidate;
             }
         }
 
         Debug.LogWarning(
-            $"[HANGAR UI] Nie znaleziono BaseCore dla hangaru owner={hangar.OwnerClientId}");
+            $"[HANGAR UI] Nie znaleziono BaseCore dla hangaru. " +
+            $"owner={hangar.OwnerClientId}");
 
         return null;
     }
+
+    private bool IsCorrectCore(
+        BaseCore core,
+        ulong ownerClientId)
+    {
+        return core != null &&
+               core.IsSpawned &&
+               core.OwnerClientId == ownerClientId;
+    }
+
+    // =========================================================
+    // SETUP
+    // =========================================================
 
     private void SetupShipButtons()
     {
@@ -133,7 +291,31 @@ public class HangarPanelUI : MonoBehaviour
             shipButtons[i].onClick.AddListener(() =>
             {
                 if (selectedHangar == null)
+                {
+                    Debug.LogWarning(
+                        "[HANGAR UI BUILD] Brak przypisanego lokalnego hangaru.");
+
+                    TryAssignLocalHangar();
                     return;
+                }
+
+                if (NetworkManager.Singleton == null)
+                    return;
+
+                ulong localClientId =
+                    NetworkManager.Singleton.LocalClientId;
+
+                if (selectedHangar.OwnerClientId != localClientId)
+                {
+                    Debug.LogWarning(
+                        $"[HANGAR UI BUILD BLOCKED] " +
+                        $"localClient={localClientId}, " +
+                        $"hangarOwner={selectedHangar.OwnerClientId}");
+
+                    selectedHangar = null;
+                    TryAssignLocalHangar();
+                    return;
+                }
 
                 if (index < 0 || index >= ships.Count)
                     return;
@@ -141,7 +323,8 @@ public class HangarPanelUI : MonoBehaviour
                 if (ships[index] == null)
                     return;
 
-                selectedHangar.RequestBuildShip(ships[index]);
+                selectedHangar.RequestBuildShip(
+                    ships[index]);
             });
 
             EventTrigger trigger =
@@ -150,7 +333,8 @@ public class HangarPanelUI : MonoBehaviour
             if (trigger == null)
             {
                 trigger =
-                    shipButtons[i].gameObject.AddComponent<EventTrigger>();
+                    shipButtons[i].gameObject
+                        .AddComponent<EventTrigger>();
             }
 
             if (trigger.triggers == null)
@@ -162,10 +346,13 @@ public class HangarPanelUI : MonoBehaviour
             EventTrigger.Entry enter =
                 new EventTrigger.Entry
                 {
-                    eventID = EventTriggerType.PointerEnter
+                    eventID =
+                        EventTriggerType.PointerEnter
                 };
 
-            enter.callback.AddListener(_ => ShowShipCost(index));
+            enter.callback.AddListener(
+                _ => ShowShipCost(index));
+
             trigger.triggers.Add(enter);
 
             if (index < ships.Count &&
@@ -191,7 +378,10 @@ public class HangarPanelUI : MonoBehaviour
             queueButtons[i].onClick.AddListener(() =>
             {
                 if (selectedHangar != null)
-                    selectedHangar.RequestRemoveFromQueue(index);
+                {
+                    selectedHangar
+                        .RequestRemoveFromQueue(index);
+                }
             });
         }
     }
@@ -223,7 +413,8 @@ public class HangarPanelUI : MonoBehaviour
         if (panel == null)
             return;
 
-        ModuleSlotUI[] slots = panel.GetSlots();
+        ModuleSlotUI[] slots =
+            panel.GetSlots();
 
         if (slots == null)
             return;
@@ -231,7 +422,11 @@ public class HangarPanelUI : MonoBehaviour
         for (int i = 0; i < slots.Length; i++)
         {
             if (slots[i] != null)
-                slots[i].Setup(this, i);
+            {
+                slots[i].Setup(
+                    this,
+                    i);
+            }
         }
     }
 
@@ -243,11 +438,12 @@ public class HangarPanelUI : MonoBehaviour
         int slotIndex,
         ModuleDefinition module)
     {
-        if (selectedHangar == null)
+        if (!CanUseSelectedHangar())
             return;
 
         if (selectedDockIndex < 0 ||
-            selectedDockIndex >= selectedHangar.dockedShips.Count)
+            selectedDockIndex >=
+            selectedHangar.dockedShips.Count)
         {
             return;
         }
@@ -258,8 +454,11 @@ public class HangarPanelUI : MonoBehaviour
         if (module == null)
             return;
 
-        if (string.IsNullOrWhiteSpace(module.moduleId))
+        if (string.IsNullOrWhiteSpace(
+                module.moduleId))
+        {
             return;
+        }
 
         selectedHangar.RequestInstallModule(
             selectedDockIndex,
@@ -267,13 +466,15 @@ public class HangarPanelUI : MonoBehaviour
             module.moduleId);
     }
 
-    public void RequestRemoveModule(int slotIndex)
+    public void RequestRemoveModule(
+        int slotIndex)
     {
-        if (selectedHangar == null)
+        if (!CanUseSelectedHangar())
             return;
 
         if (selectedDockIndex < 0 ||
-            selectedDockIndex >= selectedHangar.dockedShips.Count)
+            selectedDockIndex >=
+            selectedHangar.dockedShips.Count)
         {
             return;
         }
@@ -284,6 +485,21 @@ public class HangarPanelUI : MonoBehaviour
         selectedHangar.RequestRemoveModule(
             selectedDockIndex,
             slotIndex);
+    }
+
+    private bool CanUseSelectedHangar()
+    {
+        if (selectedHangar == null)
+            return false;
+
+        if (NetworkManager.Singleton == null)
+            return false;
+
+        if (!selectedHangar.IsSpawned)
+            return false;
+
+        return selectedHangar.OwnerClientId ==
+               NetworkManager.Singleton.LocalClientId;
     }
 
     // =========================================================
@@ -304,21 +520,23 @@ public class HangarPanelUI : MonoBehaviour
 
     private void RefreshSelectedShipPanel()
     {
-        if (selectedHangar == null)
+        if (!CanUseSelectedHangar())
         {
             HideAllShipPanels();
             return;
         }
 
         if (selectedDockIndex < 0 ||
-            selectedDockIndex >= selectedHangar.dockedShips.Count)
+            selectedDockIndex >=
+            selectedHangar.dockedShips.Count)
         {
             HideAllShipPanels();
             return;
         }
 
         DockedShipData shipData =
-            selectedHangar.dockedShips[selectedDockIndex];
+            selectedHangar
+                .dockedShips[selectedDockIndex];
 
         if (ShipDatabase.Instance == null)
         {
@@ -337,7 +555,8 @@ public class HangarPanelUI : MonoBehaviour
         }
 
         ShipModulePanelUI selectedPanel =
-            GetPanelForShipType(shipDefinition.shipType);
+            GetPanelForShipType(
+                shipDefinition.shipType);
 
         HideAllShipPanels();
 
@@ -345,10 +564,11 @@ public class HangarPanelUI : MonoBehaviour
             return;
 
         selectedPanel.SetVisible(true);
+
         int coreTier =
-    selectedCore != null
-        ? selectedCore.tier.Value
-        : 1;
+            selectedCore != null
+                ? selectedCore.tier.Value
+                : 1;
 
         selectedPanel.Refresh(
             shipDefinition,
@@ -384,16 +604,19 @@ public class HangarPanelUI : MonoBehaviour
         if (index < 0 || index >= ships.Count)
             return;
 
-        ShipDefinition ship = ships[index];
+        ShipDefinition ship =
+            ships[index];
 
         if (ship == null)
             return;
 
         if (metalText != null)
-            metalText.text = "M: " + ship.metalCost;
+            metalText.text =
+                "M: " + ship.metalCost;
 
         if (energyText != null)
-            energyText.text = "E: " + ship.energyCost;
+            energyText.text =
+                "E: " + ship.energyCost;
 
         if (timeText != null)
         {
@@ -410,7 +633,7 @@ public class HangarPanelUI : MonoBehaviour
             return;
 
         float progress =
-            selectedHangar != null
+            CanUseSelectedHangar()
                 ? selectedHangar.buildProgress.Value
                 : 0f;
 
@@ -426,23 +649,28 @@ public class HangarPanelUI : MonoBehaviour
 
     private void UpdateQueue()
     {
-        for (int i = 0; i < queueIcons.Length; i++)
+        for (int i = 0;
+             i < queueIcons.Length;
+             i++)
         {
             if (queueIcons[i] == null)
                 continue;
 
             bool hasShip =
-                selectedHangar != null &&
+                CanUseSelectedHangar() &&
                 i < selectedHangar.buildQueue.Count;
 
             if (hasShip)
             {
                 string shipId =
-                    selectedHangar.buildQueue[i].ToString();
+                    selectedHangar
+                        .buildQueue[i]
+                        .ToString();
 
                 ShipDefinition ship =
                     ShipDatabase.Instance != null
-                        ? ShipDatabase.Instance.GetShip(shipId)
+                        ? ShipDatabase.Instance
+                            .GetShip(shipId)
                         : null;
 
                 queueIcons[i].sprite =
@@ -453,17 +681,20 @@ public class HangarPanelUI : MonoBehaviour
                 if (i < queueButtons.Length &&
                     queueButtons[i] != null)
                 {
-                    queueButtons[i].interactable = true;
+                    queueButtons[i].interactable =
+                        true;
                 }
             }
             else
             {
-                queueIcons[i].sprite = emptySprite;
+                queueIcons[i].sprite =
+                    emptySprite;
 
                 if (i < queueButtons.Length &&
                     queueButtons[i] != null)
                 {
-                    queueButtons[i].interactable = false;
+                    queueButtons[i].interactable =
+                        false;
                 }
             }
         }
@@ -475,24 +706,30 @@ public class HangarPanelUI : MonoBehaviour
 
     private void UpdateDocked()
     {
-        for (int i = 0; i < dockIcons.Length; i++)
+        for (int i = 0;
+             i < dockIcons.Length;
+             i++)
         {
             if (dockIcons[i] == null)
                 continue;
 
             bool hasShip =
-                selectedHangar != null &&
-                i < selectedHangar.dockedShips.Count;
+                CanUseSelectedHangar() &&
+                i < selectedHangar
+                    .dockedShips.Count;
 
             if (hasShip)
             {
                 DockedShipData shipData =
-                    selectedHangar.dockedShips[i];
+                    selectedHangar
+                        .dockedShips[i];
 
                 ShipDefinition ship =
                     ShipDatabase.Instance != null
-                        ? ShipDatabase.Instance.GetShip(
-                            shipData.shipId.ToString())
+                        ? ShipDatabase.Instance
+                            .GetShip(
+                                shipData.shipId
+                                    .ToString())
                         : null;
 
                 dockIcons[i].sprite =
@@ -503,17 +740,20 @@ public class HangarPanelUI : MonoBehaviour
                 if (i < dockButtons.Length &&
                     dockButtons[i] != null)
                 {
-                    dockButtons[i].interactable = true;
+                    dockButtons[i].interactable =
+                        true;
                 }
             }
             else
             {
-                dockIcons[i].sprite = emptySprite;
+                dockIcons[i].sprite =
+                    emptySprite;
 
                 if (i < dockButtons.Length &&
                     dockButtons[i] != null)
                 {
-                    dockButtons[i].interactable = false;
+                    dockButtons[i].interactable =
+                        false;
                 }
 
                 if (selectedDockIndex == i)
@@ -529,11 +769,12 @@ public class HangarPanelUI : MonoBehaviour
 
     private void SelectDockSlot(int index)
     {
-        if (selectedHangar == null)
+        if (!CanUseSelectedHangar())
             return;
 
         if (index < 0 ||
-            index >= selectedHangar.dockedShips.Count)
+            index >=
+            selectedHangar.dockedShips.Count)
         {
             return;
         }
@@ -546,7 +787,9 @@ public class HangarPanelUI : MonoBehaviour
 
     private void RefreshDockSelectors()
     {
-        for (int i = 0; i < dockSelectors.Length; i++)
+        for (int i = 0;
+             i < dockSelectors.Length;
+             i++)
         {
             if (dockSelectors[i] != null)
             {
