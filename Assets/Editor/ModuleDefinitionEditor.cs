@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -15,6 +16,7 @@ public class ModuleDefinitionEditor : Editor
     private SerializedProperty energyCost;
     private SerializedProperty craftTime;
     private SerializedProperty maxCopiesPerPlayer;
+    private SerializedProperty exclusive;
 
     private SerializedProperty shieldFlat;
     private SerializedProperty shieldPercent;
@@ -90,6 +92,7 @@ public class ModuleDefinitionEditor : Editor
         energyCost = serializedObject.FindProperty("energyCost");
         craftTime = serializedObject.FindProperty("craftTime");
         maxCopiesPerPlayer = serializedObject.FindProperty("maxCopiesPerPlayer");
+        exclusive = serializedObject.FindProperty("exclusive"); 
 
         shieldFlat = serializedObject.FindProperty("shieldFlat");
         shieldPercent = serializedObject.FindProperty("shieldPercent");
@@ -170,6 +173,7 @@ public class ModuleDefinitionEditor : Editor
         EditorGUILayout.PropertyField(energyCost);
         EditorGUILayout.PropertyField(craftTime);
         EditorGUILayout.PropertyField(maxCopiesPerPlayer);
+        EditorGUILayout.PropertyField(exclusive); 
 
         DrawHeader("STAT MODIFIERS");
         EditorGUILayout.PropertyField(shieldFlat);

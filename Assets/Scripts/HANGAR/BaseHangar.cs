@@ -7,7 +7,11 @@ public class BaseHangar : NetworkBehaviour
 {
     public const int MaxDockedShips = 6;
     public const int MaxQueue = 2;
-    public const int ModuleSlotCount = 4;
+
+    private const int NormalSlot1 = 0;
+    private const int NormalSlot2 = 1;
+    private const int NormalSlot3 = 2;
+    private const int ClassSlot = 3;
 
     public NetworkList<FixedString64Bytes> buildQueue;
     public NetworkList<DockedShipData> dockedShips;
@@ -39,6 +43,9 @@ public class BaseHangar : NetworkBehaviour
         if (ship == null)
             return;
 
+        if (string.IsNullOrWhiteSpace(ship.shipId))
+            return;
+
         RequestBuildShipServerRpc(ship.shipId);
     }
 
@@ -47,21 +54,26 @@ public class BaseHangar : NetworkBehaviour
         string shipId,
         ServerRpcParams rpcParams = default)
     {
-        ulong senderId = rpcParams.Receive.SenderClientId;
+        ulong senderClientId =
+            rpcParams.Receive.SenderClientId;
 
-        if (!CanClientUseHangar(senderId))
+        if (!CanUseHangar(senderClientId))
             return;
 
         if (buildQueue.Count >= MaxQueue)
             return;
 
-        ShipDefinition ship = ShipDatabase.Instance.GetShip(shipId);
+        if (ShipDatabase.Instance == null)
+            return;
+
+        ShipDefinition ship =
+            ShipDatabase.Instance.GetShip(shipId);
 
         if (ship == null)
             return;
 
         PlayerResources resources =
-            FindPlayerResources(senderId);
+            FindPlayerResources(senderClientId);
 
         if (resources == null)
             return;
@@ -78,7 +90,7 @@ public class BaseHangar : NetworkBehaviour
             ship.energyCost);
 
         buildQueue.Add(
-            new FixedString64Bytes(ship.shipId));
+            new FixedString64Bytes(shipId));
     }
 
     private void ProcessBuildQueue()
@@ -96,11 +108,16 @@ public class BaseHangar : NetworkBehaviour
                 buildQueue[0].ToString();
 
             currentShip =
-                ShipDatabase.Instance.GetShip(shipId);
+                ShipDatabase.Instance != null
+                    ? ShipDatabase.Instance.GetShip(shipId)
+                    : null;
         }
 
         if (currentShip == null)
         {
+            Debug.LogError(
+                "[HANGAR] Nie znaleziono statku z pocz¹tku kolejki.");
+
             buildQueue.RemoveAt(0);
             buildProgress.Value = 0f;
             return;
@@ -117,7 +134,7 @@ public class BaseHangar : NetworkBehaviour
 
         buildProgress.Value = 1f;
 
-        // Statek czeka na 100%, gdy hangar jest pe³ny.
+        // Przy pe³nym hangarze statek czeka na 100%.
         if (dockedShips.Count >= MaxDockedShips)
             return;
 
@@ -132,14 +149,17 @@ public class BaseHangar : NetworkBehaviour
                     new FixedString64Bytes(
                         currentShip.shipId),
 
-                module1 = default,
-                module2 = default,
-                module3 = default,
+                normalModule1 = default,
+                normalModule2 = default,
+                normalModule3 = default,
                 classModule = default
             };
 
         dockedShips.Add(newShip);
         buildQueue.RemoveAt(0);
+
+        Debug.Log(
+            $"[HANGAR] Zbudowano statek: {currentShip.shipId}");
 
         currentShip = null;
         buildProgress.Value = 0f;
@@ -155,26 +175,25 @@ public class BaseHangar : NetworkBehaviour
         int index,
         ServerRpcParams rpcParams = default)
     {
-        ulong senderId =
+        ulong senderClientId =
             rpcParams.Receive.SenderClientId;
 
-        if (!CanClientUseHangar(senderId))
+        if (!CanUseHangar(senderClientId))
             return;
 
-        if (index < 0 ||
-            index >= buildQueue.Count)
-        {
+        if (index < 0 || index >= buildQueue.Count)
             return;
-        }
 
         string shipId =
             buildQueue[index].ToString();
 
         ShipDefinition ship =
-            ShipDatabase.Instance.GetShip(shipId);
+            ShipDatabase.Instance != null
+                ? ShipDatabase.Instance.GetShip(shipId)
+                : null;
 
         PlayerResources resources =
-            FindPlayerResources(senderId);
+            FindPlayerResources(senderClientId);
 
         if (ship != null && resources != null)
         {
@@ -216,44 +235,116 @@ public class BaseHangar : NetworkBehaviour
         string moduleId,
         ServerRpcParams rpcParams = default)
     {
-        ulong senderId =
+        ulong senderClientId =
             rpcParams.Receive.SenderClientId;
 
-        if (!CanClientUseHangar(senderId))
+        Debug.Log(
+            $"[MODULE INSTALL 01] " +
+            $"dock={dockIndex}, slot={slotIndex}, module={moduleId}");
+
+        if (!CanUseHangar(senderClientId))
+        {
+            Debug.LogWarning(
+                "[MODULE INSTALL ERROR] Gracz nie jest w³aœcicielem hangaru.");
+
             return;
+        }
 
         if (!IsValidDockIndex(dockIndex))
-            return;
+        {
+            Debug.LogWarning(
+                "[MODULE INSTALL ERROR] Nieprawid³owy indeks statku.");
 
-        if (!IsValidModuleSlot(slotIndex))
             return;
+        }
+
+        if (!IsValidSlotIndex(slotIndex))
+        {
+            Debug.LogWarning(
+                "[MODULE INSTALL ERROR] Nieprawid³owy indeks slotu.");
+
+            return;
+        }
+
+        if (ModuleDatabase.Instance == null)
+        {
+            Debug.LogError(
+                "[MODULE INSTALL ERROR] ModuleDatabase.Instance == null");
+
+            return;
+        }
 
         ModuleDefinition module =
             ModuleDatabase.Instance.GetModule(moduleId);
 
         if (module == null)
+        {
+            Debug.LogWarning(
+                $"[MODULE INSTALL ERROR] Nie znaleziono modu³u: {moduleId}");
+
             return;
+        }
+
+        BaseCore core =
+            FindCoreForOwner(senderClientId);
+
+        if (core == null)
+        {
+            Debug.LogWarning(
+                "[MODULE INSTALL] Nie znaleziono BaseCore gracza.");
+
+            return;
+        }
+
+        int coreTier = core.tier.Value;
+
+        if (slotIndex >= 0 &&
+            slotIndex <= 2 &&
+            slotIndex >= coreTier)
+        {
+            Debug.LogWarning(
+                $"[MODULE INSTALL] Slot {slotIndex} zablokowany. Core tier={coreTier}");
+
+            return;
+        }
 
         PlayerModuleInventory inventory =
-            FindPlayerInventory(senderId);
+            FindPlayerInventory(senderClientId);
 
         if (inventory == null)
+        {
+            Debug.LogWarning(
+                "[MODULE INSTALL ERROR] Nie znaleziono inventory gracza.");
+
             return;
+        }
 
         if (!inventory.HasModule(moduleId))
+        {
+            Debug.LogWarning(
+                "[MODULE INSTALL ERROR] Gracz nie posiada modu³u.");
+
             return;
+        }
 
         DockedShipData shipData =
             dockedShips[dockIndex];
 
         ShipDefinition shipDefinition =
-            ShipDatabase.Instance.GetShip(
-                shipData.shipId.ToString());
+            ShipDatabase.Instance != null
+                ? ShipDatabase.Instance.GetShip(
+                    shipData.shipId.ToString())
+                : null;
 
         if (shipDefinition == null)
-            return;
+        {
+            Debug.LogWarning(
+                "[MODULE INSTALL ERROR] Nie znaleziono definicji statku.");
 
-        if (!CanInstallInSlot(
+            return;
+        }
+
+        if (!CanInstallModule(
                 module,
                 shipDefinition,
                 slotIndex))
@@ -261,31 +352,90 @@ public class BaseHangar : NetworkBehaviour
             return;
         }
 
-        if (shipData.CountModule(moduleId) >=
-            Mathf.Max(1, module.maxCopiesPerPlayer))
-        {
-            return;
-        }
-
-        FixedString64Bytes oldModuleId =
+        FixedString64Bytes previousModuleId =
             shipData.GetModule(slotIndex);
 
-        // Je¿eli w slocie by³ modu³, zwracamy go.
-        if (!oldModuleId.IsEmpty)
+        // Najpierw zabieramy nowy modu³ z inventory.
+        if (!inventory.RemoveOneModule(moduleId))
         {
-            inventory.AddModule(
-                oldModuleId.ToString());
+            Debug.LogWarning(
+                "[MODULE INSTALL ERROR] Nie uda³o siê usun¹æ modu³u z inventory.");
+
+            return;
         }
 
-        if (!inventory.RemoveOneModule(moduleId))
-            return;
+        // Je¿eli slot by³ zajêty, poprzedni modu³ wraca do inventory.
+        if (!previousModuleId.IsEmpty)
+        {
+            inventory.AddModule(
+                previousModuleId.ToString());
+        }
 
         shipData.SetModule(
             slotIndex,
             new FixedString64Bytes(moduleId));
 
-        // NetworkList wymaga ponownego wpisania struktury.
+        // DockedShipData jest struktur¹, wiêc wpisujemy j¹ ponownie.
         dockedShips[dockIndex] = shipData;
+
+        Debug.Log(
+            $"[MODULE INSTALL 02] Zamontowano {moduleId} " +
+            $"na statku {shipData.shipId}, slot={slotIndex}");
+    }
+
+    private bool CanInstallModule(
+        ModuleDefinition module,
+        ShipDefinition ship,
+        int slotIndex)
+    {
+        bool isClassSlot =
+            slotIndex == ClassSlot;
+
+        // Modu³ exclusive mo¿e wejœæ wy³¹cznie do slotu klasowego.
+        if (module.exclusive && !isClassSlot)
+        {
+            Debug.LogWarning(
+                "[MODULE INSTALL ERROR] Modu³ exclusive mo¿e byæ montowany tylko w slocie klasowym.");
+
+            return false;
+        }
+
+        // Slot klasowy wymaga zgodnego typu.
+        if (isClassSlot)
+        {
+            if (!IsModuleTypeCompatibleWithShip(module, ship))
+            {
+                Debug.LogWarning(
+                    $"[MODULE INSTALL ERROR] Modu³ typu {module.type} " +
+                    $"nie pasuje do statku typu {ship.shipType}.");
+
+                return false;
+            }
+
+            return true;
+        }
+
+        // Sloty 0–2 s¹ zwyk³e i nie przyjmuj¹ exclusive.
+        if (slotIndex == NormalSlot1 ||
+            slotIndex == NormalSlot2 ||
+            slotIndex == NormalSlot3)
+        {
+            return !module.exclusive;
+        }
+
+        return false;
+    }
+
+    private bool IsModuleTypeCompatibleWithShip(
+        ModuleDefinition module,
+        ShipDefinition ship)
+    {
+        // Zak³adamy te same nazwy:
+        // Fighter, Utility, Miner.
+        return string.Equals(
+            module.type.ToString(),
+            ship.shipType.ToString(),
+            StringComparison.OrdinalIgnoreCase);
     }
 
     // =========================================================
@@ -307,16 +457,16 @@ public class BaseHangar : NetworkBehaviour
         int slotIndex,
         ServerRpcParams rpcParams = default)
     {
-        ulong senderId =
+        ulong senderClientId =
             rpcParams.Receive.SenderClientId;
 
-        if (!CanClientUseHangar(senderId))
+        if (!CanUseHangar(senderClientId))
             return;
 
         if (!IsValidDockIndex(dockIndex))
             return;
 
-        if (!IsValidModuleSlot(slotIndex))
+        if (!IsValidSlotIndex(slotIndex))
             return;
 
         DockedShipData shipData =
@@ -329,43 +479,24 @@ public class BaseHangar : NetworkBehaviour
             return;
 
         PlayerModuleInventory inventory =
-            FindPlayerInventory(senderId);
+            FindPlayerInventory(senderClientId);
 
         if (inventory == null)
             return;
 
         inventory.AddModule(moduleId.ToString());
 
-        shipData.SetModule(slotIndex, default);
+        shipData.ClearModule(slotIndex);
         dockedShips[dockIndex] = shipData;
+
+        Debug.Log(
+            $"[MODULE REMOVE] Zdjêto {moduleId} " +
+            $"ze statku {shipData.shipId}, slot={slotIndex}");
     }
 
     // =========================================================
-    // VALIDATION
+    // VALIDATION / FIND
     // =========================================================
-
-    private bool CanInstallInSlot(
-        ModuleDefinition module,
-        ShipDefinition ship,
-        int slotIndex)
-    {
-        if (slotIndex >= 0 && slotIndex <= 2)
-        {
-            // Zak³adam:
-            // Tier1 = 0, Tier2 = 1, Tier3 = 2.
-            return (int)module.tier == slotIndex;
-        }
-
-        if (slotIndex == 3)
-        {
-            // Zak³adam zgodn¹ kolejnoœæ:
-            // Miner, Fighter, Utility lub podobn¹.
-            return (int)module.type ==
-                   (int)ship.shipType;
-        }
-
-        return false;
-    }
 
     private bool IsValidDockIndex(int index)
     {
@@ -373,13 +504,13 @@ public class BaseHangar : NetworkBehaviour
                index < dockedShips.Count;
     }
 
-    private bool IsValidModuleSlot(int index)
+    private bool IsValidSlotIndex(int index)
     {
-        return index >= 0 &&
-               index < ModuleSlotCount;
+        return index >= NormalSlot1 &&
+               index <= ClassSlot;
     }
 
-    private bool CanClientUseHangar(ulong clientId)
+    private bool CanUseHangar(ulong clientId)
     {
         return clientId == OwnerClientId;
     }
@@ -407,11 +538,25 @@ public class BaseHangar : NetworkBehaviour
             FindObjectsByType<PlayerModuleInventory>(
                 FindObjectsSortMode.None);
 
-        foreach (PlayerModuleInventory inventory
-                 in inventories)
+        foreach (PlayerModuleInventory inventory in inventories)
         {
             if (inventory.OwnerClientId == clientId)
                 return inventory;
+        }
+
+        return null;
+    }
+
+    private BaseCore FindCoreForOwner(ulong clientId)
+    {
+        BaseCore[] cores =
+            FindObjectsByType<BaseCore>(
+                FindObjectsSortMode.None);
+
+        foreach (BaseCore core in cores)
+        {
+            if (core.OwnerClientId == clientId)
+                return core;
         }
 
         return null;

@@ -9,30 +9,36 @@ public class DraggableModuleUI : MonoBehaviour,
 {
     [SerializeField] private Image iconImage;
 
+    [Header("Drag appearance")]
+    [SerializeField, Range(0f, 1f)]
+    private float originalAlphaWhileDragging = 0.35f;
+
+    [SerializeField, Range(0f, 1f)]
+    private float ghostAlpha = 0.75f;
+
     private Canvas canvas;
     private CanvasGroup canvasGroup;
-    private RectTransform rectTransform;
-
-    private Transform startParent;
-    private Vector2 startPosition;
-
     private ModuleDefinition module;
+
+    private RectTransform dragGhost;
+    private Image dragGhostImage;
 
     private void Awake()
     {
-        rectTransform =
-            GetComponent<RectTransform>();
-
-        canvasGroup =
-            GetComponent<CanvasGroup>();
-
-        canvas =
-            GetComponentInParent<Canvas>();
+        canvasGroup = GetComponent<CanvasGroup>();
+        canvas = GetComponentInParent<Canvas>();
 
         if (canvasGroup == null)
         {
             Debug.LogError(
-                "DraggableModuleUI wymaga CanvasGroup.",
+                "DraggableModuleUI wymaga komponentu CanvasGroup.",
+                gameObject);
+        }
+
+        if (canvas == null)
+        {
+            Debug.LogError(
+                "DraggableModuleUI nie znajduje nadrzêdnego Canvas.",
                 gameObject);
         }
     }
@@ -55,42 +61,35 @@ public class DraggableModuleUI : MonoBehaviour,
         return module;
     }
 
-    public void OnBeginDrag(
-        PointerEventData eventData)
+    public void OnBeginDrag(PointerEventData eventData)
     {
         if (module == null ||
             canvas == null ||
-            canvasGroup == null)
+            canvasGroup == null ||
+            iconImage == null)
         {
             return;
         }
 
-        startParent = transform.parent;
-        startPosition =
-            rectTransform.anchoredPosition;
-
-        transform.SetParent(
-            canvas.transform,
-            true);
-
-        transform.SetAsLastSibling();
-
-        canvasGroup.alpha = 0.6f;
+        // Oryginalny element zostaje w Content.
+        canvasGroup.alpha = originalAlphaWhileDragging;
         canvasGroup.blocksRaycasts = false;
+
+        CreateDragGhost();
+
+        if (dragGhost != null)
+            dragGhost.position = eventData.position;
     }
 
-    public void OnDrag(
-        PointerEventData eventData)
+    public void OnDrag(PointerEventData eventData)
     {
-        if (canvas == null)
+        if (dragGhost == null)
             return;
 
-        rectTransform.position =
-            eventData.position;
+        dragGhost.position = eventData.position;
     }
 
-    public void OnEndDrag(
-        PointerEventData eventData)
+    public void OnEndDrag(PointerEventData eventData)
     {
         if (canvasGroup != null)
         {
@@ -98,14 +97,67 @@ public class DraggableModuleUI : MonoBehaviour,
             canvasGroup.blocksRaycasts = true;
         }
 
-        if (startParent != null)
-        {
-            transform.SetParent(
-                startParent,
-                false);
+        DestroyDragGhost();
+    }
 
-            rectTransform.anchoredPosition =
-                startPosition;
+    private void CreateDragGhost()
+    {
+        GameObject ghostObject =
+            new GameObject(
+                "ModuleDragGhost",
+                typeof(RectTransform),
+                typeof(CanvasGroup),
+                typeof(Image));
+
+        ghostObject.transform.SetParent(
+            canvas.transform,
+            false);
+
+        ghostObject.transform.SetAsLastSibling();
+
+        dragGhost =
+            ghostObject.GetComponent<RectTransform>();
+
+        dragGhostImage =
+            ghostObject.GetComponent<Image>();
+
+        CanvasGroup ghostCanvasGroup =
+            ghostObject.GetComponent<CanvasGroup>();
+
+        RectTransform sourceRect =
+            iconImage.rectTransform;
+
+        dragGhost.sizeDelta =
+            sourceRect.rect.size;
+
+        dragGhostImage.sprite =
+            iconImage.sprite;
+
+        dragGhostImage.preserveAspect = true;
+        dragGhostImage.raycastTarget = false;
+
+        ghostCanvasGroup.alpha = ghostAlpha;
+        ghostCanvasGroup.blocksRaycasts = false;
+        ghostCanvasGroup.interactable = false;
+    }
+
+    private void DestroyDragGhost()
+    {
+        if (dragGhost != null)
+            Destroy(dragGhost.gameObject);
+
+        dragGhost = null;
+        dragGhostImage = null;
+    }
+
+    private void OnDisable()
+    {
+        DestroyDragGhost();
+
+        if (canvasGroup != null)
+        {
+            canvasGroup.alpha = 1f;
+            canvasGroup.blocksRaycasts = true;
         }
     }
 }

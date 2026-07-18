@@ -57,6 +57,9 @@ public class ModuleDefinition : ScriptableObject
     [Min(1)]
     public int maxCopiesPerPlayer = 1;
 
+    [Header("Restrictions")]
+    public bool exclusive;
+
     [Header("Stat Modifiers")]
     public float shieldFlat;
     public float shieldPercent;

@@ -62,8 +62,7 @@ public class ModuleSlotUI :
         SetModule(null);
     }
 
-    public void OnDrop(
-        PointerEventData eventData)
+    public void OnDrop(PointerEventData eventData)
     {
         if (isLocked || hangarPanel == null)
             return;
@@ -72,17 +71,18 @@ public class ModuleSlotUI :
             return;
 
         DraggableModuleUI dragged =
-            eventData.pointerDrag
-                .GetComponent<DraggableModuleUI>();
+            eventData.pointerDrag.GetComponent<DraggableModuleUI>();
 
         if (dragged == null)
             return;
 
-        ModuleDefinition module =
-            dragged.GetModule();
+        ModuleDefinition module = dragged.GetModule();
 
         if (module == null)
             return;
+
+        Debug.Log(
+            $"[MODULE DROP] module={module.moduleId}, slot={slotIndex}");
 
         hangarPanel.RequestInstallModule(
             slotIndex,

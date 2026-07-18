@@ -10,37 +10,39 @@ public struct DockedShipData :
     public FixedString64Bytes instanceId;
     public FixedString64Bytes shipId;
 
-    public FixedString64Bytes module1;
-    public FixedString64Bytes module2;
-    public FixedString64Bytes module3;
+    public FixedString64Bytes normalModule1;
+    public FixedString64Bytes normalModule2;
+    public FixedString64Bytes normalModule3;
     public FixedString64Bytes classModule;
 
     public FixedString64Bytes GetModule(int slotIndex)
     {
         return slotIndex switch
         {
-            0 => module1,
-            1 => module2,
-            2 => module3,
+            0 => normalModule1,
+            1 => normalModule2,
+            2 => normalModule3,
             3 => classModule,
             _ => default
         };
     }
 
-    public void SetModule(int slotIndex, FixedString64Bytes moduleId)
+    public void SetModule(
+        int slotIndex,
+        FixedString64Bytes moduleId)
     {
         switch (slotIndex)
         {
             case 0:
-                module1 = moduleId;
+                normalModule1 = moduleId;
                 break;
 
             case 1:
-                module2 = moduleId;
+                normalModule2 = moduleId;
                 break;
 
             case 2:
-                module3 = moduleId;
+                normalModule3 = moduleId;
                 break;
 
             case 3:
@@ -49,17 +51,30 @@ public struct DockedShipData :
         }
     }
 
+    public void ClearModule(int slotIndex)
+    {
+        SetModule(slotIndex, default);
+    }
+
+    public bool HasModule(int slotIndex)
+    {
+        return !GetModule(slotIndex).IsEmpty;
+    }
+
     public int CountModule(string moduleId)
     {
+        if (string.IsNullOrWhiteSpace(moduleId))
+            return 0;
+
         int count = 0;
 
-        if (module1.ToString() == moduleId)
+        if (normalModule1.ToString() == moduleId)
             count++;
 
-        if (module2.ToString() == moduleId)
+        if (normalModule2.ToString() == moduleId)
             count++;
 
-        if (module3.ToString() == moduleId)
+        if (normalModule3.ToString() == moduleId)
             count++;
 
         if (classModule.ToString() == moduleId)
@@ -75,9 +90,9 @@ public struct DockedShipData :
         serializer.SerializeValue(ref instanceId);
         serializer.SerializeValue(ref shipId);
 
-        serializer.SerializeValue(ref module1);
-        serializer.SerializeValue(ref module2);
-        serializer.SerializeValue(ref module3);
+        serializer.SerializeValue(ref normalModule1);
+        serializer.SerializeValue(ref normalModule2);
+        serializer.SerializeValue(ref normalModule3);
         serializer.SerializeValue(ref classModule);
     }
 
@@ -85,9 +100,26 @@ public struct DockedShipData :
     {
         return instanceId.Equals(other.instanceId)
             && shipId.Equals(other.shipId)
-            && module1.Equals(other.module1)
-            && module2.Equals(other.module2)
-            && module3.Equals(other.module3)
+            && normalModule1.Equals(other.normalModule1)
+            && normalModule2.Equals(other.normalModule2)
+            && normalModule3.Equals(other.normalModule3)
             && classModule.Equals(other.classModule);
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj is DockedShipData other &&
+               Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(
+            instanceId,
+            shipId,
+            normalModule1,
+            normalModule2,
+            normalModule3,
+            classModule);
     }
 }
