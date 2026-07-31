@@ -2296,6 +2296,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDatabase
   modules:
   - {fileID: 11400000, guid: 0da0395b1de187440b9b353fac6b1054, type: 2}
+  - {fileID: 11400000, guid: b6a3ad1aa427b7b4f9ff98c00b733c9c, type: 2}
+  - {fileID: 11400000, guid: cd78b0eb1416ab24ca1b8d89ee49fd4a, type: 2}
+  - {fileID: 11400000, guid: 37b73252ca10ead4f8680c292fdaab7e, type: 2}
 --- !u!114 &162948379
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2965,7 +2968,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &218511162
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3091,6 +3094,7 @@ MonoBehaviour:
   utilityPanel: {fileID: 1534546823}
   minerPanel: {fileID: 489091013}
   inventoryPanel: {fileID: 951277085}
+  deployButton: {fileID: 0}
 --- !u!1 &219570219
 GameObject:
   m_ObjectHideFlags: 0
@@ -7125,6 +7129,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AssemblyPanelUI
   modules:
   - {fileID: 11400000, guid: 0da0395b1de187440b9b353fac6b1054, type: 2}
+  - {fileID: 11400000, guid: b6a3ad1aa427b7b4f9ff98c00b733c9c, type: 2}
+  - {fileID: 11400000, guid: cd78b0eb1416ab24ca1b8d89ee49fd4a, type: 2}
+  - {fileID: 11400000, guid: 37b73252ca10ead4f8680c292fdaab7e, type: 2}
   content: {fileID: 1311724249}
   buttonPrefab: {fileID: 387368249338007428, guid: b13266cf7c8a08d4fb55b41a7409c606, type: 3}
   nameText: {fileID: 0}
@@ -12216,7 +12223,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &819383569
 RectTransform:
   m_ObjectHideFlags: 0
@@ -20320,7 +20327,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1348086434
 RectTransform:
   m_ObjectHideFlags: 0
@@ -24787,6 +24794,7 @@ MonoBehaviour:
   - {fileID: 105859613}
   - {fileID: 879384195}
   - {fileID: 122073606}
+  dockShipButton: {fileID: 0}
 --- !u!4 &1692002725
 Transform:
   m_ObjectHideFlags: 0
