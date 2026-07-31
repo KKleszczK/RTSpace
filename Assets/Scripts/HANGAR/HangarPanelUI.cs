@@ -39,6 +39,9 @@ public class HangarPanelUI : MonoBehaviour
     [Header("Inventory")]
     [SerializeField] private ModuleInventoryPanelUI inventoryPanel;
 
+    [Header("Deploy")]
+    [SerializeField] private Button deployButton;
+
     private BaseHangar selectedHangar;
     private BaseCore selectedCore;
 
@@ -58,6 +61,7 @@ public class HangarPanelUI : MonoBehaviour
         HideAllShipPanels();
 
         TryAssignLocalHangar();
+        SetupDeployButton();
     }
 
     private void Update()
@@ -161,6 +165,54 @@ public class HangarPanelUI : MonoBehaviour
 
         return null;
     }
+    private void SetupDeployButton()
+    {
+        if (deployButton == null)
+            return;
+
+        deployButton.onClick.RemoveListener(OnDeployButtonClicked);
+        deployButton.onClick.AddListener(OnDeployButtonClicked);
+
+        RefreshDeployButton();
+    }
+
+    private void OnDeployButtonClicked()
+    {
+        if (!CanUseSelectedHangar())
+            return;
+
+        if (selectedDockIndex < 0 ||
+            selectedDockIndex >=
+            selectedHangar.dockedShips.Count)
+        {
+            return;
+        }
+
+        int dockIndexToLaunch =
+            selectedDockIndex;
+
+        Debug.Log(
+            $"[DEPLOY UI] Wysy³am ¿¹danie deployu. " +
+            $"dockIndex={dockIndexToLaunch}");
+
+        ClearDockSelection();
+        HideAllShipPanels();
+
+        selectedHangar.RequestLaunchShip(
+            dockIndexToLaunch);
+    }
+
+    private void RefreshDeployButton()
+    {
+        if (deployButton == null)
+            return;
+
+        deployButton.interactable =
+            CanUseSelectedHangar() &&
+            selectedDockIndex >= 0 &&
+            selectedDockIndex < selectedHangar.dockedShips.Count;
+    }
+
 
     public void SetHangar(BaseHangar hangar)
     {
@@ -765,6 +817,7 @@ public class HangarPanelUI : MonoBehaviour
         }
 
         RefreshDockSelectors();
+        RefreshDeployButton();
     }
 
     private void SelectDockSlot(int index)
@@ -782,6 +835,7 @@ public class HangarPanelUI : MonoBehaviour
         selectedDockIndex = index;
 
         RefreshDockSelectors();
+        RefreshDeployButton();
         RefreshSelectedShipPanel();
     }
 
@@ -803,5 +857,6 @@ public class HangarPanelUI : MonoBehaviour
     {
         selectedDockIndex = -1;
         RefreshDockSelectors();
+        RefreshDeployButton();
     }
 }

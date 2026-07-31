@@ -16,16 +16,10 @@ MonoBehaviour:
   displayName: Fighter
   icon: {fileID: 21300000, guid: 0ea305abf3ca32c4cb1a88ba775aecd7, type: 3}
   shipType: 0
-  shipPrefab: {fileID: 6875874269343178419, guid: e3f6e04c39f2a98409fc2ce1b2bba98a, type: 3}
+  shipPrefab: {fileID: 5813241367069302835, guid: 5648694b70701354c93576adc54706f7, type: 3}
   metalCost: 100
   energyCost: 500
   buildTime: 10
   maxHp: 250
+  maxShield: 50
   moveSpeed: 7
-  attackDamage: 20
-  attackRange: 5
-  attackCooldown: 3
-  minerSpeed: 1.4
-  tier1Slots: 2
-  tier2Slots: 1
-  tier3Slots: 1

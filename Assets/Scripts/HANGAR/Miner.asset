@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Miner
   icon: {fileID: 21300000, guid: 90bf5d71d46715d4caed5789a668fe39, type: 3}
   shipType: 2
-  shipPrefab: {fileID: 6875874269343178419, guid: 92e57048fef458f4f8f8e35c910382c5, type: 3}
+  shipPrefab: {fileID: 5813241367069302835, guid: 15c11fb6fa05740458987173c73aafe3, type: 3}
   metalCost: 50
   energyCost: 1000
   buildTime: 5

@@ -503,6 +503,11 @@ MonoBehaviour:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 0
+  launchCenter: {fileID: 0}
+  launchRadius: 2
+  launchHeight: 0.5
+  faceAwayFromBase: 1
+  dockingRange: 4
 --- !u!1 &1463253415074095854
 GameObject:
   m_ObjectHideFlags: 0

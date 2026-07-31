@@ -28,14 +28,10 @@ public class ShipDefinition : ScriptableObject
 
     [Header("Stats")]
     public int maxHp = 100;
+    public int maxShield = 0;
     public float moveSpeed = 5;
-    public int attackDamage = 10;
-    public float attackRange = 5;
-    public float attackCooldown = 1;
-    public float minerSpeed = 1;
+    
+    
 
-    [Header("Module Slots")]
-    public int tier1Slots = 2;
-    public int tier2Slots = 1;
-    public int tier3Slots = 1;
+  
 }
