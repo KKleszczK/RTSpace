@@ -24,6 +24,19 @@ public class ShipWeaponManager : NetworkBehaviour
         public ShipUnit CurrentTarget;
     }
 
+    [Header("Laser Visuals")]
+    [SerializeField] private Transform[] laserOrigins = new Transform[4];
+    [SerializeField] private LineRenderer[] laserLines = new LineRenderer[4];
+
+    private sealed class LaserVisual
+    {
+        public LineRenderer Line;
+        public ShipUnit Target;
+    }
+
+    private readonly Dictionary<int, LaserVisual> laserVisuals = new();
+
+
     [Header("Debug")]
     [SerializeField] private bool showDebugLogs;
 
@@ -36,15 +49,20 @@ public class ShipWeaponManager : NetworkBehaviour
     private void Awake()
     {
         ship = GetComponent<ShipUnit>();
+
+        InitializeLaserVisualsLocal();
     }
 
     private void Update()
     {
+        UpdateLaserVisuals();
+
         if (!IsServer)
             return;
 
         UpdateWeaponTimers();
         UpdateAuraWeapons();
+        UpdateLaserWeapons();
     }
 
     // Wywo³ywane przez ShipUnit po przypisaniu modu³ów podczas deployu.
@@ -281,7 +299,9 @@ public class ShipWeaponManager : NetworkBehaviour
     {
         return weapons.Count > 0;
     }
-
+    /// <summary>
+    /// ////////////////////////   AURA   ///////////////////////////////////
+    /// </summary>
     private void UpdateAuraWeapons()
     {
         for (int i = 0; i < weapons.Count; i++)
@@ -385,5 +405,370 @@ public class ShipWeaponManager : NetworkBehaviour
                 target.transform.position);
 
         return distance <= range;
+    }
+    // =========================================================
+    // LASER
+    // =========================================================
+
+    private void UpdateLaserWeapons()
+    {
+        for (int i = 0; i < weapons.Count; i++)
+        {
+            WeaponRuntime weapon = weapons[i];
+
+            if (weapon.Definition == null)
+                continue;
+
+            if (weapon.Definition.weaponType != WeaponType.Laser)
+                continue;
+
+            UpdateLaserWeapon(weapon);
+        }
+    }
+
+    private void UpdateLaserWeapon(
+        WeaponRuntime weapon)
+    {
+        float range = Mathf.Max(
+            0f,
+            weapon.Definition.weaponRange);
+
+        if (!IsValidLaserTarget(
+                weapon.CurrentTarget,
+                range))
+        {
+            if (weapon.CurrentTarget != null)
+                ClearLaserTarget(weapon);
+
+            weapon.CurrentTarget =
+                FindNearestEnemy(range);
+
+            if (weapon.CurrentTarget != null)
+            {
+                StartLaserClientRpc(
+                    weapon.SlotIndex,
+                    new NetworkObjectReference(
+                        weapon.CurrentTarget.NetworkObject));
+
+                // Pierwsze obra¿enia dopiero po pe³nym interwale.
+                weapon.NextAttackTime =
+                    Time.time +
+                    GetFinalAttackInterval(
+                        weapon.Definition);
+            }
+        }
+
+        if (weapon.CurrentTarget == null)
+            return;
+
+        if (Time.time < weapon.NextAttackTime)
+            return;
+
+        ExecuteLaserDamage(
+            weapon,
+            weapon.CurrentTarget);
+
+        weapon.NextAttackTime =
+            Time.time +
+            GetFinalAttackInterval(
+                weapon.Definition);
+    }
+
+    private ShipUnit FindNearestEnemy(
+        float range)
+    {
+        ShipUnit[] allShips =
+            FindObjectsByType<ShipUnit>(
+                FindObjectsSortMode.None);
+
+        ShipUnit nearest = null;
+
+        float nearestDistanceSquared =
+            range * range;
+
+        foreach (ShipUnit target in allShips)
+        {
+            if (!IsValidLaserTarget(
+                    target,
+                    range))
+            {
+                continue;
+            }
+
+            float distanceSquared =
+                (target.transform.position -
+                 ship.transform.position)
+                .sqrMagnitude;
+
+            if (distanceSquared >=
+                nearestDistanceSquared)
+            {
+                continue;
+            }
+
+            nearestDistanceSquared =
+                distanceSquared;
+
+            nearest = target;
+        }
+
+        return nearest;
+    }
+
+    private bool IsValidLaserTarget(
+        ShipUnit target,
+        float range)
+    {
+        if (target == null)
+            return false;
+
+        if (target == ship)
+            return false;
+
+        if (!target.IsSpawned)
+            return false;
+
+        if (target.isDead.Value)
+            return false;
+
+        if (target.ownerId.Value ==
+            ship.ownerId.Value)
+        {
+            return false;
+        }
+
+        float distanceSquared =
+            (target.transform.position -
+             ship.transform.position)
+            .sqrMagnitude;
+
+        return distanceSquared <=
+               range * range;
+    }
+
+    private void ExecuteLaserDamage(
+        WeaponRuntime weapon,
+        ShipUnit target)
+    {
+        if (target == null)
+            return;
+
+        float hullDamage =
+            GetFinalHullDamage(
+                weapon.Definition);
+
+        float shieldDamage =
+            GetFinalShieldDamage(
+                weapon.Definition);
+
+        target.TakeWeaponDamage(
+            hullDamage,
+            shieldDamage);
+
+        if (showDebugLogs)
+        {
+            Debug.Log(
+                $"[LASER] {ship.name} atakuje {target.name}. " +
+                $"Hull={hullDamage:0.##}, " +
+                $"Shield={shieldDamage:0.##}",
+                ship);
+        }
+    }
+
+    private void ClearLaserTarget(
+        WeaponRuntime weapon)
+    {
+        if (weapon.CurrentTarget == null)
+            return;
+
+        weapon.CurrentTarget = null;
+
+        StopLaserClientRpc(
+            weapon.SlotIndex);
+    }
+
+    [ClientRpc]
+    private void StartLaserClientRpc(
+        int slotIndex,
+        NetworkObjectReference targetReference)
+    {
+        if (!targetReference.TryGet(
+                out NetworkObject targetObject))
+        {
+            return;
+        }
+
+        ShipUnit target =
+            targetObject.GetComponent<ShipUnit>();
+
+        if (target == null)
+            return;
+
+        if (laserLines == null ||
+            slotIndex < 0 ||
+            slotIndex >= laserLines.Length)
+        {
+            Debug.LogWarning(
+                $"[LASER] Brak LineRenderer dla slotu {slotIndex}.",
+                this);
+
+            return;
+        }
+
+        LineRenderer line =
+            laserLines[slotIndex];
+
+        if (line == null)
+        {
+            Debug.LogWarning(
+                $"[LASER] Laser Lines[{slotIndex}] jest pusty.",
+                this);
+
+            return;
+        }
+
+        StopLaserVisualLocal(slotIndex);
+
+        line.useWorldSpace = true;
+        line.positionCount = 2;
+        line.gameObject.SetActive(true);
+
+        laserVisuals[slotIndex] =
+            new LaserVisual
+            {
+                Line = line,
+                Target = target
+            };
+
+        UpdateSingleLaserVisual(
+            slotIndex,
+            laserVisuals[slotIndex]);
+    }
+
+    [ClientRpc]
+    private void StopLaserClientRpc(
+        int slotIndex)
+    {
+        StopLaserVisualLocal(
+            slotIndex);
+    }
+
+    private void UpdateLaserVisuals()
+    {
+        List<int> lasersToStop = new();
+
+        foreach (
+            KeyValuePair<int, LaserVisual> pair
+            in laserVisuals)
+        {
+            int slotIndex = pair.Key;
+            LaserVisual visual = pair.Value;
+
+            bool invalid =
+                visual == null ||
+                visual.Line == null ||
+                visual.Target == null ||
+                !visual.Target.IsSpawned ||
+                visual.Target.isDead.Value;
+
+            if (invalid)
+            {
+                lasersToStop.Add(slotIndex);
+                continue;
+            }
+
+            UpdateSingleLaserVisual(
+                slotIndex,
+                visual);
+        }
+
+        foreach (int slotIndex in lasersToStop)
+        {
+            StopLaserVisualLocal(
+                slotIndex);
+        }
+    }
+
+    private void UpdateSingleLaserVisual(
+    int slotIndex,
+    LaserVisual visual)
+    {
+        if (visual == null ||
+            visual.Line == null ||
+            visual.Target == null)
+        {
+            return;
+        }
+
+        Vector3 startPosition =
+            transform.position;
+
+        if (laserOrigins != null &&
+            slotIndex >= 0 &&
+            slotIndex < laserOrigins.Length &&
+            laserOrigins[slotIndex] != null)
+        {
+            startPosition =
+                laserOrigins[slotIndex].position;
+        }
+
+        visual.Line.SetPosition(
+            0,
+            startPosition);
+
+        visual.Line.SetPosition(
+            1,
+            visual.Target.transform.position);
+    }
+
+    private void StopLaserVisualLocal(
+        int slotIndex)
+    {
+        if (laserLines != null &&
+            slotIndex >= 0 &&
+            slotIndex < laserLines.Length)
+        {
+            LineRenderer line =
+                laserLines[slotIndex];
+
+            if (line != null)
+                line.gameObject.SetActive(false);
+        }
+
+        laserVisuals.Remove(
+            slotIndex);
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        if (laserLines != null)
+        {
+            foreach (LineRenderer line in laserLines)
+            {
+                if (line != null)
+                    line.gameObject.SetActive(false);
+            }
+        }
+
+        laserVisuals.Clear();
+
+        base.OnNetworkDespawn();
+    }
+    private void InitializeLaserVisualsLocal()
+    {
+        if (laserLines == null)
+            return;
+
+        foreach (LineRenderer line in laserLines)
+        {
+            if (line == null)
+                continue;
+
+            line.useWorldSpace = true;
+            line.positionCount = 2;
+            line.gameObject.SetActive(false);
+        }
+
+        laserVisuals.Clear();
     }
 }
