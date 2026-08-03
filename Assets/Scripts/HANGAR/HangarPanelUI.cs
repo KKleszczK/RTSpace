@@ -664,18 +664,17 @@ public class HangarPanelUI : MonoBehaviour
 
         if (metalText != null)
             metalText.text =
-                "M: " + ship.metalCost;
+                "" + ship.metalCost;
 
         if (energyText != null)
             energyText.text =
-                "E: " + ship.energyCost;
+                "" + ship.energyCost;
 
         if (timeText != null)
         {
             timeText.text =
-                "T: " +
-                Mathf.RoundToInt(ship.buildTime) +
-                "s";
+                "" +
+                Mathf.RoundToInt(ship.buildTime);
         }
     }
 

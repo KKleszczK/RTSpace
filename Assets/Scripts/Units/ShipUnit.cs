@@ -465,14 +465,18 @@ public class ShipUnit : NetworkBehaviour
     // =========================================================
 
     [ServerRpc(RequireOwnership = false)]
-    public void TakeDamageServerRpc(
-        int damage)
+    public void TakeWeaponDamageServerRpc(
+        float hullDamage,
+        float shieldDamage)
     {
-        TakeDamage(damage);
+        TakeWeaponDamage(
+            hullDamage,
+            shieldDamage);
     }
 
-    public void TakeDamage(
-        int damage)
+    public void TakeWeaponDamage(
+        float hullDamage,
+        float shieldDamage)
     {
         if (!IsServer)
             return;
@@ -480,28 +484,31 @@ public class ShipUnit : NetworkBehaviour
         if (isDead.Value)
             return;
 
-        int remainingDamage =
-            damage;
-
         if (shield.Value > 0)
         {
-            int shieldDamage =
-                Mathf.Min(
-                    shield.Value,
-                    remainingDamage);
+            int finalShieldDamage =
+                Mathf.Max(
+                    0,
+                    Mathf.RoundToInt(shieldDamage));
 
-            shield.Value -=
-                shieldDamage;
+            shield.Value =
+                Mathf.Max(
+                    0,
+                    shield.Value - finalShieldDamage);
 
-            remainingDamage -=
-                shieldDamage;
+            // Nadwy¿ka obra¿eñ NIE przechodzi na HP.
+            return;
         }
 
-        if (remainingDamage > 0)
-        {
-            hp.Value -=
-                remainingDamage;
-        }
+        int finalHullDamage =
+            Mathf.Max(
+                0,
+                Mathf.RoundToInt(hullDamage));
+
+        hp.Value =
+            Mathf.Max(
+                0,
+                hp.Value - finalHullDamage);
 
         if (hp.Value <= 0)
         {
@@ -518,8 +525,7 @@ public class ShipUnit : NetworkBehaviour
         if (isDead.Value)
             return;
 
-        isDead.Value =
-            true;
+        isDead.Value = true;
 
         NetworkObject.Despawn(true);
     }
