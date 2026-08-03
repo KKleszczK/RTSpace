@@ -217,6 +217,14 @@ public class ShipUnit : NetworkBehaviour
 
         CalculateDeployedModuleStats();
 
+        ShipWeaponManager weaponManager =
+        GetComponent<ShipWeaponManager>();
+
+        if (weaponManager != null)
+        {
+            weaponManager.InitializeWeaponsFromShipModules();
+        }
+
         hp.Value =
             maxHp;
 
