@@ -44,6 +44,7 @@ public class ShipWeaponManager : NetworkBehaviour
             return;
 
         UpdateWeaponTimers();
+        UpdateAuraWeapons();
     }
 
     // Wywo³ywane przez ShipUnit po przypisaniu modu³ów podczas deployu.
@@ -279,5 +280,110 @@ public class ShipWeaponManager : NetworkBehaviour
     public bool HasAnyWeapon()
     {
         return weapons.Count > 0;
+    }
+
+    private void UpdateAuraWeapons()
+    {
+        for (int i = 0; i < weapons.Count; i++)
+        {
+            WeaponRuntime weapon = weapons[i];
+
+            if (weapon.Definition == null)
+                continue;
+
+            if (weapon.Definition.weaponType != WeaponType.Aura)
+                continue;
+
+            if (Time.time < weapon.NextAttackTime)
+                continue;
+
+            ExecuteAuraAttack(weapon);
+
+            weapon.NextAttackTime =
+                Time.time +
+                GetFinalAttackInterval(weapon.Definition);
+        }
+    }
+
+    private void ExecuteAuraAttack(
+    WeaponRuntime weapon)
+    {
+        if (ship == null || weapon.Definition == null)
+            return;
+
+        float range =
+            Mathf.Max(
+                0f,
+                weapon.Definition.weaponRange);
+
+        float hullDamage =
+            GetFinalHullDamage(
+                weapon.Definition);
+
+        float shieldDamage =
+            GetFinalShieldDamage(
+                weapon.Definition);
+
+        ShipUnit[] allShips =
+            FindObjectsByType<ShipUnit>(
+                FindObjectsSortMode.None);
+
+        int targetsHit = 0;
+
+        foreach (ShipUnit target in allShips)
+        {
+            if (!IsValidAuraTarget(
+                    target,
+                    range))
+            {
+                continue;
+            }
+
+            target.TakeWeaponDamage(
+                hullDamage,
+                shieldDamage);
+
+            targetsHit++;
+        }
+
+        if (showDebugLogs)
+        {
+            Debug.Log(
+                $"[AURA] {ship.name} wykona³ atak. " +
+                $"Range={range:0.##}, " +
+                $"HullDamage={hullDamage:0.##}, " +
+                $"ShieldDamage={shieldDamage:0.##}, " +
+                $"Targets={targetsHit}",
+                ship);
+        }
+    }
+    private bool IsValidAuraTarget(
+    ShipUnit target,
+    float range)
+    {
+        if (target == null)
+            return false;
+
+        if (target == ship)
+            return false;
+
+        if (!target.IsSpawned)
+            return false;
+
+        if (target.isDead.Value)
+            return false;
+
+        if (target.ownerId.Value ==
+            ship.ownerId.Value)
+        {
+            return false;
+        }
+
+        float distance =
+            Vector3.Distance(
+                ship.transform.position,
+                target.transform.position);
+
+        return distance <= range;
     }
 }
