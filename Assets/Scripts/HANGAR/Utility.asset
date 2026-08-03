@@ -14,18 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShipDefinition
   shipId: utility
   displayName: Utility
-  icon: {fileID: 21300000, guid: 64040e79f4521b144bb9ede9595edf8d, type: 3}
+  icon: {fileID: 21300000, guid: 6c6be4b7493bfb64cab329f9ba4ec89c, type: 3}
   shipType: 1
   shipPrefab: {fileID: 5813241367069302835, guid: 413156312520a584ab0684431023e17b, type: 3}
   metalCost: 300
   energyCost: 300
   buildTime: 15
   maxHp: 150
+  maxShield: 0
   moveSpeed: 4
-  attackDamage: 15
-  attackRange: 6
-  attackCooldown: 5
-  minerSpeed: 1.4
-  tier1Slots: 1
-  tier2Slots: 1
-  tier3Slots: 3

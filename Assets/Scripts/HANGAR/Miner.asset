@@ -14,18 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShipDefinition
   shipId: miner
   displayName: Miner
-  icon: {fileID: 21300000, guid: 90bf5d71d46715d4caed5789a668fe39, type: 3}
+  icon: {fileID: 21300000, guid: ff9825407c58c1044aca2a63bf0cc71d, type: 3}
   shipType: 2
   shipPrefab: {fileID: 5813241367069302835, guid: 15c11fb6fa05740458987173c73aafe3, type: 3}
   metalCost: 50
   energyCost: 1000
   buildTime: 5
   maxHp: 80
+  maxShield: 0
   moveSpeed: 10
-  attackDamage: 5
-  attackRange: 3
-  attackCooldown: 4
-  minerSpeed: 1.2
-  tier1Slots: 3
-  tier2Slots: 1
-  tier3Slots: 0
