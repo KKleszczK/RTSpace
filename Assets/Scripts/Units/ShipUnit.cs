@@ -517,6 +517,39 @@ public class ShipUnit : NetworkBehaviour
         }
     }
 
+    /// <summary>
+    /// Obra¿enia omijaj¹ce tarczê.
+    /// U¿ywane np. przez Self Damage.
+    /// </summary>
+    public void TakeDirectHullDamage(
+        float damage)
+    {
+        if (!IsServer)
+            return;
+
+        if (isDead.Value)
+            return;
+
+        int finalDamage =
+            Mathf.Max(
+                0,
+                Mathf.RoundToInt(damage));
+
+        if (finalDamage <= 0)
+            return;
+
+        hp.Value =
+            Mathf.Max(
+                0,
+                hp.Value - finalDamage);
+
+        if (hp.Value <= 0)
+        {
+            hp.Value = 0;
+            Die();
+        }
+    }
+
     private void Die()
     {
         if (!IsServer)
