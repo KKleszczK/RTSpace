@@ -36,10 +36,6 @@ public class ShipWeaponManager : NetworkBehaviour
 
     private readonly Dictionary<int, LaserVisual> laserVisuals = new();
 
-    [Header("Projectile")]
-    [SerializeField] private NetworkObject projectilePrefab;
-    [SerializeField] private Transform[] projectileOrigins = new Transform[4];
-
 
     [Header("Debug")]
     [SerializeField] private bool showDebugLogs;
@@ -67,7 +63,6 @@ public class ShipWeaponManager : NetworkBehaviour
         UpdateWeaponTimers();
         UpdateAuraWeapons();
         UpdateLaserWeapons();
-        UpdateProjectileWeapons();
     }
 
     // Wywo³ywane przez ShipUnit po przypisaniu modu³ów podczas deployu.
@@ -775,140 +770,5 @@ public class ShipWeaponManager : NetworkBehaviour
         }
 
         laserVisuals.Clear();
-    }
-
-    // =========================================================
-    // PROJECTILE
-    // =========================================================
-
-    private void UpdateProjectileWeapons()
-    {
-        for (int i = 0; i < weapons.Count; i++)
-        {
-            WeaponRuntime weapon = weapons[i];
-
-            if (weapon.Definition == null)
-                continue;
-
-            if (weapon.Definition.weaponType != WeaponType.Projectile)
-                continue;
-
-            UpdateProjectileWeapon(weapon);
-        }
-    }
-
-    private void UpdateProjectileWeapon(
-        WeaponRuntime weapon)
-    {
-        float range = Mathf.Max(
-            0f,
-            weapon.Definition.weaponRange);
-
-        if (!IsValidLaserTarget(
-                weapon.CurrentTarget,
-                range))
-        {
-            weapon.CurrentTarget =
-                FindNearestEnemy(range);
-        }
-
-        if (weapon.CurrentTarget == null)
-            return;
-
-        if (Time.time < weapon.NextAttackTime)
-            return;
-
-        FireProjectile(
-            weapon,
-            weapon.CurrentTarget);
-
-        weapon.NextAttackTime =
-            Time.time +
-            GetFinalAttackInterval(
-                weapon.Definition);
-    }
-
-    private void FireProjectile(
-        WeaponRuntime weapon,
-        ShipUnit target)
-    {
-        if (projectilePrefab == null)
-        {
-            Debug.LogError(
-                "[PROJECTILE] Brak Projectile Prefab.",
-                this);
-
-            return;
-        }
-
-        if (target == null ||
-            !target.IsSpawned ||
-            target.isDead.Value)
-        {
-            return;
-        }
-
-        Vector3 spawnPosition =
-            transform.position;
-
-        int slotIndex =
-            weapon.SlotIndex;
-
-        if (projectileOrigins != null &&
-            slotIndex >= 0 &&
-            slotIndex < projectileOrigins.Length &&
-            projectileOrigins[slotIndex] != null)
-        {
-            spawnPosition =
-                projectileOrigins[slotIndex].position;
-        }
-
-        Vector3 direction =
-            target.transform.position -
-            spawnPosition;
-
-        Quaternion spawnRotation =
-            direction.sqrMagnitude > 0.001f
-                ? Quaternion.LookRotation(
-                    direction.normalized,
-                    Vector3.up)
-                : Quaternion.identity;
-
-        NetworkObject projectileObject =
-            Instantiate(
-                projectilePrefab,
-                spawnPosition,
-                spawnRotation);
-
-        HomingProjectile projectile =
-            projectileObject.GetComponent<HomingProjectile>();
-
-        if (projectile == null)
-        {
-            Debug.LogError(
-                "[PROJECTILE] Prefab nie posiada HomingProjectile.",
-                projectileObject);
-
-            Destroy(projectileObject.gameObject);
-            return;
-        }
-
-        projectile.Initialize(
-            target,
-            GetFinalHullDamage(weapon.Definition),
-            GetFinalShieldDamage(weapon.Definition),
-            Mathf.Max(
-                0.01f,
-                weapon.Definition.projectileSpeed));
-
-        projectileObject.Spawn();
-
-        if (showDebugLogs)
-        {
-            Debug.Log(
-                $"[PROJECTILE] {ship.name} wystrzeli³ w {target.name}. " +
-                $"Speed={weapon.Definition.projectileSpeed:0.##}",
-                ship);
-        }
     }
 }
