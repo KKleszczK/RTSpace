@@ -304,9 +304,12 @@ public class ShipWeaponManager : NetworkBehaviour
     {
         return weapons.Count > 0;
     }
-    /// <summary>
-    /// ////////////////////////   AURA   ///////////////////////////////////
-    /// </summary>
+
+
+    // =========================================================
+    // AURA
+    // =========================================================
+
     private void UpdateAuraWeapons()
     {
         for (int i = 0; i < weapons.Count; i++)
@@ -322,19 +325,41 @@ public class ShipWeaponManager : NetworkBehaviour
             if (Time.time < weapon.NextAttackTime)
                 continue;
 
-            ExecuteAuraAttack(weapon);
+            int targetsHit =
+                ExecuteAuraAttack(weapon);
+
+            /*
+             * Brak celów:
+             * nie wykonano ataku,
+             * nie ma self damage,
+             * nie rozpoczynamy cooldownu.
+             */
+            if (targetsHit <= 0)
+                continue;
+
+            /*
+             * Atak zosta³ ju¿ wykonany na wszystkich celach.
+             * Dopiero teraz nak³adamy self damage jeden raz,
+             * niezale¿nie od liczby trafionych statków.
+             */
+            ApplySelfDamageAfterAttack(weapon);
 
             weapon.NextAttackTime =
                 Time.time +
-                GetFinalAttackInterval(weapon.Definition);
+                GetFinalAttackInterval(
+                    weapon.Definition);
         }
     }
 
-    private void ExecuteAuraAttack(
-    WeaponRuntime weapon)
+    private int ExecuteAuraAttack(
+        WeaponRuntime weapon)
     {
-        if (ship == null || weapon.Definition == null)
-            return;
+        if (ship == null ||
+            weapon == null ||
+            weapon.Definition == null)
+        {
+            return 0;
+        }
 
         float range =
             Mathf.Max(
@@ -371,7 +396,7 @@ public class ShipWeaponManager : NetworkBehaviour
             targetsHit++;
         }
 
-        if (showDebugLogs)
+        if (showDebugLogs && targetsHit > 0)
         {
             Debug.Log(
                 $"[AURA] {ship.name} wykona³ atak. " +
@@ -381,6 +406,8 @@ public class ShipWeaponManager : NetworkBehaviour
                 $"Targets={targetsHit}",
                 ship);
         }
+
+        return targetsHit;
     }
     private bool IsValidAuraTarget(
     ShipUnit target,
@@ -472,6 +499,8 @@ public class ShipWeaponManager : NetworkBehaviour
         ExecuteLaserDamage(
             weapon,
             weapon.CurrentTarget);
+
+        ApplySelfDamageAfterAttack(weapon);
 
         weapon.NextAttackTime =
             Time.time +
@@ -903,11 +932,52 @@ public class ShipWeaponManager : NetworkBehaviour
 
         projectileObject.Spawn();
 
+        ApplySelfDamageAfterAttack(weapon);
+
         if (showDebugLogs)
         {
             Debug.Log(
                 $"[PROJECTILE] {ship.name} wystrzeli³ w {target.name}. " +
                 $"Speed={weapon.Definition.projectileSpeed:0.##}",
+                ship);
+        }
+    }
+
+    // =========================================================
+    // SELF DAMAG
+    // =========================================================
+
+    private void ApplySelfDamageAfterAttack(
+    WeaponRuntime weapon)
+    {
+        if (!IsServer)
+            return;
+
+        if (ship == null ||
+            ship.isDead.Value ||
+            weapon == null ||
+            weapon.Definition == null)
+        {
+            return;
+        }
+
+        ModuleDefinition definition =
+            weapon.Definition;
+
+        if (!definition.selfHarmOnAttack)
+            return;
+
+        if (definition.selfDamage <= 0f)
+            return;
+
+        ship.TakeDirectHullDamage(
+            definition.selfDamage);
+
+        if (showDebugLogs)
+        {
+            Debug.Log(
+                $"[SELF DAMAGE] {ship.name} otrzyma³ " +
+                $"{definition.selfDamage:0.##} obra¿eñ po ataku.",
                 ship);
         }
     }
