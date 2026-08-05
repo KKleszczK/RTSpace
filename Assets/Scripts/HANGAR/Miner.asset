@@ -19,7 +19,7 @@ MonoBehaviour:
   shipPrefab: {fileID: 5813241367069302835, guid: 15c11fb6fa05740458987173c73aafe3, type: 3}
   metalCost: 50
   energyCost: 1000
-  buildTime: 5
+  buildTime: 3
   maxHp: 80
   maxShield: 0
   moveSpeed: 10
