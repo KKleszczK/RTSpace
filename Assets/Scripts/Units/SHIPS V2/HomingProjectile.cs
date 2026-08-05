@@ -14,6 +14,10 @@ public class HomingProjectile : NetworkBehaviour
     private float shieldDamage;
     private float moveSpeed;
 
+    private bool canSlowOnHit;
+    private float slowPercent;
+    private float slowDuration;
+
     private float spawnTime;
     private bool initialized;
     private bool hasHit;
@@ -22,19 +26,42 @@ public class HomingProjectile : NetworkBehaviour
         ShipUnit newTarget,
         float newHullDamage,
         float newShieldDamage,
-        float newMoveSpeed)
+        float newMoveSpeed,
+        bool newCanSlowOnHit,
+        float newSlowPercent,
+        float newSlowDuration)
     {
         target =
             newTarget;
 
         hullDamage =
-            Mathf.Max(0f, newHullDamage);
+            Mathf.Max(
+                0f,
+                newHullDamage);
 
         shieldDamage =
-            Mathf.Max(0f, newShieldDamage);
+            Mathf.Max(
+                0f,
+                newShieldDamage);
 
         moveSpeed =
-            Mathf.Max(0.01f, newMoveSpeed);
+            Mathf.Max(
+                0.01f,
+                newMoveSpeed);
+
+        canSlowOnHit =
+            newCanSlowOnHit;
+
+        slowPercent =
+            Mathf.Clamp(
+                newSlowPercent,
+                0f,
+                100f);
+
+        slowDuration =
+            Mathf.Max(
+                0f,
+                newSlowDuration);
 
         initialized = true;
     }
@@ -44,7 +71,10 @@ public class HomingProjectile : NetworkBehaviour
         base.OnNetworkSpawn();
 
         if (IsServer)
-            spawnTime = Time.time;
+        {
+            spawnTime =
+                Time.time;
+        }
     }
 
     private void Update()
@@ -52,8 +82,11 @@ public class HomingProjectile : NetworkBehaviour
         if (!IsServer)
             return;
 
-        if (!initialized || hasHit)
+        if (!initialized ||
+            hasHit)
+        {
             return;
+        }
 
         if (Time.time >=
             spawnTime + maximumLifetime)
@@ -98,12 +131,9 @@ public class HomingProjectile : NetworkBehaviour
             direction.magnitude;
 
         float movementThisFrame =
-            moveSpeed * Time.deltaTime;
+            moveSpeed *
+            Time.deltaTime;
 
-        /*
-         * movementThisFrame zapobiega przeleceniu pocisku
-         * przez cel przy du¿ej prêdkoœci.
-         */
         if (distance <= hitDistance ||
             distance <= movementThisFrame)
         {
@@ -111,7 +141,8 @@ public class HomingProjectile : NetworkBehaviour
             return;
         }
 
-        RotateTowardsTarget(direction);
+        RotateTowardsTarget(
+            direction);
 
         transform.position =
             Vector3.MoveTowards(
@@ -123,8 +154,11 @@ public class HomingProjectile : NetworkBehaviour
     private void RotateTowardsTarget(
         Vector3 direction)
     {
-        if (direction.sqrMagnitude <= 0.001f)
+        if (direction.sqrMagnitude <=
+            0.001f)
+        {
             return;
+        }
 
         Quaternion targetRotation =
             Quaternion.LookRotation(
@@ -135,7 +169,8 @@ public class HomingProjectile : NetworkBehaviour
             Quaternion.RotateTowards(
                 transform.rotation,
                 targetRotation,
-                rotationSpeed * Time.deltaTime);
+                rotationSpeed *
+                Time.deltaTime);
     }
 
     private void HitTarget()
@@ -150,6 +185,13 @@ public class HomingProjectile : NetworkBehaviour
             target.TakeWeaponDamage(
                 hullDamage,
                 shieldDamage);
+
+            if (canSlowOnHit)
+            {
+                target.ApplySlow(
+                    slowPercent,
+                    slowDuration);
+            }
         }
 
         DespawnProjectile();

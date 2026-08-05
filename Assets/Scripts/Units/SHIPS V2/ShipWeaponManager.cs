@@ -393,6 +393,10 @@ public class ShipWeaponManager : NetworkBehaviour
                 hullDamage,
                 shieldDamage);
 
+            ApplySlowOnHit(
+                weapon,
+                target);
+
             targetsHit++;
         }
 
@@ -598,6 +602,10 @@ public class ShipWeaponManager : NetworkBehaviour
         target.TakeWeaponDamage(
             hullDamage,
             shieldDamage);
+
+        ApplySlowOnHit(
+            weapon,
+            target);
 
         if (showDebugLogs)
         {
@@ -928,7 +936,10 @@ public class ShipWeaponManager : NetworkBehaviour
             GetFinalShieldDamage(weapon.Definition),
             Mathf.Max(
                 0.01f,
-                weapon.Definition.projectileSpeed));
+                weapon.Definition.projectileSpeed),
+            weapon.Definition.canSlowOnHit,
+            weapon.Definition.slowPercent,
+            weapon.Definition.slowDuration);
 
         projectileObject.Spawn();
 
@@ -980,5 +991,34 @@ public class ShipWeaponManager : NetworkBehaviour
                 $"{definition.selfDamage:0.##} obra¿eñ po ataku.",
                 ship);
         }
+    }
+
+    // =========================================================
+    // SLOW
+    // =========================================================
+
+    private void ApplySlowOnHit(
+    WeaponRuntime weapon,
+    ShipUnit target)
+    {
+        if (!IsServer)
+            return;
+
+        if (weapon == null ||
+            weapon.Definition == null ||
+            target == null)
+        {
+            return;
+        }
+
+        ModuleDefinition definition =
+            weapon.Definition;
+
+        if (!definition.canSlowOnHit)
+            return;
+
+        target.ApplySlow(
+            definition.slowPercent,
+            definition.slowDuration);
     }
 }

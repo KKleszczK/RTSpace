@@ -1,4 +1,5 @@
 using Unity.Collections;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using TMPro;
@@ -172,6 +173,7 @@ public class ShipUnit : NetworkBehaviour
         if (!IsServer)
             return;
 
+        UpdateSlows();
         UpdateMovement();
     }
 
@@ -374,7 +376,7 @@ public class ShipUnit : NetworkBehaviour
             Vector3.MoveTowards(
                 transform.position,
                 targetPosition.Value,
-                moveSpeed * Time.deltaTime);
+                CurrentMoveSpeed * Time.deltaTime);
     }
 
     // =========================================================
@@ -562,6 +564,109 @@ public class ShipUnit : NetworkBehaviour
 
         NetworkObject.Despawn(true);
     }
+
+
+    // =========================================================
+    // SLOW
+    // =========================================================
+
+    private sealed class ActiveSlow
+    {
+        public float Percent;
+        public float EndTime;
+    }
+
+    private readonly List<ActiveSlow> activeSlows = new();
+
+    public NetworkVariable<float> currentSlowPercent = new(
+        0f,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server
+    );
+
+    public float CurrentSlowPercent =>
+        currentSlowPercent.Value;
+
+    public float CurrentMoveSpeed =>
+        moveSpeed *
+        (1f - currentSlowPercent.Value / 100f);
+
+    public void ApplySlow(
+    float slowPercent,
+    float duration)
+    {
+        if (!IsServer)
+            return;
+
+        if (isDead.Value)
+            return;
+
+        slowPercent =
+            Mathf.Clamp(
+                slowPercent,
+                0f,
+                100f);
+
+        duration =
+            Mathf.Max(
+                0f,
+                duration);
+
+        if (slowPercent <= 0f ||
+            duration <= 0f)
+        {
+            return;
+        }
+
+        activeSlows.Add(
+            new ActiveSlow
+            {
+                Percent = slowPercent,
+                EndTime = Time.time + duration
+            });
+
+        RecalculateStrongestSlow();
+    }
+
+
+    private void UpdateSlows()
+    {
+        bool removedAny = false;
+
+        for (int i = activeSlows.Count - 1;
+             i >= 0;
+             i--)
+        {
+            if (Time.time <
+                activeSlows[i].EndTime)
+            {
+                continue;
+            }
+
+            activeSlows.RemoveAt(i);
+            removedAny = true;
+        }
+
+        if (removedAny)
+            RecalculateStrongestSlow();
+    }
+
+    private void RecalculateStrongestSlow()
+    {
+        float strongestSlow = 0f;
+
+        foreach (ActiveSlow slow in activeSlows)
+        {
+            if (slow.Percent > strongestSlow)
+                strongestSlow = slow.Percent;
+        }
+
+        currentSlowPercent.Value =
+            strongestSlow;
+    }
+
+
+
 
     // =========================================================
     // UI
