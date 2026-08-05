@@ -391,6 +391,14 @@ MonoBehaviour:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 0
+  upgradeToTier2:
+    metalCost: 50
+    energyCost: 50
+    upgradeTime: 3
+  upgradeToTier3:
+    metalCost: 100
+    energyCost: 100
+    upgradeTime: 5
 --- !u!114 &2684553389713563295
 MonoBehaviour:
   m_ObjectHideFlags: 0
