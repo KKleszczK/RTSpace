@@ -5,26 +5,31 @@ public class PlayerUnits : NetworkBehaviour
     public NetworkVariable<int> currentUnits = new(0);
     public NetworkVariable<int> maxUnits = new(30);
 
-    public bool CanAddUnit()
+    public bool CanReserveUnit()
     {
         return currentUnits.Value < maxUnits.Value;
     }
 
-    public void AddUnit()
+    public bool TryReserveUnit()
     {
-        if (!IsServer) return;
-        if (!CanAddUnit()) return;
+        if (!IsServer)
+            return false;
+
+        if (!CanReserveUnit())
+            return false;
 
         currentUnits.Value++;
+        return true;
     }
 
-    public void RemoveUnit()
+    public void ReleaseUnit()
     {
-        if (!IsServer) return;
+        if (!IsServer)
+            return;
 
-        currentUnits.Value--;
-
-        if (currentUnits.Value < 0)
-            currentUnits.Value = 0;
+        currentUnits.Value =
+            System.Math.Max(
+                0,
+                currentUnits.Value - 1);
     }
 }

@@ -562,7 +562,34 @@ public class ShipUnit : NetworkBehaviour
 
         isDead.Value = true;
 
+        PlayerUnits units =
+            FindPlayerUnits(ownerId.Value);
+
+        if (units != null)
+        {
+            units.ReleaseUnit();
+        }
+
         NetworkObject.Despawn(true);
+    }
+
+    private PlayerUnits FindPlayerUnits(
+    ulong clientId)
+    {
+        PlayerUnits[] allUnits =
+            FindObjectsByType<PlayerUnits>(
+                FindObjectsSortMode.None);
+
+        foreach (PlayerUnits playerUnits in allUnits)
+        {
+            if (!playerUnits.IsSpawned)
+                continue;
+
+            if (playerUnits.OwnerClientId == clientId)
+                return playerUnits;
+        }
+
+        return null;
     }
 
 

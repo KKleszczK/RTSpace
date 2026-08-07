@@ -7,7 +7,6 @@ public class TopLeftHud : MonoBehaviour
     [SerializeField] private TMP_Text metalText;
     [SerializeField] private TMP_Text energyText;
     [SerializeField] private TMP_Text unitsText;
-    [SerializeField] private TMP_Text baseHpText;
     [SerializeField] private TMP_Text timeText;
 
     private PlayerResources resources;
@@ -25,28 +24,18 @@ public class TopLeftHud : MonoBehaviour
 
         if (resources != null)
         {
-            metalText.text = "[Metal: " + resources.metal.Value.ToString() +" ]";
-            energyText.text = "[Energy: " + resources.energy.Value.ToString() + " ]";
+            metalText.text = "" + resources.metal.Value.ToString();
+            energyText.text = "" + resources.energy.Value.ToString();
         }
 
         if (units != null)
         {
-            unitsText.text = $"[Units: {units.currentUnits.Value}/{units.maxUnits.Value} ]";
-        }
-
-        if (playerBase != null)
-        {
-            NetworkHealth baseHealth = playerBase.GetBaseHealth();
-
-            if (baseHealth != null)
-                baseHpText.text = $"[Base HP: {baseHealth.GetHealth()}/{baseHealth.GetMaxHealth()}]";
-            else
-                baseHpText.text = "[Base HP: -/- ]";
+            unitsText.text = $"Ships - {units.currentUnits.Value}/{units.maxUnits.Value}";
         }
 
         int minutes = Mathf.FloorToInt(gameTime / 60);
         int seconds = Mathf.FloorToInt(gameTime % 60);
-        timeText.text = $"[Time: {minutes:00}:{seconds:00} ]";
+        timeText.text = $"{minutes:00}:{seconds:00}";
     }
 
     private void FindLocalPlayer()

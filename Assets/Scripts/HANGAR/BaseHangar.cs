@@ -36,6 +36,9 @@ public class BaseHangar : NetworkBehaviour
     [SerializeField, Min(1f)]
     private float dockingRange = 4f;
 
+    
+
+
     private void Awake()
     {
         buildQueue = new NetworkList<FixedString64Bytes>();
@@ -151,7 +154,7 @@ public class BaseHangar : NetworkBehaviour
         }
 
         PlayerResources resources =
-            FindPlayerResources(senderClientId);
+    FindPlayerResources(senderClientId);
 
         if (resources == null)
         {
@@ -160,26 +163,35 @@ public class BaseHangar : NetworkBehaviour
                 $"clientId={senderClientId}");
 
             DebugAllPlayerResources();
-
             return;
         }
 
-        Debug.Log(
-            $"[SHIP BUILD 03] Znaleziono zasoby. " +
-            $"resourceOwner={resources.OwnerClientId}, " +
-            $"metal={resources.metal.Value}, " +
-            $"energy={resources.energy.Value}, " +
-            $"costMetal={ship.metalCost}, " +
-            $"costEnergy={ship.energyCost}");
+        PlayerUnits units =
+            FindPlayerUnits(senderClientId);
+
+        if (units == null)
+        {
+            Debug.LogWarning(
+                $"[SHIP BUILD BLOCKED] Nie znaleziono PlayerUnits. " +
+                $"clientId={senderClientId}");
+
+            return;
+        }
 
         if (!resources.CanAfford(
                 ship.metalCost,
                 ship.energyCost))
         {
             Debug.LogWarning(
-                $"[SHIP BUILD BLOCKED 08] Brak zasobów. " +
-                $"metal={resources.metal.Value}/{ship.metalCost}, " +
-                $"energy={resources.energy.Value}/{ship.energyCost}");
+                $"[SHIP BUILD BLOCKED 08] Brak zasobów.");
+
+            return;
+        }
+
+        if (!units.TryReserveUnit())
+        {
+            Debug.LogWarning(
+                "[SHIP BUILD BLOCKED] Osi¹gniêto limit jednostek.");
 
             return;
         }
@@ -374,6 +386,12 @@ public class BaseHangar : NetworkBehaviour
         }
 
         buildQueue.RemoveAt(index);
+
+        PlayerUnits units =
+            FindPlayerUnits(senderClientId);
+
+        if (units != null)
+            units.ReleaseUnit();
 
         if (index == 0)
         {
@@ -1182,5 +1200,24 @@ public class BaseHangar : NetworkBehaviour
                 $"metal={resources.metal.Value}, " +
                 $"energy={resources.energy.Value}");
         }
+    }
+
+    private PlayerUnits FindPlayerUnits(
+    ulong clientId)
+    {
+        PlayerUnits[] allUnits =
+            FindObjectsByType<PlayerUnits>(
+                FindObjectsSortMode.None);
+
+        foreach (PlayerUnits playerUnits in allUnits)
+        {
+            if (!playerUnits.IsSpawned)
+                continue;
+
+            if (playerUnits.OwnerClientId == clientId)
+                return playerUnits;
+        }
+
+        return null;
     }
 }
