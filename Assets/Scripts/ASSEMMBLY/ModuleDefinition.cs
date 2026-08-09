@@ -124,10 +124,10 @@ public class ModuleDefinition : ScriptableObject
     public float stackInactiveTimeToReset = 3f;
 
     [Header("Multiple Targets")]
-    public int maxTargets = 1;
+    public int maxTargets = 0;
 
     public bool canChainAttack;
-    public int chainJumps;
+    public float chainJumpsRange = 1.0f;
     public float chainDamageMultiplier = 0.5f;
 
     [Header("Slow")]

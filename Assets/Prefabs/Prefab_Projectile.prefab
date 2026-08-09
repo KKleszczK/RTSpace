@@ -160,7 +160,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 0
+  GlobalObjectIdHash: 193146943
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -235,6 +235,9 @@ MonoBehaviour:
   hitDistance: 0.2
   rotationSpeed: 720
   maximumLifetime: 30
+  aoeImpactPrefab: {fileID: 8833621251306552937, guid: 4fa0ca2c08457614e82cfe0c4e7a7ed5, type: 3}
+  chainLinePrefab: {fileID: 3525162572452835259, guid: f8575020b397bbf4598c3a1a9f1821ae, type: 3}
+  chainVisualLifetime: 0.2
 --- !u!1 &4055965684228398234
 GameObject:
   m_ObjectHideFlags: 0

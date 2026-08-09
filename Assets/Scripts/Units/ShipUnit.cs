@@ -210,6 +210,8 @@ public class ShipUnit : NetworkBehaviour
         classModule.Value =
             data.classModule;
 
+        weaponStackMovementPercent = 0f;
+
         if (definition != null)
         {
             baseMaxHp = definition.maxHp;
@@ -217,6 +219,7 @@ public class ShipUnit : NetworkBehaviour
             baseMoveSpeed = definition.moveSpeed;
         }
 
+        
         CalculateDeployedModuleStats();
 
         ShipWeaponManager weaponManager =
@@ -614,9 +617,24 @@ public class ShipUnit : NetworkBehaviour
     public float CurrentSlowPercent =>
         currentSlowPercent.Value;
 
-    public float CurrentMoveSpeed =>
-        moveSpeed *
-        (1f - currentSlowPercent.Value / 100f);
+    public float CurrentMoveSpeed
+    {
+        get
+        {
+            float stackMultiplier =
+                Mathf.Max(
+                    0f,
+                    1f + weaponStackMovementPercent / 100f);
+
+            float slowMultiplier =
+                Mathf.Clamp01(
+                    1f - currentSlowPercent.Value / 100f);
+
+            return moveSpeed *
+                   stackMultiplier *
+                   slowMultiplier;
+        }
+    }
 
     public void ApplySlow(
     float slowPercent,
@@ -939,6 +957,18 @@ public class ShipUnit : NetworkBehaviour
             WeaponsAttackSpeedPercent +=
                 module.allWeaponsAttackSpeedPercent;
         }
+    }
+
+    private float weaponStackMovementPercent;
+
+    public void SetWeaponStackMovementPercent(
+        float percent)
+    {
+        if (!IsServer)
+            return;
+
+        weaponStackMovementPercent =
+            percent;
     }
 
 }

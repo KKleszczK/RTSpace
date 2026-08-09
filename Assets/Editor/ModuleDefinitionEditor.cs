@@ -69,7 +69,7 @@ public class ModuleDefinitionEditor : Editor
 
     private SerializedProperty maxTargets;
     private SerializedProperty canChainAttack;
-    private SerializedProperty chainJumps;
+    private SerializedProperty chainJumpsRange;
     private SerializedProperty chainDamageMultiplier;
 
     private SerializedProperty canSlowOnHit;
@@ -145,7 +145,7 @@ public class ModuleDefinitionEditor : Editor
 
         maxTargets = serializedObject.FindProperty("maxTargets");
         canChainAttack = serializedObject.FindProperty("canChainAttack");
-        chainJumps = serializedObject.FindProperty("chainJumps");
+        chainJumpsRange = serializedObject.FindProperty("chainJumpsRange");
         chainDamageMultiplier = serializedObject.FindProperty("chainDamageMultiplier");
 
         canSlowOnHit = serializedObject.FindProperty("canSlowOnHit");
@@ -289,7 +289,7 @@ public class ModuleDefinitionEditor : Editor
             if (canChainAttack.boolValue)
             {
                 EditorGUI.indentLevel++;
-                EditorGUILayout.PropertyField(chainJumps);
+                EditorGUILayout.PropertyField(chainJumpsRange);
                 EditorGUILayout.PropertyField(chainDamageMultiplier);
                 EditorGUI.indentLevel--;
             }

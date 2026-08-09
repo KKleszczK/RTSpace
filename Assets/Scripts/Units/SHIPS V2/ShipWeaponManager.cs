@@ -15,8 +15,11 @@ public class ShipWeaponManager : NetworkBehaviour
         public float NextAttackTime;
 
         public int CurrentAmmo;
+
         public bool IsReloading;
         public float ReloadEndTime;
+
+        public bool IsDisabled;
 
         public int CurrentStacks;
         public float LastAttackTime;
@@ -27,6 +30,13 @@ public class ShipWeaponManager : NetworkBehaviour
     [Header("Laser Visuals")]
     [SerializeField] private Transform[] laserOrigins = new Transform[4];
     [SerializeField] private LineRenderer[] laserLines = new LineRenderer[4];
+
+    [Header("AOE Visuals")]
+    [SerializeField] private GameObject aoeImpactPrefab;
+
+    [Header("Chain Visual")]
+    [SerializeField] private LineRenderer chainLinePrefab;
+    [SerializeField] private float chainVisualLifetime = 0.2f;
 
     private sealed class LaserVisual
     {
@@ -39,6 +49,7 @@ public class ShipWeaponManager : NetworkBehaviour
     [Header("Projectile")]
     [SerializeField] private NetworkObject projectilePrefab;
     [SerializeField] private Transform[] projectileOrigins = new Transform[4];
+
 
 
     [Header("Debug")]
@@ -65,6 +76,8 @@ public class ShipWeaponManager : NetworkBehaviour
             return;
 
         UpdateWeaponTimers();
+        UpdateMagazineReloads();
+
         UpdateAuraWeapons();
         UpdateLaserWeapons();
         UpdateProjectileWeapons();
@@ -155,16 +168,18 @@ public class ShipWeaponManager : NetworkBehaviour
 
             // Pierwszy atak dopiero po pe³nym interwale.
             NextAttackTime =
-                Time.time +
-                GetFinalAttackInterval(module),
+        Time.time +
+        GetFinalAttackInterval(module),
 
             CurrentAmmo =
-                module.weaponHasMagazine
-                    ? Mathf.Max(0, module.magazineCapacity)
-                    : 0,
+        module.weaponHasMagazine
+            ? Mathf.Max(1, module.magazineCapacity)
+            : 0,
 
             IsReloading = false,
             ReloadEndTime = 0f,
+
+            IsDisabled = false,
 
             CurrentStacks = 0,
             LastAttackTime = 0f,
@@ -192,42 +207,20 @@ public class ShipWeaponManager : NetworkBehaviour
         {
             WeaponRuntime weapon = weapons[i];
 
-            UpdateReload(weapon);
+            
             UpdateStackReset(weapon);
         }
     }
 
-    private void UpdateReload(WeaponRuntime weapon)
+    private void UpdateStackReset(
+    WeaponRuntime weapon)
     {
-        if (!weapon.IsReloading)
-            return;
-
-        if (Time.time < weapon.ReloadEndTime)
-            return;
-
-        weapon.IsReloading = false;
-
-        weapon.CurrentAmmo =
-            Mathf.Max(
-                0,
-                weapon.Definition.magazineCapacity);
-
-        weapon.NextAttackTime =
-            Time.time +
-            GetFinalAttackInterval(
-                weapon.Definition);
-
-        if (showDebugLogs)
+        if (weapon == null ||
+            weapon.Definition == null)
         {
-            Debug.Log(
-                $"[WEAPON MANAGER] Prze³adowano broñ " +
-                $"{weapon.ModuleId}. Ammo={weapon.CurrentAmmo}",
-                ship);
+            return;
         }
-    }
 
-    private void UpdateStackReset(WeaponRuntime weapon)
-    {
         ModuleDefinition definition =
             weapon.Definition;
 
@@ -250,10 +243,12 @@ public class ShipWeaponManager : NetworkBehaviour
 
         weapon.CurrentStacks = 0;
 
+        RecalculateStackMovementSpeed();
+
         if (showDebugLogs)
         {
             Debug.Log(
-                $"[WEAPON MANAGER] Zresetowano stacki broni " +
+                $"[STACK] Zresetowano stacki " +
                 $"{weapon.ModuleId}.",
                 ship);
         }
@@ -276,33 +271,155 @@ public class ShipWeaponManager : NetworkBehaviour
                attackSpeedMultiplier;
     }
 
-    public float GetFinalHullDamage(
-        ModuleDefinition definition)
+    private float GetStackDamageMultiplier(
+    WeaponRuntime weapon)
     {
-        if (definition == null)
-            return 0f;
+        if (weapon == null ||
+            weapon.Definition == null ||
+            !weapon.Definition.weaponIsStacking)
+        {
+            return 1f;
+        }
+
+        float percent =
+            weapon.Definition.stackDamagePercent *
+            weapon.CurrentStacks;
 
         return Mathf.Max(
             0f,
-            definition.weaponHullDamage *
-            ship.WeaponsDamageMultiplier);
+            1f + percent / 100f);
     }
 
-    public float GetFinalShieldDamage(
-        ModuleDefinition definition)
+    private float GetFinalHullDamage(
+        WeaponRuntime weapon)
     {
-        if (definition == null)
+        if (weapon == null ||
+            weapon.Definition == null)
+        {
             return 0f;
+        }
+
+        float baseDamage =
+            weapon.Definition.weaponHullDamage *
+            ship.WeaponsDamageMultiplier;
 
         return Mathf.Max(
             0f,
-            definition.weaponShieldDamage *
-            ship.WeaponsDamageMultiplier);
+            baseDamage *
+            GetStackDamageMultiplier(weapon));
+    }
+
+    private float GetFinalShieldDamage(
+        WeaponRuntime weapon)
+    {
+        if (weapon == null ||
+            weapon.Definition == null)
+        {
+            return 0f;
+        }
+
+        float baseDamage =
+            weapon.Definition.weaponShieldDamage *
+            ship.WeaponsDamageMultiplier;
+
+        return Mathf.Max(
+            0f,
+            baseDamage *
+            GetStackDamageMultiplier(weapon));
     }
 
     public bool HasAnyWeapon()
     {
         return weapons.Count > 0;
+    }
+
+    private float GetFinalWeaponRange(
+    WeaponRuntime weapon)
+    {
+        if (weapon == null ||
+            weapon.Definition == null)
+        {
+            return 0f;
+        }
+
+        float multiplier = 1f;
+
+        if (weapon.Definition.weaponIsStacking)
+        {
+            float percent =
+                weapon.Definition.stackRangePercent *
+                weapon.CurrentStacks;
+
+            multiplier =
+                Mathf.Max(
+                    0f,
+                    1f + percent / 100f);
+        }
+
+        return Mathf.Max(
+            0f,
+            weapon.Definition.weaponRange *
+            multiplier);
+    }
+
+    private float GetFinalAttackInterval(
+    WeaponRuntime weapon)
+    {
+        if (weapon == null ||
+            weapon.Definition == null)
+        {
+            return 1f;
+        }
+
+        float baseInterval =
+            Mathf.Max(
+                0.01f,
+                weapon.Definition.weaponAttackInterval);
+
+        float shipAttackSpeedMultiplier =
+            Mathf.Max(
+                0.01f,
+                ship.WeaponsAttackSpeedMultiplier);
+
+        float stackMultiplier = 1f;
+
+        if (weapon.Definition.weaponIsStacking)
+        {
+            float percent =
+                weapon.Definition.stackAttackSpeedPercent *
+                weapon.CurrentStacks;
+
+            stackMultiplier =
+                Mathf.Max(
+                    0.01f,
+                    1f + percent / 100f);
+        }
+
+        return baseInterval /
+               shipAttackSpeedMultiplier /
+               stackMultiplier;
+    }
+
+    private void RecalculateStackMovementSpeed()
+    {
+        float totalPercent = 0f;
+
+        foreach (WeaponRuntime weapon in weapons)
+        {
+            if (weapon == null ||
+                weapon.Definition == null ||
+                !weapon.Definition.weaponIsStacking)
+            {
+                continue;
+            }
+
+            totalPercent +=
+                weapon.Definition.stackMovementSpeedPercent *
+                weapon.CurrentStacks;
+        }
+
+        ship.SetWeaponStackMovementPercent(
+            totalPercent);
     }
 
 
@@ -322,7 +439,7 @@ public class ShipWeaponManager : NetworkBehaviour
             if (weapon.Definition.weaponType != WeaponType.Aura)
                 continue;
 
-            if (Time.time < weapon.NextAttackTime)
+            if (!CanWeaponAttack(weapon))
                 continue;
 
             int targetsHit =
@@ -343,11 +460,17 @@ public class ShipWeaponManager : NetworkBehaviour
              * niezale¿nie od liczby trafionych statków.
              */
             ApplySelfDamageAfterAttack(weapon);
+            ConsumeAmmoAfterAttack(weapon);
+            AddStackAfterAttack(weapon);
 
-            weapon.NextAttackTime =
-                Time.time +
-                GetFinalAttackInterval(
-                    weapon.Definition);
+            if (!weapon.IsReloading &&
+                !weapon.IsDisabled)
+            {
+                weapon.NextAttackTime =
+                    Time.time +
+                    GetFinalAttackInterval(
+                        weapon);
+            }
         }
     }
 
@@ -362,17 +485,15 @@ public class ShipWeaponManager : NetworkBehaviour
         }
 
         float range =
-            Mathf.Max(
-                0f,
-                weapon.Definition.weaponRange);
+            GetFinalWeaponRange(weapon);
 
         float hullDamage =
             GetFinalHullDamage(
-                weapon.Definition);
+                weapon);
 
         float shieldDamage =
             GetFinalShieldDamage(
-                weapon.Definition);
+                weapon);
 
         ShipUnit[] allShips =
             FindObjectsByType<ShipUnit>(
@@ -396,6 +517,17 @@ public class ShipWeaponManager : NetworkBehaviour
             ApplySlowOnHit(
                 weapon,
                 target);
+
+            ApplyAoeDamage(
+                weapon,
+                target,
+                target.transform.position);
+
+            ApplyChainAttack(
+                weapon,
+                target,
+                hullDamage,
+                shieldDamage);
 
             targetsHit++;
         }
@@ -465,9 +597,8 @@ public class ShipWeaponManager : NetworkBehaviour
     private void UpdateLaserWeapon(
         WeaponRuntime weapon)
     {
-        float range = Mathf.Max(
-            0f,
-            weapon.Definition.weaponRange);
+        float range =
+            GetFinalWeaponRange(weapon);
 
         if (!IsValidLaserTarget(
                 weapon.CurrentTarget,
@@ -490,14 +621,14 @@ public class ShipWeaponManager : NetworkBehaviour
                 weapon.NextAttackTime =
                     Time.time +
                     GetFinalAttackInterval(
-                        weapon.Definition);
+                        weapon);
             }
         }
 
         if (weapon.CurrentTarget == null)
             return;
 
-        if (Time.time < weapon.NextAttackTime)
+        if (!CanWeaponAttack(weapon))
             return;
 
         ExecuteLaserDamage(
@@ -505,11 +636,17 @@ public class ShipWeaponManager : NetworkBehaviour
             weapon.CurrentTarget);
 
         ApplySelfDamageAfterAttack(weapon);
+        ConsumeAmmoAfterAttack(weapon);
+        AddStackAfterAttack(weapon);
 
-        weapon.NextAttackTime =
-            Time.time +
-            GetFinalAttackInterval(
-                weapon.Definition);
+        if (!weapon.IsReloading &&
+            !weapon.IsDisabled)
+        {
+            weapon.NextAttackTime =
+                Time.time +
+                GetFinalAttackInterval(
+                    weapon);
+        }
     }
 
     private ShipUnit FindNearestEnemy(
@@ -593,11 +730,11 @@ public class ShipWeaponManager : NetworkBehaviour
 
         float hullDamage =
             GetFinalHullDamage(
-                weapon.Definition);
+                weapon);
 
         float shieldDamage =
             GetFinalShieldDamage(
-                weapon.Definition);
+                weapon);
 
         target.TakeWeaponDamage(
             hullDamage,
@@ -606,6 +743,17 @@ public class ShipWeaponManager : NetworkBehaviour
         ApplySlowOnHit(
             weapon,
             target);
+
+        ApplyAoeDamage(
+            weapon,
+            target,
+            target.transform.position);
+
+        ApplyChainAttack(
+            weapon,
+            target,
+            hullDamage,
+            shieldDamage);
 
         if (showDebugLogs)
         {
@@ -837,9 +985,8 @@ public class ShipWeaponManager : NetworkBehaviour
     private void UpdateProjectileWeapon(
         WeaponRuntime weapon)
     {
-        float range = Mathf.Max(
-            0f,
-            weapon.Definition.weaponRange);
+        float range =
+            GetFinalWeaponRange(weapon);
 
         if (!IsValidLaserTarget(
                 weapon.CurrentTarget,
@@ -852,17 +999,20 @@ public class ShipWeaponManager : NetworkBehaviour
         if (weapon.CurrentTarget == null)
             return;
 
-        if (Time.time < weapon.NextAttackTime)
+        if (!CanWeaponAttack(weapon))
             return;
 
         FireProjectile(
             weapon,
             weapon.CurrentTarget);
 
-        weapon.NextAttackTime =
-            Time.time +
-            GetFinalAttackInterval(
-                weapon.Definition);
+        if (!weapon.IsReloading && !weapon.IsDisabled)
+        {
+            weapon.NextAttackTime =
+                Time.time +
+                GetFinalAttackInterval(
+                    weapon);
+        }
     }
 
     private void FireProjectile(
@@ -919,7 +1069,7 @@ public class ShipWeaponManager : NetworkBehaviour
 
         HomingProjectile projectile =
             projectileObject.GetComponent<HomingProjectile>();
-
+ 
         if (projectile == null)
         {
             Debug.LogError(
@@ -932,18 +1082,35 @@ public class ShipWeaponManager : NetworkBehaviour
 
         projectile.Initialize(
             target,
-            GetFinalHullDamage(weapon.Definition),
-            GetFinalShieldDamage(weapon.Definition),
+
+            GetFinalHullDamage(weapon),
+            GetFinalShieldDamage(weapon),
+
             Mathf.Max(
                 0.01f,
                 weapon.Definition.projectileSpeed),
+
+            ship.ownerId.Value,
+
             weapon.Definition.canSlowOnHit,
             weapon.Definition.slowPercent,
-            weapon.Definition.slowDuration);
+            weapon.Definition.slowDuration,
+
+            weapon.Definition.weaponHasAoe,
+            weapon.Definition.weaponAoeRange,
+            weapon.Definition.weaponAoeDamageMultiplier,
+
+
+            weapon.Definition.canChainAttack,
+            weapon.Definition.maxTargets,
+            weapon.Definition.chainJumpsRange,
+            weapon.Definition.chainDamageMultiplier);
 
         projectileObject.Spawn();
 
         ApplySelfDamageAfterAttack(weapon);
+        ConsumeAmmoAfterAttack(weapon);
+        AddStackAfterAttack(weapon);
 
         if (showDebugLogs)
         {
@@ -1020,5 +1187,651 @@ public class ShipWeaponManager : NetworkBehaviour
         target.ApplySlow(
             definition.slowPercent,
             definition.slowDuration);
+    }
+
+    // =========================================================
+    // MAGAZINE
+    // =========================================================
+
+    private bool CanWeaponAttack(
+        WeaponRuntime weapon)
+    {
+        if (weapon == null ||
+            weapon.Definition == null)
+        {
+            return false;
+        }
+
+        if (weapon.IsDisabled)
+            return false;
+
+        if (weapon.IsReloading)
+            return false;
+
+        if (Time.time < weapon.NextAttackTime)
+            return false;
+
+        // Broñ bez magazynka.
+        if (!weapon.Definition.weaponHasMagazine)
+            return true;
+
+        // Jest amunicja.
+        if (weapon.CurrentAmmo > 0)
+            return true;
+
+        // Magazynek pusty.
+        HandleEmptyMagazine(weapon);
+
+        return false;
+    }
+
+    private void ConsumeAmmoAfterAttack(
+        WeaponRuntime weapon)
+    {
+        if (weapon == null ||
+            weapon.Definition == null)
+        {
+            return;
+        }
+
+        // Broñ bez magazynka niczego nie zu¿ywa.
+        if (!weapon.Definition.weaponHasMagazine)
+            return;
+
+        if (weapon.IsDisabled)
+            return;
+
+        weapon.CurrentAmmo =
+            Mathf.Max(
+                0,
+                weapon.CurrentAmmo - 1);
+
+        if (showDebugLogs)
+        {
+            Debug.Log(
+                $"[MAGAZINE] {ship.name} | " +
+                $"slot={weapon.SlotIndex} | " +
+                $"ammo={weapon.CurrentAmmo}/" +
+                $"{weapon.Definition.magazineCapacity}",
+                ship);
+        }
+
+        if (weapon.CurrentAmmo <= 0)
+        {
+            HandleEmptyMagazine(weapon);
+        }
+    }
+
+    private void HandleEmptyMagazine(
+        WeaponRuntime weapon)
+    {
+        if (weapon == null ||
+            weapon.Definition == null)
+        {
+            return;
+        }
+
+        if (weapon.IsDisabled ||
+            weapon.IsReloading)
+        {
+            return;
+        }
+
+        if (weapon.Definition.magazineCanReload)
+        {
+            StartReload(weapon);
+        }
+        else
+        {
+            ConsumeWeaponModule(weapon);
+        }
+    }
+
+    private void StartReload(
+        WeaponRuntime weapon)
+    {
+        if (weapon == null ||
+            weapon.Definition == null)
+        {
+            return;
+        }
+
+        if (!weapon.Definition.weaponHasMagazine)
+            return;
+
+        if (!weapon.Definition.magazineCanReload)
+            return;
+
+        if (weapon.IsReloading ||
+            weapon.IsDisabled)
+        {
+            return;
+        }
+
+        int capacity =
+            Mathf.Max(
+                1,
+                weapon.Definition.magazineCapacity);
+
+        if (weapon.CurrentAmmo >= capacity)
+            return;
+
+        weapon.IsReloading = true;
+
+        weapon.ReloadEndTime =
+            Time.time +
+            Mathf.Max(
+                0f,
+                weapon.Definition.magazineReloadTime);
+
+        /*
+         * Laser podczas reloadu przestaje œwieciæ.
+         * Po zakoñczeniu reloadu ponownie z³apie cel.
+         */
+        if (weapon.Definition.weaponType ==
+            WeaponType.Laser)
+        {
+            if (weapon.CurrentTarget != null)
+                ClearLaserTarget(weapon);
+        }
+
+        if (showDebugLogs)
+        {
+            Debug.Log(
+                $"[MAGAZINE] {ship.name} rozpoczyna reload. " +
+                $"slot={weapon.SlotIndex}, " +
+                $"czas={weapon.Definition.magazineReloadTime:0.##} s",
+                ship);
+        }
+    }
+
+    private void UpdateMagazineReloads()
+    {
+        for (int i = 0; i < weapons.Count; i++)
+        {
+            WeaponRuntime weapon =
+                weapons[i];
+
+            if (weapon == null ||
+                weapon.Definition == null)
+            {
+                continue;
+            }
+
+            if (!weapon.IsReloading)
+                continue;
+
+            if (Time.time <
+                weapon.ReloadEndTime)
+            {
+                continue;
+            }
+
+            FinishReload(weapon);
+        }
+    }
+
+    private void FinishReload(
+        WeaponRuntime weapon)
+    {
+        if (weapon == null ||
+            weapon.Definition == null)
+        {
+            return;
+        }
+
+        weapon.IsReloading = false;
+
+        weapon.CurrentAmmo =
+            Mathf.Max(
+                1,
+                weapon.Definition.magazineCapacity);
+
+        /*
+         * Po reloadzie broñ jest gotowa.
+         * Nie dok³adamy kolejnego attack interval.
+         */
+        weapon.NextAttackTime =
+            Time.time;
+
+        if (showDebugLogs)
+        {
+            Debug.Log(
+                $"[MAGAZINE] {ship.name} zakoñczy³ reload. " +
+                $"slot={weapon.SlotIndex}, " +
+                $"ammo={weapon.CurrentAmmo}",
+                ship);
+        }
+    }
+
+    private void ConsumeWeaponModule(
+    WeaponRuntime weapon)
+    {
+        if (!IsServer)
+            return;
+
+        if (weapon == null ||
+            weapon.IsDisabled)
+        {
+            return;
+        }
+
+        weapon.IsDisabled = true;
+        weapon.IsReloading = false;
+        weapon.CurrentAmmo = 0;
+
+        if (weapon.Definition != null &&
+            weapon.Definition.weaponType ==
+            WeaponType.Laser)
+        {
+            if (weapon.CurrentTarget != null)
+                ClearLaserTarget(weapon);
+
+            StopLaserClientRpc(
+                weapon.SlotIndex);
+        }
+
+        RemoveWeaponModuleFromSlot(
+            weapon.SlotIndex);
+
+        if (showDebugLogs)
+        {
+            Debug.Log(
+                $"[MAGAZINE] Modu³ broni ze slotu " +
+                $"{weapon.SlotIndex} zosta³ zu¿yty.",
+                ship);
+        }
+    }
+
+    private void RemoveWeaponModuleFromSlot(
+        int slotIndex)
+    {
+        if (!IsServer ||
+            ship == null)
+        {
+            return;
+        }
+
+        switch (slotIndex)
+        {
+            case 0:
+                ship.normalModule1.Value = default;
+                break;
+
+            case 1:
+                ship.normalModule2.Value = default;
+                break;
+
+            case 2:
+                ship.normalModule3.Value = default;
+                break;
+
+            case 3:
+                ship.classModule.Value = default;
+                break;
+        }
+    }
+
+    // =========================================================
+    // STACKING
+    // =========================================================
+
+    private void AddStackAfterAttack(
+        WeaponRuntime weapon)
+    {
+        if (weapon == null ||
+            weapon.Definition == null)
+        {
+            return;
+        }
+
+        ModuleDefinition definition =
+            weapon.Definition;
+
+        if (!definition.weaponIsStacking)
+            return;
+
+        int maxStacks =
+            Mathf.Max(
+                0,
+                definition.weaponMaxStacks);
+
+        if (maxStacks <= 0)
+            return;
+
+        weapon.CurrentStacks =
+            Mathf.Min(
+                weapon.CurrentStacks + 1,
+                maxStacks);
+
+        weapon.LastAttackTime =
+            Time.time;
+
+        RecalculateStackMovementSpeed();
+
+        if (showDebugLogs)
+        {
+            Debug.Log(
+                $"[STACK] {ship.name} | " +
+                $"slot={weapon.SlotIndex} | " +
+                $"stacks={weapon.CurrentStacks}/{maxStacks}",
+                ship);
+        }
+    }
+
+    // =========================================================
+    // AOE
+    // =========================================================
+
+    private void ApplyAoeDamage(
+        WeaponRuntime weapon,
+        ShipUnit primaryTarget,
+        Vector3 hitPosition)
+    {
+        if (!IsServer)
+            return;
+
+        if (weapon == null ||
+            weapon.Definition == null)
+        {
+            return;
+        }
+
+        ModuleDefinition definition =
+            weapon.Definition;
+
+        if (!definition.weaponHasAoe)
+            return;
+
+        float aoeRange =
+            Mathf.Max(
+                0f,
+                definition.weaponAoeRange);
+
+        if (aoeRange <= 0f)
+            return;
+
+        float damageMultiplier =
+            Mathf.Max(
+                0f,
+                definition.weaponAoeDamageMultiplier);
+
+        float aoeHullDamage =
+            GetFinalHullDamage(weapon) *
+            damageMultiplier;
+
+        float aoeShieldDamage =
+            GetFinalShieldDamage(weapon) *
+            damageMultiplier;
+
+        float rangeSquared =
+            aoeRange * aoeRange;
+
+        ShowAoeImpactClientRpc(
+            hitPosition,
+            aoeRange);
+
+        ShipUnit[] allShips =
+            FindObjectsByType<ShipUnit>(
+                FindObjectsSortMode.None);
+
+        foreach (ShipUnit target in allShips)
+        {
+            if (target == null)
+                continue;
+
+            // G³ówny cel ju¿ dosta³ normalny hit.
+            if (target == primaryTarget)
+                continue;
+
+            if (target == ship)
+                continue;
+
+            if (!target.IsSpawned)
+                continue;
+
+            if (target.isDead.Value)
+                continue;
+
+            // Friendly fire wy³¹czony.
+            if (target.ownerId.Value ==
+                ship.ownerId.Value)
+            {
+                continue;
+            }
+
+            Vector3 offset =
+                target.transform.position -
+                hitPosition;
+
+            if (offset.sqrMagnitude >
+                rangeSquared)
+            {
+                continue;
+            }
+
+            target.TakeWeaponDamage(
+                aoeHullDamage,
+                aoeShieldDamage);
+
+            /*
+             * Je¿eli uznajemy AOE za hit tej samej broni,
+             * slow równie¿ mo¿e byæ aplikowany.
+             */
+            ApplySlowOnHit(
+                weapon,
+                target);
+        }
+    }
+
+    [ClientRpc]
+    private void ShowAoeImpactClientRpc(
+    Vector3 position,
+    float radius)
+    {
+        if (aoeImpactPrefab == null)
+            return;
+
+        GameObject visual =
+            Instantiate(
+                aoeImpactPrefab,
+                position,
+                Quaternion.identity);
+
+        AoeImpactVisual impact =
+            visual.GetComponent<AoeImpactVisual>();
+
+        if (impact != null)
+        {
+            impact.Initialize(radius);
+        }
+    }
+
+    // =========================================================
+    // ChainAttack
+    // =========================================================
+
+    private void ApplyChainAttack(
+    WeaponRuntime weapon,
+    ShipUnit primaryTarget,
+    float initialHullDamage,
+    float initialShieldDamage)
+    {
+        if (!IsServer)
+            return;
+
+        if (weapon == null ||
+            weapon.Definition == null ||
+            primaryTarget == null)
+        {
+            return;
+        }
+
+        ModuleDefinition definition =
+            weapon.Definition;
+
+        if (!definition.canChainAttack)
+            return;
+
+        int maxJumps =
+            Mathf.Max(
+                0,
+                definition.maxTargets);
+
+        if (maxJumps <= 0)
+            return;
+
+        float jumpRange =
+            Mathf.Max(
+                0f,
+                definition.chainJumpsRange);
+
+        if (jumpRange <= 0f)
+            return;
+
+        float multiplier =
+            Mathf.Max(
+                0f,
+                definition.chainDamageMultiplier);
+
+        List<ShipUnit> alreadyHit =
+            new List<ShipUnit>();
+
+        alreadyHit.Add(primaryTarget);
+
+        ShipUnit currentTarget =
+            primaryTarget;
+
+        float currentHullDamage =
+            initialHullDamage;
+
+        float currentShieldDamage =
+            initialShieldDamage;
+
+        for (int jump = 0;
+             jump < maxJumps;
+             jump++)
+        {
+            ShipUnit nextTarget =
+                FindNearestChainTarget(
+                    currentTarget,
+                    jumpRange,
+                    alreadyHit);
+
+            if (nextTarget == null)
+                break;
+
+            currentHullDamage *=
+                multiplier;
+
+            currentShieldDamage *=
+                multiplier;
+
+            // Wizualizacja przeskoku chaina.
+            ShowChainVisualClientRpc(
+                currentTarget.transform.position,
+                nextTarget.transform.position);
+
+            // Damage kolejnego celu.
+            nextTarget.TakeWeaponDamage(
+                currentHullDamage,
+                currentShieldDamage);
+
+            ApplySlowOnHit(
+                weapon,
+                nextTarget);
+
+            alreadyHit.Add(
+                nextTarget);
+
+            currentTarget =
+                nextTarget;
+        }
+    }
+
+    private ShipUnit FindNearestChainTarget(
+    ShipUnit fromTarget,
+    float range,
+    List<ShipUnit> alreadyHit)
+    {
+        if (fromTarget == null)
+            return null;
+
+        ShipUnit[] allShips =
+            FindObjectsByType<ShipUnit>(
+                FindObjectsSortMode.None);
+
+        ShipUnit nearest = null;
+
+        float nearestDistanceSquared =
+            range * range;
+
+        foreach (ShipUnit target in allShips)
+        {
+            if (target == null)
+                continue;
+
+            if (target == ship)
+                continue;
+
+            if (!target.IsSpawned)
+                continue;
+
+            if (target.isDead.Value)
+                continue;
+
+            if (target.ownerId.Value ==
+                ship.ownerId.Value)
+            {
+                continue;
+            }
+
+            if (alreadyHit.Contains(target))
+                continue;
+
+            Vector3 offset =
+                target.transform.position -
+                fromTarget.transform.position;
+
+            float distanceSquared =
+                offset.sqrMagnitude;
+
+            if (distanceSquared >
+                nearestDistanceSquared)
+            {
+                continue;
+            }
+
+            nearestDistanceSquared =
+                distanceSquared;
+
+            nearest =
+                target;
+        }
+
+        return nearest;
+    }
+
+
+    [ClientRpc]
+    private void ShowChainVisualClientRpc(
+    Vector3 startPosition,
+    Vector3 endPosition)
+    {
+        if (chainLinePrefab == null)
+            return;
+
+        LineRenderer line =
+            Instantiate(chainLinePrefab);
+
+        line.positionCount = 2;
+        line.useWorldSpace = true;
+
+        line.SetPosition(0, startPosition);
+        line.SetPosition(1, endPosition);
+
+        Destroy(
+            line.gameObject,
+            chainVisualLifetime);
     }
 }

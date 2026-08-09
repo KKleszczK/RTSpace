@@ -1429,6 +1429,11 @@ MonoBehaviour:
   currentShieldBar: {fileID: 0}
   shieldText: {fileID: 0}
   maxShieldBarWidth: 1080
+  currentSlowPercent:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
 --- !u!114 &6542804714395669886
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1525,6 +1530,9 @@ MonoBehaviour:
   - {fileID: 282849211997031845}
   - {fileID: 5196048114607759444}
   - {fileID: 6699274052300440912}
+  aoeImpactPrefab: {fileID: 8833621251306552937, guid: 4fa0ca2c08457614e82cfe0c4e7a7ed5, type: 3}
+  chainLinePrefab: {fileID: 3525162572452835259, guid: f8575020b397bbf4598c3a1a9f1821ae, type: 3}
+  chainVisualLifetime: 0.2
   projectilePrefab: {fileID: 1608138282464106586, guid: a175d557009d2da4390052e538ff4f59, type: 3}
   projectileOrigins:
   - {fileID: 2430904823246477056}
