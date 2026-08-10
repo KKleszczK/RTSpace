@@ -58,7 +58,9 @@ public class ModuleButtonUI : MonoBehaviour,
         }
         else
         {
-            iconImage.sprite = module.icon;
+            ModuleTierColorHelper.ApplyToImage(
+                iconImage,
+                module);
         }
 
         if (button != null)

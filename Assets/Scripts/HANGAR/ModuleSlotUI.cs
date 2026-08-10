@@ -100,13 +100,20 @@ public class ModuleSlotUI :
         if (iconImage == null)
             return;
 
-        iconImage.sprite =
-            module != null
-                ? module.icon
-                : emptySprite;
+        if (module == null)
+        {
+            iconImage.sprite = emptySprite;
+            iconImage.color = Color.white;
+            originalIconColor = Color.white;
+            return;
+        }
 
-        if (!isDragging)
-            iconImage.color = originalIconColor;
+        ModuleTierColorHelper.ApplyToImage(
+            iconImage,
+            module);
+
+        originalIconColor =
+            iconImage.color;
     }
 
     public ModuleDefinition GetModule()
@@ -451,7 +458,10 @@ public class ModuleSlotUI :
         dragGhostImage.sprite =
             iconImage.sprite;
 
-        dragGhostImage.color = Color.white;
+        dragGhostImage.color =
+            originalIconColor;
+
+        
         dragGhostImage.preserveAspect = true;
         dragGhostImage.raycastTarget = false;
 
