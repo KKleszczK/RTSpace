@@ -64,6 +64,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DraggableModuleUI
   iconImage: {fileID: 2486387120456209622}
+  originalAlphaWhileDragging: 0.35
+  ghostAlpha: 0.75
 --- !u!1 &7198095909719437510
 GameObject:
   m_ObjectHideFlags: 0
@@ -204,7 +206,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: e3af83d27529d2343b2496585990fafa, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

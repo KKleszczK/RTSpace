@@ -47,13 +47,12 @@ public class DraggableModuleUI : MonoBehaviour,
     {
         module = newModule;
 
-        if (iconImage != null)
-        {
-            iconImage.sprite =
-                module != null
-                    ? module.icon
-                    : null;
-        }
+        if (iconImage == null)
+            return;
+
+        ModuleTierColorHelper.ApplyToImage(
+            iconImage,
+            module);
     }
 
     public ModuleDefinition GetModule()
@@ -132,6 +131,9 @@ public class DraggableModuleUI : MonoBehaviour,
 
         dragGhostImage.sprite =
             iconImage.sprite;
+
+        dragGhostImage.color =
+            iconImage.color;
 
         dragGhostImage.preserveAspect = true;
         dragGhostImage.raycastTarget = false;
