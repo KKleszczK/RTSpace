@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0024218ce9266a34694abb828c810cd2, type: 3}
-  m_Name: 1_Mobile_Assembly_T3
+  m_Name: 1_Reconstruction_Module_T3
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
-  moduleId: mobile_assembly_t3
+  moduleId: reconstruction_module
   displayName: Mobile Assembly
-  description: Boosts module production speed at nearby stations by 4%. You should
+  description: Boosts module production speed at nearby stations by 2%. You should
     make some
   icon: {fileID: 21300000, guid: daaebe26a0711224e8ca1bd15a2d17e6, type: 3}
-  tier: 3
+  tier: 1
   type: 2
-  metalCost: 90
-  energyCost: 60
-  craftTime: 20
+  metalCost: 20
+  energyCost: 10
+  craftTime: 5
   maxCopiesPerPlayer: 99
   exclusive: 0
   shieldFlat: 0
@@ -38,7 +38,7 @@ MonoBehaviour:
   auraEffectValue: 0
   haveBaseBooster: 1
   baseBoosterEffect: 0
-  baseBoosterValue: 0.08
+  baseBoosterValue: 0.02
   isSocketMiner: 0
   mineInterval: 1
   miningAmountAtFullDensity: 40

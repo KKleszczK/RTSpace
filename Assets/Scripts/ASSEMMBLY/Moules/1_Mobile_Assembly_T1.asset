@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Mobile Assembly
   description: Boosts module production speed at nearby stations by 2%. You should
     make some
-  icon: {fileID: 21300000, guid: 0a7623db8af99fc4bad691c987ded7c8, type: 3}
+  icon: {fileID: 21300000, guid: daaebe26a0711224e8ca1bd15a2d17e6, type: 3}
   tier: 1
   type: 2
   metalCost: 20
