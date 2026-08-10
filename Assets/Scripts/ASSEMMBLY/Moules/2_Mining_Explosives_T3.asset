@@ -29,7 +29,7 @@ MonoBehaviour:
   hpFlat: 0
   hpPercent: 0
   moveSpeedFlat: 0
-  moveSpeedPercent: -0.1
+  moveSpeedPercent: -10
   allWeaponsDamagePercent: 0
   allWeaponsAttackSpeedPercent: 0
   haveAura: 0
@@ -43,7 +43,7 @@ MonoBehaviour:
   mineInterval: 1.5
   miningAmountAtFullDensity: 600
   densityRemovedPerHit: 15
-  miningModuleDurability: 0
+  miningModuleDurability: 3
   isWeapon: 0
   weaponType: 0
   weaponRange: 5

@@ -28,7 +28,7 @@ MonoBehaviour:
   hpFlat: 0
   hpPercent: 0
   moveSpeedFlat: 0
-  moveSpeedPercent: 0.05
+  moveSpeedPercent: 5
   allWeaponsDamagePercent: 0
   allWeaponsAttackSpeedPercent: 0
   haveAura: 0

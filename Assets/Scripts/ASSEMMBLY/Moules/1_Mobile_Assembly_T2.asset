@@ -38,7 +38,7 @@ MonoBehaviour:
   auraEffectValue: 0
   haveBaseBooster: 1
   baseBoosterEffect: 0
-  baseBoosterValue: 0.04
+  baseBoosterValue: 4
   isSocketMiner: 0
   mineInterval: 1
   miningAmountAtFullDensity: 40
