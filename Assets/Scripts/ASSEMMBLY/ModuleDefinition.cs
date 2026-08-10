@@ -24,7 +24,8 @@ public enum BaseBoosterEffectType
 {
     AssemblySpeed,
     EnergyProduction,
-    LabSpeed
+    LabSpeed,
+    DencityBoost
 }
 
 public enum WeaponType
