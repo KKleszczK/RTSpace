@@ -10,17 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0024218ce9266a34694abb828c810cd2, type: 3}
-  m_Name: 1_Speed Engine T1 1
+  m_Name: 2_Mining_Explosives_T3
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
-  moduleId: speed_engine_t2
-  displayName: Speed Engine
-  description: Increase ship movement speed by 10%
-  icon: {fileID: 21300000, guid: 7dd4ee3aa13b7824797a4835f8054e2f, type: 3}
-  tier: 2
-  type: 2
-  metalCost: 350
-  energyCost: 100
-  craftTime: 25
+  moduleId: mining_explosives_t3
+  displayName: Mining Explosives
+  description: Explodes 3 times, yielding 600*dencity. Each explosion drops dencity
+    by 20%. Ship equipped with this technology is slower by 10%
+  icon: {fileID: 21300000, guid: 13d3c4ad36b8afb44b6aa4034b1a0bfd, type: 3}
+  tier: 3
+  type: 0
+  metalCost: 700
+  energyCost: 350
+  craftTime: 50
   maxCopiesPerPlayer: 99
   exclusive: 0
   shieldFlat: 0
@@ -28,7 +29,7 @@ MonoBehaviour:
   hpFlat: 0
   hpPercent: 0
   moveSpeedFlat: 0
-  moveSpeedPercent: 0.1
+  moveSpeedPercent: -0.1
   allWeaponsDamagePercent: 0
   allWeaponsAttackSpeedPercent: 0
   haveAura: 0
@@ -38,10 +39,10 @@ MonoBehaviour:
   haveBaseBooster: 0
   baseBoosterEffect: 0
   baseBoosterValue: 0
-  isSocketMiner: 0
-  mineInterval: 1
-  miningAmountAtFullDensity: 1
-  densityRemovedPerHit: 1
+  isSocketMiner: 1
+  mineInterval: 1.5
+  miningAmountAtFullDensity: 600
+  densityRemovedPerHit: 15
   miningModuleDurability: 0
   isWeapon: 0
   weaponType: 0

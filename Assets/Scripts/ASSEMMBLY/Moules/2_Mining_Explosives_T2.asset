@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0024218ce9266a34694abb828c810cd2, type: 3}
-  m_Name: 2_Mining_Laser 3
+  m_Name: 2_Mining_Explosives_T2
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
-  moduleId: mining_laser_t1
-  displayName: Mining Laser
-  description: Enables ship to mine metal from asteroid clusters. Mining strength
-    5/s*density. Each second mined drops density by 0.01%
-  icon: {fileID: 21300000, guid: d47ed3865b0fca646a378e59dc8ee779, type: 3}
-  tier: 1
+  moduleId: mining_explosives_t2
+  displayName: Mining Explosives
+  description: Explodes 3 times, yielding 300*dencity. Each explosion drops dencity
+    by 8%. Ship equipped with this technology is slower by 7%
+  icon: {fileID: 21300000, guid: 13d3c4ad36b8afb44b6aa4034b1a0bfd, type: 3}
+  tier: 2
   type: 0
-  metalCost: 50
-  energyCost: 20
-  craftTime: 10
+  metalCost: 400
+  energyCost: 200
+  craftTime: 30
   maxCopiesPerPlayer: 99
   exclusive: 0
   shieldFlat: 0
@@ -29,7 +29,7 @@ MonoBehaviour:
   hpFlat: 0
   hpPercent: 0
   moveSpeedFlat: 0
-  moveSpeedPercent: 0
+  moveSpeedPercent: -0.07
   allWeaponsDamagePercent: 0
   allWeaponsAttackSpeedPercent: 0
   haveAura: 0
@@ -40,9 +40,9 @@ MonoBehaviour:
   baseBoosterEffect: 0
   baseBoosterValue: 0
   isSocketMiner: 1
-  mineInterval: 1
-  miningAmountAtFullDensity: 5
-  densityRemovedPerHit: 0.01
+  mineInterval: 1.5
+  miningAmountAtFullDensity: 300
+  densityRemovedPerHit: 8
   miningModuleDurability: 0
   isWeapon: 0
   weaponType: 0
