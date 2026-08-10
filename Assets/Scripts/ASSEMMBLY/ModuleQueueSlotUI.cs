@@ -10,24 +10,52 @@ public class ModuleQueueSlotUI : MonoBehaviour
     private int index;
     private AssemblyPanelUI panel;
 
-    public void Setup(int slotIndex, AssemblyPanelUI assemblyPanel)
+    public void Setup(
+        int slotIndex,
+        AssemblyPanelUI assemblyPanel)
     {
         index = slotIndex;
         panel = assemblyPanel;
 
-        button.onClick.RemoveAllListeners();
-        button.onClick.AddListener(() => panel.RemoveQueueItem(index));
+        if (button != null)
+        {
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(
+                () => panel.RemoveQueueItem(index));
+        }
+
+        SetEmpty();
     }
 
     public void SetEmpty()
     {
-        icon.sprite = emptySprite;
-        button.interactable = false;
+        if (icon != null)
+        {
+            icon.sprite = emptySprite;
+            icon.color = Color.white;
+        }
+
+        if (button != null)
+            button.interactable = false;
     }
 
-    public void SetModule(ModuleDefinition module)
+    public void SetModule(
+        ModuleDefinition module)
     {
-        icon.sprite = module.icon;
-        button.interactable = true;
+        if (module == null)
+        {
+            SetEmpty();
+            return;
+        }
+
+        if (icon != null)
+        {
+            ModuleTierColorHelper.ApplyToImage(
+                icon,
+                module);
+        }
+
+        if (button != null)
+            button.interactable = true;
     }
 }
