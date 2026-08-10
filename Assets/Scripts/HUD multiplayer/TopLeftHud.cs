@@ -1,6 +1,7 @@
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using System.Globalization;
 
 public class TopLeftHud : MonoBehaviour
 {
@@ -25,12 +26,14 @@ public class TopLeftHud : MonoBehaviour
         if (resources != null)
         {
             metalText.text =
-                resources.metal.Value.ToString("#,0")
-                .Replace(",", ".");
+                resources.metal.Value
+                    .ToString("#,0", CultureInfo.InvariantCulture)
+                    .Replace(",", ".");
 
             energyText.text =
-                resources.energy.Value.ToString("#,0")
-                .Replace(",", ".");
+                resources.energy.Value
+                    .ToString("#,0", CultureInfo.InvariantCulture)
+                    .Replace(",", ".");
         }
 
         if (units != null)
