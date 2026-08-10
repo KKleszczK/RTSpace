@@ -10,35 +10,36 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0024218ce9266a34694abb828c810cd2, type: 3}
-  m_Name: 1_Reconstruction_Module_T3
+  m_Name: 1_Density_Scanner_T2
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
-  moduleId: reconstruction_module
-  displayName: Reconstruction Module
-  description: Creates healing aura that repairs damaged hull by 1% every second.
-    Reduces holder's hull durability by 5% (stacks)
-  icon: {fileID: 21300000, guid: daaebe26a0711224e8ca1bd15a2d17e6, type: 3}
-  tier: 3
+  moduleId: density_scanner_T2
+  displayName: Density Scanner
+  description: Boosts the density of nearby asteroid cluster by 20%, but reduces
+    holder movement speed by 30%. Only one module can be active within an asteroid's
+    range, and you can only own one at a time.
+  icon: {fileID: 21300000, guid: 04eaf6b6ca044ba42821ddf8b9d6e945, type: 3}
+  tier: 2
   type: 2
-  metalCost: 200
-  energyCost: 100
-  craftTime: 50
-  maxCopiesPerPlayer: 99
+  metalCost: 600
+  energyCost: 400
+  craftTime: 60
+  maxCopiesPerPlayer: 1
   exclusive: 0
   shieldFlat: 0
   shieldPercent: 0
   hpFlat: 0
-  hpPercent: -5
+  hpPercent: 0
   moveSpeedFlat: 0
-  moveSpeedPercent: 0
+  moveSpeedPercent: -30
   allWeaponsDamagePercent: 0
   allWeaponsAttackSpeedPercent: 0
-  haveAura: 1
+  haveAura: 0
   auraRange: 4
   auraEffect: 1
   auraEffectValue: 1
-  haveBaseBooster: 0
-  baseBoosterEffect: 0
-  baseBoosterValue: 2
+  haveBaseBooster: 1
+  baseBoosterEffect: 3
+  baseBoosterValue: 20
   isSocketMiner: 0
   mineInterval: 1
   miningAmountAtFullDensity: 40
