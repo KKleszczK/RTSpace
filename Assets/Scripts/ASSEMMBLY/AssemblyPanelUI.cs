@@ -22,21 +22,26 @@ public class AssemblyPanelUI : MonoBehaviour
     [Header("Queue")]
     [SerializeField] private ModuleQueueSlotUI[] queueSlots;
 
+    private BaseCore localCore;
+
     private PlayerModuleCrafting playerCrafting;
 
     private void Start()
     {
-        CreateModuleButtons();
-
         for (int i = 0; i < queueSlots.Length; i++)
         {
             if (queueSlots[i] != null)
                 queueSlots[i].Setup(i, this);
         }
+
+        TryFindLocalCore();
     }
 
     private void Update()
     {
+        if (localCore == null)
+            TryFindLocalCore();
+
         if (playerCrafting == null)
             FindLocalPlayerCrafting();
 
@@ -44,32 +49,6 @@ public class AssemblyPanelUI : MonoBehaviour
         UpdateQueueUI();
     }
 
-    private void CreateModuleButtons()
-    {
-        if (content == null)
-        {
-            Debug.LogError("[CRAFT ERROR] AssemblyPanelUI: content == null", gameObject);
-            return;
-        }
-
-        if (buttonPrefab == null)
-        {
-            Debug.LogError("[CRAFT ERROR] AssemblyPanelUI: buttonPrefab == null", gameObject);
-            return;
-        }
-
-        foreach (ModuleDefinition module in modules)
-        {
-            if (module == null)
-            {
-                Debug.LogError("[CRAFT ERROR] AssemblyPanelUI: modu³ na liœcie jest null", gameObject);
-                continue;
-            }
-
-            ModuleButtonUI button = Instantiate(buttonPrefab, content);
-            button.Setup(module, this);
-        }
-    }
 
     public void ShowModuleInfo(ModuleDefinition module)
     {
@@ -191,5 +170,104 @@ public class AssemblyPanelUI : MonoBehaviour
     {
         if (playerCrafting != null)
             playerCrafting.RequestRemoveFromQueue(index);
+    }
+
+    
+
+    private void TryFindLocalCore()
+    {
+        if (localCore != null)
+            return;
+
+        if (NetworkManager.Singleton == null)
+            return;
+
+        BaseCore[] cores =
+            FindObjectsByType<BaseCore>(
+                FindObjectsSortMode.None);
+
+        foreach (BaseCore core in cores)
+        {
+            if (core == null)
+                continue;
+
+            if (!core.IsSpawned)
+                continue;
+
+            if (core.OwnerClientId !=
+                NetworkManager.Singleton.LocalClientId)
+            {
+                continue;
+            }
+
+            localCore = core;
+
+            localCore.tier.OnValueChanged +=
+                OnCoreTierChanged;
+
+            RefreshModuleButtons();
+
+            return;
+        }
+    }
+
+    private void OnCoreTierChanged(
+    int previousTier,
+    int newTier)
+    {
+        RefreshModuleButtons();
+    }
+
+    private void RefreshModuleButtons()
+    {
+        if (content == null)
+            return;
+
+        if (buttonPrefab == null)
+            return;
+
+        if (localCore == null)
+            return;
+
+        // Usuwamy stare przyciski.
+        for (int i = content.childCount - 1;
+             i >= 0;
+             i--)
+        {
+            Destroy(
+                content.GetChild(i).gameObject);
+        }
+
+        int coreTier =
+            localCore.tier.Value;
+
+        foreach (ModuleDefinition module in modules)
+        {
+            if (module == null)
+                continue;
+
+            // Modu³ wy¿szego tieru ni¿ Core
+            // nie jest jeszcze dostêpny.
+            if ((int)module.tier > coreTier)
+                continue;
+
+            ModuleButtonUI button =
+                Instantiate(
+                    buttonPrefab,
+                    content);
+
+            button.Setup(
+                module,
+                this);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (localCore != null)
+        {
+            localCore.tier.OnValueChanged -=
+                OnCoreTierChanged;
+        }
     }
 }
