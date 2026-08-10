@@ -20,10 +20,10 @@ MonoBehaviour:
   tier: 2
   type: 0
   metalCost: 400
-  energyCost: 200
+  energyCost: 120
   craftTime: 30
   maxCopiesPerPlayer: 99
-  exclusive: 0
+  exclusive: 1
   shieldFlat: 0
   shieldPercent: 0
   hpFlat: 0

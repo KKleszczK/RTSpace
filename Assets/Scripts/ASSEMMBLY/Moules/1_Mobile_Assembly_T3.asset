@@ -10,39 +10,39 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0024218ce9266a34694abb828c810cd2, type: 3}
-  m_Name: 2_Mining_Explosives_T1
+  m_Name: 1_Mobile_Assembly_T3
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
-  moduleId: mining_explosives_t1
-  displayName: Mining Explosives
-  description: Explodes 3 times, yielding 150*dencity. Each explosion drops dencity
-    by 4%. Ship equipped with this technology is slower by 5%
-  icon: {fileID: 21300000, guid: 13d3c4ad36b8afb44b6aa4034b1a0bfd, type: 3}
-  tier: 1
-  type: 0
-  metalCost: 180
-  energyCost: 40
-  craftTime: 15
+  moduleId: mobile_assembly_t3
+  displayName: Mobile Assembly
+  description: Boosts module production speed at nearby stations by 4%. You should
+    make some
+  icon: {fileID: 21300000, guid: daaebe26a0711224e8ca1bd15a2d17e6, type: 3}
+  tier: 3
+  type: 2
+  metalCost: 90
+  energyCost: 60
+  craftTime: 20
   maxCopiesPerPlayer: 99
-  exclusive: 1
+  exclusive: 0
   shieldFlat: 0
   shieldPercent: 0
   hpFlat: 0
   hpPercent: 0
   moveSpeedFlat: 0
-  moveSpeedPercent: -0.05
+  moveSpeedPercent: 0
   allWeaponsDamagePercent: 0
   allWeaponsAttackSpeedPercent: 0
   haveAura: 0
   auraRange: 5
   auraEffect: 0
   auraEffectValue: 0
-  haveBaseBooster: 0
+  haveBaseBooster: 1
   baseBoosterEffect: 0
-  baseBoosterValue: 0
-  isSocketMiner: 1
-  mineInterval: 1.5
-  miningAmountAtFullDensity: 150
-  densityRemovedPerHit: 4
+  baseBoosterValue: 0.08
+  isSocketMiner: 0
+  mineInterval: 1
+  miningAmountAtFullDensity: 40
+  densityRemovedPerHit: 0.04
   miningModuleDurability: 0
   isWeapon: 0
   weaponType: 0
