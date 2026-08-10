@@ -24,7 +24,7 @@ MonoBehaviour:
   energyCost: 400
   craftTime: 60
   maxCopiesPerPlayer: 1
-  exclusive: 0
+  exclusive: 1
   shieldFlat: 0
   shieldPercent: 0
   hpFlat: 0

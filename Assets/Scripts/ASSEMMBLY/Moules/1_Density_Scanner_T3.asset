@@ -12,25 +12,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0024218ce9266a34694abb828c810cd2, type: 3}
   m_Name: 1_Density_Scanner_T3
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
-  moduleId: density_scanner_T2
+  moduleId: density_scanner_T3
   displayName: Density Scanner
   description: Boosts the density of nearby asteroid cluster by 20%, but reduces
     holder movement speed by 30%. Only one module can be active within an asteroid's
     range, and you can only own one at a time.
   icon: {fileID: 21300000, guid: 04eaf6b6ca044ba42821ddf8b9d6e945, type: 3}
-  tier: 2
+  tier: 3
   type: 2
-  metalCost: 600
-  energyCost: 400
-  craftTime: 60
+  metalCost: 1000
+  energyCost: 700
+  craftTime: 90
   maxCopiesPerPlayer: 1
-  exclusive: 0
+  exclusive: 1
   shieldFlat: 0
   shieldPercent: 0
   hpFlat: 0
   hpPercent: 0
   moveSpeedFlat: 0
-  moveSpeedPercent: -30
+  moveSpeedPercent: -50
   allWeaponsDamagePercent: 0
   allWeaponsAttackSpeedPercent: 0
   haveAura: 0
@@ -39,7 +39,7 @@ MonoBehaviour:
   auraEffectValue: 1
   haveBaseBooster: 1
   baseBoosterEffect: 3
-  baseBoosterValue: 20
+  baseBoosterValue: 30
   isSocketMiner: 0
   mineInterval: 1
   miningAmountAtFullDensity: 40
