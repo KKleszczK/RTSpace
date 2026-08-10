@@ -24,8 +24,13 @@ public class TopLeftHud : MonoBehaviour
 
         if (resources != null)
         {
-            metalText.text = "" + resources.metal.Value.ToString();
-            energyText.text = "" + resources.energy.Value.ToString();
+            metalText.text =
+                resources.metal.Value.ToString("#,0")
+                .Replace(",", ".");
+
+            energyText.text =
+                resources.energy.Value.ToString("#,0")
+                .Replace(",", ".");
         }
 
         if (units != null)
