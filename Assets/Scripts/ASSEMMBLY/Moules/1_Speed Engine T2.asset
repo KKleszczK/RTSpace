@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
   moduleId: speed_engine_t2
   displayName: Speed Engine
-  description: Increase ship movement speed by 10%
+  description: Upgrades ship thrusters with additional power giving +1 flat movement
+    speed, also increase fuel injection efficiency giving 10% overall speed bonus
   icon: {fileID: 21300000, guid: 7dd4ee3aa13b7824797a4835f8054e2f, type: 3}
   tier: 2
   type: 2
@@ -27,7 +28,7 @@ MonoBehaviour:
   shieldPercent: 0
   hpFlat: 0
   hpPercent: 0
-  moveSpeedFlat: 0
+  moveSpeedFlat: 1
   moveSpeedPercent: 10
   allWeaponsDamagePercent: 0
   allWeaponsAttackSpeedPercent: 0

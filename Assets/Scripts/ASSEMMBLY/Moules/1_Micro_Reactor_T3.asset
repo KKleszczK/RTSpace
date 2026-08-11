@@ -10,39 +10,39 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0024218ce9266a34694abb828c810cd2, type: 3}
-  m_Name: 1_Speed Engine T3
+  m_Name: 1_Micro_Reactor_T3
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
-  moduleId: speed_engine_t3
-  displayName: Speed Engine
-  description: Upgrades ship thrusters with additional power giving +1 flat movement
-    speed, also increase fuel injection efficiency giving 20% overall speed bonus
-  icon: {fileID: 21300000, guid: 7dd4ee3aa13b7824797a4835f8054e2f, type: 3}
+  moduleId: micro_reactor_t3
+  displayName: Micro Reactor
+  description: Boosts cores energy production at nearby station by 15% (stacks) and
+    reduces flat movement speed of holder by 3
+  icon: {fileID: 21300000, guid: 10e2b85dcbf26a947b01fe0f41f794e7, type: 3}
   tier: 3
   type: 2
-  metalCost: 700
-  energyCost: 500
-  craftTime: 50
+  metalCost: 200
+  energyCost: 100
+  craftTime: 40
   maxCopiesPerPlayer: 99
-  exclusive: 0
+  exclusive: 1
   shieldFlat: 0
   shieldPercent: 0
   hpFlat: 0
   hpPercent: 0
-  moveSpeedFlat: 1
-  moveSpeedPercent: 10
+  moveSpeedFlat: -3
+  moveSpeedPercent: 0
   allWeaponsDamagePercent: 0
   allWeaponsAttackSpeedPercent: 0
   haveAura: 0
   auraRange: 5
   auraEffect: 0
   auraEffectValue: 0
-  haveBaseBooster: 0
-  baseBoosterEffect: 0
-  baseBoosterValue: 0
+  haveBaseBooster: 1
+  baseBoosterEffect: 1
+  baseBoosterValue: 15
   isSocketMiner: 0
   mineInterval: 1
-  miningAmountAtFullDensity: 1
-  densityRemovedPerHit: 1
+  miningAmountAtFullDensity: 40
+  densityRemovedPerHit: 0.04
   miningModuleDurability: 0
   isWeapon: 0
   weaponType: 0
