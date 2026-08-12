@@ -137,6 +137,11 @@ public class ShipUnit : NetworkBehaviour
 
     private Renderer rend;
 
+
+    [Header("Combat Feedback")]
+    [SerializeField] private Transform combatTextOrigin;
+    [SerializeField] private CombatFloatingText combatTextPrefab;
+
     // =========================================================
     // NETWORK
     // =========================================================
@@ -524,31 +529,64 @@ public class ShipUnit : NetworkBehaviour
         if (isDead.Value)
             return;
 
+        // =====================================================
+        // SHIELD DAMAGE
+        // =====================================================
+
         if (shield.Value > 0)
         {
-            int finalShieldDamage =
+            int requestedShieldDamage =
                 Mathf.Max(
                     0,
                     Mathf.RoundToInt(shieldDamage));
 
-            shield.Value =
-                Mathf.Max(
-                    0,
-                    shield.Value - finalShieldDamage);
+            /*
+             * Liczymy faktyczny damage.
+             *
+             * Jeœli tarcza ma 20,
+             * a broñ zadaje 100,
+             * poka¿emy -20, a nie -100.
+             */
+            int actualShieldDamage =
+                Mathf.Min(
+                    shield.Value,
+                    requestedShieldDamage);
+
+            if (actualShieldDamage <= 0)
+                return;
+
+            shield.Value -=
+                actualShieldDamage;
+
+            ShowShieldDamageClientRpc(
+                actualShieldDamage);
 
             // Nadwy¿ka obra¿eñ NIE przechodzi na HP.
             return;
         }
 
-        int finalHullDamage =
+        // =====================================================
+        // HULL DAMAGE
+        // =====================================================
+
+        int requestedHullDamage =
             Mathf.Max(
                 0,
                 Mathf.RoundToInt(hullDamage));
 
-        hp.Value =
-            Mathf.Max(
-                0,
-                hp.Value - finalHullDamage);
+        int actualHullDamage =
+            Mathf.Min(
+                hp.Value,
+                requestedHullDamage);
+
+        if (actualHullDamage <= 0)
+            return;
+
+        hp.Value -=
+            actualHullDamage;
+
+        ShowHullDamageClientRpc(
+            actualHullDamage);
 
         if (hp.Value <= 0)
         {
@@ -570,18 +608,24 @@ public class ShipUnit : NetworkBehaviour
         if (isDead.Value)
             return;
 
-        int finalDamage =
+        int requestedDamage =
             Mathf.Max(
                 0,
                 Mathf.RoundToInt(damage));
 
-        if (finalDamage <= 0)
+        int actualDamage =
+            Mathf.Min(
+                hp.Value,
+                requestedDamage);
+
+        if (actualDamage <= 0)
             return;
 
-        hp.Value =
-            Mathf.Max(
-                0,
-                hp.Value - finalDamage);
+        hp.Value -=
+            actualDamage;
+
+        ShowHullDamageClientRpc(
+            actualDamage);
 
         if (hp.Value <= 0)
         {
@@ -589,6 +633,63 @@ public class ShipUnit : NetworkBehaviour
             Die();
         }
     }
+
+    // =========================================================
+    // COMBAT FEEDBACK
+    // =========================================================
+
+    [ClientRpc]
+    private void ShowHullDamageClientRpc(
+        int damage)
+    {
+        ShowCombatTextLocal(
+            $"-{damage}",
+            new Color(
+                1f,
+                0.2f,
+                0.2f,
+                1f));
+    }
+
+    [ClientRpc]
+    private void ShowShieldDamageClientRpc(
+        int damage)
+    {
+        ShowCombatTextLocal(
+            $"-{damage}",
+            new Color(
+                0.2f,
+                0.7f,
+                1f,
+                1f));
+    }
+
+    private void ShowCombatTextLocal(
+        string value,
+        Color color)
+    {
+        if (combatTextPrefab == null)
+            return;
+
+        Vector3 spawnPosition =
+            combatTextOrigin != null
+                ? combatTextOrigin.position
+                : transform.position;
+
+        CombatFloatingText floatingText =
+            Instantiate(
+                combatTextPrefab,
+                spawnPosition,
+                Quaternion.identity);
+
+        floatingText.Initialize(
+            value,
+            color);
+    }
+
+    // =========================================================
+    // DEATH
+    // =========================================================
 
     private void Die()
     {
@@ -601,7 +702,8 @@ public class ShipUnit : NetworkBehaviour
         isDead.Value = true;
 
         PlayerUnits units =
-            FindPlayerUnits(ownerId.Value);
+            FindPlayerUnits(
+                ownerId.Value);
 
         if (units != null)
         {
@@ -612,7 +714,7 @@ public class ShipUnit : NetworkBehaviour
     }
 
     private PlayerUnits FindPlayerUnits(
-    ulong clientId)
+        ulong clientId)
     {
         PlayerUnits[] allUnits =
             FindObjectsByType<PlayerUnits>(
@@ -623,8 +725,11 @@ public class ShipUnit : NetworkBehaviour
             if (!playerUnits.IsSpawned)
                 continue;
 
-            if (playerUnits.OwnerClientId == clientId)
+            if (playerUnits.OwnerClientId ==
+                clientId)
+            {
                 return playerUnits;
+            }
         }
 
         return null;
@@ -1004,6 +1109,29 @@ public class ShipUnit : NetworkBehaviour
 
         weaponStackMovementPercent =
             percent;
+    }
+
+    private void ShowCombatText(
+    string value,
+    Color color)
+    {
+        if (combatTextPrefab == null)
+            return;
+
+        Vector3 spawnPosition =
+            combatTextOrigin != null
+                ? combatTextOrigin.position
+                : transform.position;
+
+        CombatFloatingText floatingText =
+            Instantiate(
+                combatTextPrefab,
+                spawnPosition,
+                Quaternion.identity);
+
+        floatingText.Initialize(
+            value,
+            color);
     }
 
 }
