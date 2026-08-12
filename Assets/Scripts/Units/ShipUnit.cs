@@ -44,6 +44,10 @@ public class ShipUnit : NetworkBehaviour
     [SerializeField] private int maxShield = 0;
     [SerializeField] private float moveSpeed = 0f;
 
+    [Header("Map Bounds")]
+    [SerializeField] private float mapSize = 100f;
+    [SerializeField] private float mapBorderMargin = 0f;
+
     private float weaponsDamageMultiplier = 1f;
     private float weaponsAttackSpeedMultiplier = 1f;
 
@@ -366,7 +370,8 @@ public class ShipUnit : NetworkBehaviour
             return;
 
         Vector3 direction =
-            targetPosition.Value - transform.position;
+            targetPosition.Value -
+            transform.position;
 
         direction.y = 0f;
 
@@ -375,11 +380,41 @@ public class ShipUnit : NetworkBehaviour
 
         RotateTowardsMovement(direction);
 
-        transform.position =
+        Vector3 newPosition =
             Vector3.MoveTowards(
                 transform.position,
                 targetPosition.Value,
                 CurrentMoveSpeed * Time.deltaTime);
+
+        float halfMapSize =
+            mapSize * 0.5f;
+
+        float minX =
+            -halfMapSize + mapBorderMargin;
+
+        float maxX =
+            halfMapSize - mapBorderMargin;
+
+        float minZ =
+            -halfMapSize + mapBorderMargin;
+
+        float maxZ =
+            halfMapSize - mapBorderMargin;
+
+        newPosition.x =
+            Mathf.Clamp(
+                newPosition.x,
+                minX,
+                maxX);
+
+        newPosition.z =
+            Mathf.Clamp(
+                newPosition.z,
+                minZ,
+                maxZ);
+
+        transform.position =
+            newPosition;
     }
 
     // =========================================================
