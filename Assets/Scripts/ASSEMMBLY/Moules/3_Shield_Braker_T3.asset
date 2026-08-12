@@ -14,27 +14,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
   moduleId: shield_braker_t3
   displayName: Shield Battery
-  description: Boosts deflector battery capacity and shield dencity giving +200 shield
-    HP and 20% overall shield. Taps into local station power networks to actively
-    recharge all equipped shield modules while in range.
-  icon: {fileID: 21300000, guid: 3dd68358756fa84499b3c2483f95abc5, type: 3}
-  tier: 2
+  description: Creates kinetic explosion, disrupting energy waves in shield modules.
+    Deals 200 damage to all shields in range. Reloas takes 120s. Also boosts holder
+    movement speed by flat +1. You can possess 2 such modules at a time
+  icon: {fileID: 21300000, guid: 60bbb35fb8c931d4da081a7a72a3fe6b, type: 3}
+  tier: 3
   type: 1
-  metalCost: 400
-  energyCost: 80
-  craftTime: 40
-  maxCopiesPerPlayer: 99
-  exclusive: 0
-  shieldFlat: 200
-  shieldPercent: 20
+  metalCost: 600
+  energyCost: 800
+  craftTime: 30
+  maxCopiesPerPlayer: 2
+  exclusive: 1
+  shieldFlat: 0
+  shieldPercent: 0
   hpFlat: 0
   hpPercent: 0
-  moveSpeedFlat: 0
+  moveSpeedFlat: 1
   moveSpeedPercent: 0
   allWeaponsDamagePercent: 0
   allWeaponsAttackSpeedPercent: 0
   haveAura: 0
-  auraRange: 5
+  auraRange: 3
   auraEffect: 0
   auraEffectValue: 0
   haveBaseBooster: 0
@@ -45,17 +45,17 @@ MonoBehaviour:
   miningAmountAtFullDensity: 40
   densityRemovedPerHit: 0.04
   miningModuleDurability: 0
-  isWeapon: 0
-  weaponType: 0
-  weaponRange: 5
+  isWeapon: 1
+  weaponType: 2
+  weaponRange: 4
   weaponAttackInterval: 1
-  weaponHullDamage: 10
-  weaponShieldDamage: 10
+  weaponHullDamage: 0
+  weaponShieldDamage: 200
   projectileSpeed: 10
-  weaponHasMagazine: 0
-  magazineCapacity: 10
+  weaponHasMagazine: 1
+  magazineCapacity: 1
   magazineCanReload: 1
-  magazineReloadTime: 3
+  magazineReloadTime: 120
   weaponHasAoe: 0
   weaponAoeRange: 2
   weaponAoeDamageMultiplier: 1
@@ -66,7 +66,7 @@ MonoBehaviour:
   stackRangePercent: 0
   stackAttackSpeedPercent: 0
   stackInactiveTimeToReset: 3
-  maxTargets: 0
+  maxTargets: 99
   canChainAttack: 0
   chainJumpsRange: 1
   chainDamageMultiplier: 0.5
