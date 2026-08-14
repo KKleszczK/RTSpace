@@ -956,18 +956,22 @@ public class ShipUnit : NetworkBehaviour
 
         AddModuleStats(
             normalModule1.Value,
+            0,
             ref totals);
 
         AddModuleStats(
             normalModule2.Value,
+            1,
             ref totals);
 
         AddModuleStats(
             normalModule3.Value,
+            2,
             ref totals);
 
         AddModuleStats(
             classModule.Value,
+            3,
             ref totals);
 
         float calculatedMaxHp =
@@ -1021,6 +1025,7 @@ public class ShipUnit : NetworkBehaviour
 
     private void AddModuleStats(
     FixedString64Bytes moduleId,
+    int slotIndex,
     ref ModuleStatTotals totals)
     {
         if (moduleId.IsEmpty)
@@ -1037,7 +1042,72 @@ public class ShipUnit : NetworkBehaviour
             return;
         }
 
-        totals.Add(module);
+        float multiplier =
+            GetModuleSlotMultiplier(
+                module,
+                slotIndex);
+
+        totals.Add(
+            module,
+            multiplier);
+
+        Debug.Log(
+            $"[MODULE MULTIPLIER] " +
+            $"module={module.moduleId}, " +
+            $"slot={slotIndex}, " +
+            $"exclusive={module.exclusive}, " +
+            $"type={module.type}, " +
+            $"multiplier=x{multiplier}",
+            this);
+    }
+
+    private float GetModuleSlotMultiplier(
+    ModuleDefinition module,
+    int slotIndex)
+    {
+        if (module == null)
+            return 1f;
+
+        // Sloty 0-2 zawsze dzia³aj¹ normalnie.
+        if (slotIndex != 3)
+            return 1f;
+
+        // Exclusive modu³ w ClassSlot zawsze dzia³a x1.
+        if (module.exclusive)
+            return 1f;
+
+        // Zwyk³y modu³ w ClassSlot:
+        // zgodny typ statku -> x2
+        // inny typ -> x1
+        if (IsModuleTypeCompatibleWithCurrentShip(module))
+            return 2f;
+
+        return 1f;
+    }
+
+    private bool IsModuleTypeCompatibleWithCurrentShip(
+        ModuleDefinition module)
+    {
+        if (module == null)
+            return false;
+
+        if (ShipDatabase.Instance == null)
+            return false;
+
+        if (shipId.Value.IsEmpty)
+            return false;
+
+        ShipDefinition shipDefinition =
+            ShipDatabase.Instance.GetShip(
+                shipId.Value.ToString());
+
+        if (shipDefinition == null)
+            return false;
+
+        return string.Equals(
+            module.type.ToString(),
+            shipDefinition.shipType.ToString(),
+            System.StringComparison.OrdinalIgnoreCase);
     }
 
     private bool TryGetModuleDefinition(
@@ -1068,34 +1138,44 @@ public class ShipUnit : NetworkBehaviour
         public float WeaponsDamagePercent;
         public float WeaponsAttackSpeedPercent;
 
-        public void Add(ModuleDefinition module)
+        public void Add(
+    ModuleDefinition module,
+    float multiplier)
         {
             if (module == null)
                 return;
 
             ShieldFlat +=
-                module.shieldFlat;
+                module.shieldFlat *
+                multiplier;
 
             ShieldPercent +=
-                module.shieldPercent;
+                module.shieldPercent *
+                multiplier;
 
             HpFlat +=
-                module.hpFlat;
+                module.hpFlat *
+                multiplier;
 
             HpPercent +=
-                module.hpPercent;
+                module.hpPercent *
+                multiplier;
 
             MoveSpeedFlat +=
-                module.moveSpeedFlat;
+                module.moveSpeedFlat *
+                multiplier;
 
             MoveSpeedPercent +=
-                module.moveSpeedPercent;
+                module.moveSpeedPercent *
+                multiplier;
 
             WeaponsDamagePercent +=
-                module.allWeaponsDamagePercent;
+                module.allWeaponsDamagePercent *
+                multiplier;
 
             WeaponsAttackSpeedPercent +=
-                module.allWeaponsAttackSpeedPercent;
+                module.allWeaponsAttackSpeedPercent *
+                multiplier;
         }
     }
 
@@ -1109,6 +1189,25 @@ public class ShipUnit : NetworkBehaviour
 
         weaponStackMovementPercent =
             percent;
+    }
+
+    public float GetModuleEffectMultiplier(
+    int slotIndex,
+    ModuleDefinition module)
+    {
+        if (module == null)
+            return 1f;
+
+        if (slotIndex != 3)
+            return 1f;
+
+        if (module.exclusive)
+            return 1f;
+
+        if (IsModuleTypeCompatibleWithCurrentShip(module))
+            return 2f;
+
+        return 1f;
     }
 
     private void ShowCombatText(
@@ -1132,6 +1231,49 @@ public class ShipUnit : NetworkBehaviour
         floatingText.Initialize(
             value,
             color);
+    }
+
+    private float auraRangeBoostPercent;
+
+    public float AuraRangeMultiplier =>
+        1f + auraRangeBoostPercent / 100f;
+
+    public void SetAuraRangeBoost(
+        float percent)
+    {
+        if (!IsServer)
+            return;
+
+        auraRangeBoostPercent =
+            Mathf.Max(
+                0f,
+                percent);
+    }
+
+    public void Heal(
+    float amount)
+    {
+        if (!IsServer)
+            return;
+
+        if (isDead.Value)
+            return;
+
+        if (amount <= 0f)
+            return;
+
+        int healAmount =
+            Mathf.Max(
+                0,
+                Mathf.RoundToInt(amount));
+
+        if (healAmount <= 0)
+            return;
+
+        hp.Value =
+            Mathf.Min(
+                MaxHp,
+                hp.Value + healAmount);
     }
 
 }

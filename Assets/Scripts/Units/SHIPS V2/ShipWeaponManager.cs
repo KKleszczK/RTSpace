@@ -291,7 +291,7 @@ public class ShipWeaponManager : NetworkBehaviour
     }
 
     private float GetFinalHullDamage(
-        WeaponRuntime weapon)
+    WeaponRuntime weapon)
     {
         if (weapon == null ||
             weapon.Definition == null)
@@ -299,8 +299,14 @@ public class ShipWeaponManager : NetworkBehaviour
             return 0f;
         }
 
+        float classSlotMultiplier =
+            ship.GetModuleEffectMultiplier(
+                weapon.SlotIndex,
+                weapon.Definition);
+
         float baseDamage =
             weapon.Definition.weaponHullDamage *
+            classSlotMultiplier *
             ship.WeaponsDamageMultiplier;
 
         return Mathf.Max(
@@ -310,7 +316,7 @@ public class ShipWeaponManager : NetworkBehaviour
     }
 
     private float GetFinalShieldDamage(
-        WeaponRuntime weapon)
+    WeaponRuntime weapon)
     {
         if (weapon == null ||
             weapon.Definition == null)
@@ -318,8 +324,14 @@ public class ShipWeaponManager : NetworkBehaviour
             return 0f;
         }
 
+        float classSlotMultiplier =
+            ship.GetModuleEffectMultiplier(
+                weapon.SlotIndex,
+                weapon.Definition);
+
         float baseDamage =
             weapon.Definition.weaponShieldDamage *
+            classSlotMultiplier *
             ship.WeaponsDamageMultiplier;
 
         return Mathf.Max(
@@ -359,7 +371,8 @@ public class ShipWeaponManager : NetworkBehaviour
         return Mathf.Max(
             0f,
             weapon.Definition.weaponRange *
-            multiplier);
+            multiplier *
+            ship.AuraRangeMultiplier);
     }
 
     private float GetFinalAttackInterval(
@@ -1148,14 +1161,24 @@ public class ShipWeaponManager : NetworkBehaviour
         if (definition.selfDamage <= 0f)
             return;
 
+        float classSlotMultiplier =
+            ship.GetModuleEffectMultiplier(
+                weapon.SlotIndex,
+                definition);
+
+        float finalSelfDamage =
+            definition.selfDamage *
+            classSlotMultiplier;
+
         ship.TakeDirectHullDamage(
-            definition.selfDamage);
+            finalSelfDamage);
 
         if (showDebugLogs)
         {
             Debug.Log(
                 $"[SELF DAMAGE] {ship.name} otrzyma³ " +
-                $"{definition.selfDamage:0.##} obra¿eñ po ataku.",
+                $"{finalSelfDamage:0.##} obra¿eñ po ataku. " +
+                $"ClassMultiplier=x{classSlotMultiplier:0.##}",
                 ship);
         }
     }

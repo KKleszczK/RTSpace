@@ -15,6 +15,8 @@ public class PlayerModuleCrafting : NetworkBehaviour
     private PlayerModuleInventory inventory;
     private ModuleDefinition currentModule;
 
+    private BaseSafeZone safeZone;
+
     private void Awake()
     {
         resources = GetComponent<PlayerResources>();
@@ -34,7 +36,38 @@ public class PlayerModuleCrafting : NetworkBehaviour
         if (!IsServer)
             return;
 
+        if (safeZone == null)
+            FindSafeZone();
+
         ProcessQueue();
+    }
+
+    private void FindSafeZone()
+    {
+        BaseSafeZone[] safeZones =
+            FindObjectsByType<BaseSafeZone>(
+                FindObjectsSortMode.None);
+
+        foreach (BaseSafeZone zone in safeZones)
+        {
+            if (!zone.IsSpawned)
+                continue;
+
+            UnitOwner baseOwner =
+                zone.GetComponent<UnitOwner>();
+
+            if (baseOwner == null)
+                continue;
+
+            if (baseOwner.ownerId.Value !=
+                OwnerClientId)
+            {
+                continue;
+            }
+
+            safeZone = zone;
+            return;
+        }
     }
 
     public void RequestCraft(ModuleDefinition module)
@@ -190,10 +223,19 @@ public class PlayerModuleCrafting : NetworkBehaviour
         }
 
         float craftTime =
-            Mathf.Max(0.01f, currentModule.craftTime);
+            Mathf.Max(
+                0.01f,
+                currentModule.craftTime);
+
+        float assemblySpeedMultiplier =
+            safeZone != null
+                ? safeZone.GetAssemblySpeedMultiplier()
+                : 1f;
 
         currentProgress.Value +=
-            Time.deltaTime / craftTime;
+            Time.deltaTime *
+            assemblySpeedMultiplier /
+            craftTime;
 
         if (currentProgress.Value < 1f)
             return;

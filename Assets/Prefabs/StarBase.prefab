@@ -119,15 +119,15 @@ GameObject:
   - component: {fileID: 4312695449792705201}
   - component: {fileID: 6524294808548120566}
   - component: {fileID: 6214533466741464102}
-  - component: {fileID: 3883900935357975945}
   - component: {fileID: 8741085580866989857}
-  - component: {fileID: 6798362953943304543}
   - component: {fileID: 2520353419286221697}
   - component: {fileID: 2684553389713563295}
   - component: {fileID: 1731094536751094707}
   - component: {fileID: 8704846793198574920}
   - component: {fileID: 3597091184765902973}
   - component: {fileID: 1223153920510780178}
+  - component: {fileID: 5889295483679330958}
+  - component: {fileID: 8233572580603474525}
   m_Layer: 0
   m_Name: StarBase
   m_TagString: Untagged
@@ -321,23 +321,6 @@ MonoBehaviour:
   currentHpBar: {fileID: 3911671571147416428}
   hpText: {fileID: 1976911526125997048}
   maxBarWidth: 1920
---- !u!114 &3883900935357975945
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 847718449950176969}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b35f3416308f2dc4d825ad2e29b0f388, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BaseHealingAura
-  ShowTopMostFoldoutHeaderGroup: 1
-  healingRange: 4
-  healPerTick: 5
-  healTickTime: 1
-  rangeCircle: {fileID: 8648945695424343136}
 --- !u!114 &8741085580866989857
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -351,18 +334,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SelectionTarget
   selectionMarker: {fileID: 3142514455629620804}
---- !u!114 &6798362953943304543
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 847718449950176969}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 502356222847d1840b4f35044f98b7d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerBaseUnit
 --- !u!114 &2520353419286221697
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -516,6 +487,34 @@ MonoBehaviour:
   launchHeight: 0.5
   faceAwayFromBase: 1
   dockingRange: 4
+--- !u!114 &5889295483679330958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 847718449950176969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 502356222847d1840b4f35044f98b7d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerBaseUnit
+--- !u!114 &8233572580603474525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 847718449950176969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97c4ffe5329e5004ea86a8d87fb733ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BaseSafeZone
+  ShowTopMostFoldoutHeaderGroup: 1
+  owner: {fileID: 4312695449792705201}
+  safeZoneRange: 2
+  updateInterval: 2
 --- !u!1 &1463253415074095854
 GameObject:
   m_ObjectHideFlags: 0

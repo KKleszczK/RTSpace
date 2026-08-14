@@ -576,44 +576,78 @@ public class BaseHangar : NetworkBehaviour
     }
 
     private bool CanInstallModule(
-        ModuleDefinition module,
-        ShipDefinition ship,
-        int slotIndex)
+    ModuleDefinition module,
+    ShipDefinition ship,
+    int slotIndex)
     {
-        bool isClassSlot =
-            slotIndex == ClassSlot;
-
-        if (module.exclusive && !isClassSlot)
+        if (module == null ||
+            ship == null)
         {
-            Debug.LogWarning(
-                "[MODULE INSTALL ERROR] Modu³ exclusive mo¿e byæ montowany " +
-                "tylko w slocie klasowym.");
-
             return false;
         }
 
-        if (isClassSlot)
+        bool isClassSlot =
+            slotIndex == ClassSlot;
+
+        bool sameType =
+            IsModuleTypeCompatibleWithShip(
+                module,
+                ship);
+
+        // =====================================================
+        // NORMALNE SLOTY 0-2
+        // =====================================================
+
+        if (!isClassSlot)
         {
-            if (!IsModuleTypeCompatibleWithShip(module, ship))
+            // Exclusive modu³u nigdy nie mo¿na
+            // zamontowaæ w normalnym slocie.
+            if (module.exclusive)
             {
                 Debug.LogWarning(
-                    $"[MODULE INSTALL ERROR] Modu³ typu {module.type} " +
-                    $"nie pasuje do statku typu {ship.shipType}.");
+                    "[MODULE INSTALL ERROR] Modu³ exclusive " +
+                    "mo¿e byæ montowany tylko w slocie klasowym.");
 
                 return false;
             }
 
+            // Zwyk³y modu³ mo¿e byæ w normalnym slocie
+            // niezale¿nie od typu statku.
             return true;
         }
 
-        if (slotIndex == NormalSlot1 ||
-            slotIndex == NormalSlot2 ||
-            slotIndex == NormalSlot3)
+        // =====================================================
+        // CLASS / EXCLUSIVE SLOT 3
+        // =====================================================
+
+        if (module.exclusive)
         {
-            return !module.exclusive;
+            // Exclusive modu³ musi pasowaæ
+            // typem do statku.
+            if (!sameType)
+            {
+                Debug.LogWarning(
+                    $"[MODULE INSTALL ERROR] Exclusive modu³ typu " +
+                    $"{module.type} nie pasuje do statku typu " +
+                    $"{ship.shipType}.");
+
+                return false;
+            }
+
+            // Exclusive + zgodny typ:
+            // mo¿na zamontowaæ, bêdzie dzia³a³ x1.
+            return true;
         }
 
-        return false;
+        /*
+         * Zwyk³y modu³ w slocie klasowym:
+         *
+         * zgodny typ  -> dozwolony, póŸniej x2
+         * inny typ    -> dozwolony, póŸniej x1
+         *
+         * Mno¿nika NIE liczymy tutaj.
+         */
+        return true;
     }
 
     private bool IsModuleTypeCompatibleWithShip(

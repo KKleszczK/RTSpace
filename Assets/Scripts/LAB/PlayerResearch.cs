@@ -17,6 +17,8 @@ public class PlayerResearch : NetworkBehaviour
 
     private HashSet<string> completedResearches = new();
 
+    private BaseSafeZone safeZone;
+
     private void Awake()
     {
         resources = GetComponent<PlayerResources>();
@@ -28,7 +30,38 @@ public class PlayerResearch : NetworkBehaviour
         if (!IsServer)
             return;
 
+        if (safeZone == null)
+            FindSafeZone();
+
         ProcessQueue();
+    }
+
+    private void FindSafeZone()
+    {
+        BaseSafeZone[] safeZones =
+            FindObjectsByType<BaseSafeZone>(
+                FindObjectsSortMode.None);
+
+        foreach (BaseSafeZone zone in safeZones)
+        {
+            if (!zone.IsSpawned)
+                continue;
+
+            UnitOwner baseOwner =
+                zone.GetComponent<UnitOwner>();
+
+            if (baseOwner == null)
+                continue;
+
+            if (baseOwner.ownerId.Value !=
+                OwnerClientId)
+            {
+                continue;
+            }
+
+            safeZone = zone;
+            return;
+        }
     }
 
     public void RequestResearch(ResearchDefinition research)
@@ -114,14 +147,29 @@ public class PlayerResearch : NetworkBehaviour
         if (currentResearch == null)
             return;
 
-        currentProgress.Value += Time.deltaTime / currentResearch.baseResearchTime;
+        float researchTime =
+            Mathf.Max(
+                0.01f,
+                currentResearch.baseResearchTime);
+
+        float labSpeedMultiplier =
+            safeZone != null
+                ? safeZone.GetLabSpeedMultiplier()
+                : 1f;
+
+        currentProgress.Value +=
+            Time.deltaTime *
+            labSpeedMultiplier /
+            researchTime;
 
         if (currentProgress.Value >= 1f)
         {
             CompleteResearch(currentResearch);
 
             researchQueue.RemoveAt(0);
+
             currentResearch = null;
+            currentResearchId.Value = default;
             currentProgress.Value = 0f;
         }
     }

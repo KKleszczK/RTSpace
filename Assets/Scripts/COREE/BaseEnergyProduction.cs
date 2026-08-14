@@ -7,6 +7,7 @@ public class BaseEnergyProduction : NetworkBehaviour
 
     private UnitOwner owner;
     private BaseEnergyGenerator[] generators;
+    private BaseSafeZone safeZone;
 
     private float timer;
 
@@ -14,6 +15,7 @@ public class BaseEnergyProduction : NetworkBehaviour
     {
         owner = GetComponent<UnitOwner>();
         generators = GetComponents<BaseEnergyGenerator>();
+        safeZone = GetComponent<BaseSafeZone>();
     }
 
     private void Update()
@@ -37,13 +39,31 @@ public class BaseEnergyProduction : NetworkBehaviour
 
         foreach (BaseEnergyGenerator generator in generators)
         {
-            flatBonus += generator.GetFlatBonus();
-            percentBonus += generator.GetPercentBonus();
+            if (generator == null)
+                continue;
+
+            flatBonus +=
+                generator.GetFlatBonus();
+
+            percentBonus +=
+                generator.GetPercentBonus();
         }
 
-        float result = (baseEnergyPerSecond + flatBonus) * (1f + percentBonus);
+        float generatorResult =
+            (baseEnergyPerSecond + flatBonus) *
+            (1f + percentBonus);
 
-        return Mathf.RoundToInt(result);
+        float safeZoneMultiplier =
+            safeZone != null
+                ? safeZone.GetEnergyProductionMultiplier()
+                : 1f;
+
+        float finalResult =
+            generatorResult *
+            safeZoneMultiplier;
+
+        return Mathf.RoundToInt(
+            finalResult);
     }
 
     private void AddEnergyToOwner()

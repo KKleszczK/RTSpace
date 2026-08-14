@@ -339,6 +339,16 @@ public class AsteroidSocket : NetworkBehaviour
             return;
         }
 
+        int slotIndex =
+            slot == ShipModuleSlot.Class
+            ? 3
+            : (int)slot;
+
+        float moduleMultiplier =
+            ship.GetModuleEffectMultiplier(
+                slotIndex,
+                module);
+
         MiningOperation operation = new()
         {
             Slot = slot,

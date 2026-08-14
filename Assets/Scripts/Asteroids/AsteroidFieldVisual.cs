@@ -156,39 +156,382 @@ public class AsteroidFieldVisual : MonoBehaviour
             mesh.Clear();
         }
 
-        Vector3[] vertices = new Vector3[points.Count];
-
-        for (int i = 0; i < points.Count; i++)
+        if (points == null ||
+            points.Count < 3)
         {
-            if (points[i] == null)
+            meshFilter.sharedMesh = null;
+            return;
+        }
+
+        List<Vector3> vertices =
+            new List<Vector3>();
+
+        foreach (Transform point in points)
+        {
+            if (point == null)
                 continue;
 
-            vertices[i] =
-                transform.InverseTransformPoint(points[i].position);
+            Vector3 localPosition =
+                transform.InverseTransformPoint(
+                    point.position);
 
-            vertices[i].y = visualHeight - 0.01f;
+            localPosition.y =
+                visualHeight - 0.01f;
+
+            vertices.Add(
+                localPosition);
         }
 
-        // Prosty polygon wypuk³y:
-        // punkt 0 ³¹czony jest z kolejnymi punktami.
-        int[] triangles =
-            new int[(points.Count - 2) * 3];
-
-        int triangleIndex = 0;
-
-        for (int i = 1; i < points.Count - 1; i++)
+        if (vertices.Count < 3)
         {
-            triangles[triangleIndex++] = 0;
-            triangles[triangleIndex++] = i;
-            triangles[triangleIndex++] = i + 1;
+            meshFilter.sharedMesh = null;
+            return;
         }
 
-        mesh.vertices = vertices;
-        mesh.triangles = triangles;
+        List<int> triangles =
+            TriangulatePolygon(vertices);
+
+        if (triangles.Count < 3)
+        {
+            Debug.LogWarning(
+                "[ASTEROID FIELD] Nie uda³o siê triangulowaæ polygonu.",
+                this);
+
+            meshFilter.sharedMesh = null;
+            return;
+        }
+
+        mesh.SetVertices(vertices);
+        mesh.SetTriangles(
+            triangles,
+            0);
+
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
 
-        meshFilter.sharedMesh = mesh;
-        fillMaterial.color = fillColor;
+        meshFilter.sharedMesh =
+            mesh;
+
+        fillMaterial.color =
+            fillColor;
+    }
+
+    private List<int> TriangulatePolygon(
+    List<Vector3> vertices)
+    {
+        List<int> result =
+            new List<int>();
+
+        if (vertices == null ||
+            vertices.Count < 3)
+        {
+            return result;
+        }
+
+        List<int> indices =
+            new List<int>();
+
+        for (int i = 0;
+             i < vertices.Count;
+             i++)
+        {
+            indices.Add(i);
+        }
+
+        bool isClockwise =
+            SignedArea(vertices) < 0f;
+
+        int safetyCounter = 0;
+
+        while (indices.Count > 3)
+        {
+            bool earFound = false;
+
+            for (int i = 0;
+                 i < indices.Count;
+                 i++)
+            {
+                int previousIndex =
+                    indices[
+                        (i - 1 + indices.Count) %
+                        indices.Count];
+
+                int currentIndex =
+                    indices[i];
+
+                int nextIndex =
+                    indices[
+                        (i + 1) %
+                        indices.Count];
+
+                Vector3 a =
+                    vertices[previousIndex];
+
+                Vector3 b =
+                    vertices[currentIndex];
+
+                Vector3 c =
+                    vertices[nextIndex];
+
+                if (!IsConvex(
+                        a,
+                        b,
+                        c,
+                        isClockwise))
+                {
+                    continue;
+                }
+
+                bool containsPoint = false;
+
+                for (int j = 0;
+                     j < indices.Count;
+                     j++)
+                {
+                    int testIndex =
+                        indices[j];
+
+                    if (testIndex == previousIndex ||
+                        testIndex == currentIndex ||
+                        testIndex == nextIndex)
+                    {
+                        continue;
+                    }
+
+                    Vector3 p =
+                        vertices[testIndex];
+
+                    if (PointInsideTriangleXZ(
+                            p,
+                            a,
+                            b,
+                            c))
+                    {
+                        containsPoint = true;
+                        break;
+                    }
+                }
+
+                if (containsPoint)
+                    continue;
+
+                if (isClockwise)
+                {
+                    result.Add(previousIndex);
+                    result.Add(currentIndex);
+                    result.Add(nextIndex);
+                }
+                else
+                {
+                    result.Add(nextIndex);
+                    result.Add(currentIndex);
+                    result.Add(previousIndex);
+                }
+
+                indices.RemoveAt(i);
+
+                earFound = true;
+                break;
+            }
+
+            safetyCounter++;
+
+            if (!earFound ||
+                safetyCounter > 10000)
+            {
+                Debug.LogWarning(
+                    "[ASTEROID FIELD] Ear clipping zatrzyma³ siê. " +
+                    "SprawdŸ kolejnoœæ punktów i czy krawêdzie polygonu siê nie przecinaj¹.",
+                    this);
+
+                return new List<int>();
+            }
+        }
+
+        if (indices.Count == 3)
+        {
+            if (isClockwise)
+            {
+                result.Add(indices[0]);
+                result.Add(indices[1]);
+                result.Add(indices[2]);
+            }
+            else
+            {
+                result.Add(indices[2]);
+                result.Add(indices[1]);
+                result.Add(indices[0]);
+            }
+        }
+
+        return result;
+    }
+
+    private float SignedArea(
+    List<Vector3> vertices)
+    {
+        float area = 0f;
+
+        for (int i = 0;
+             i < vertices.Count;
+             i++)
+        {
+            Vector3 a =
+                vertices[i];
+
+            Vector3 b =
+                vertices[
+                    (i + 1) %
+                    vertices.Count];
+
+            area +=
+                a.x * b.z -
+                b.x * a.z;
+        }
+
+        return area * 0.5f;
+    }
+
+    private bool IsConvex(
+        Vector3 a,
+        Vector3 b,
+        Vector3 c,
+        bool isClockwise)
+    {
+        float cross =
+            (b.x - a.x) *
+            (c.z - b.z)
+            -
+            (b.z - a.z) *
+            (c.x - b.x);
+
+        return isClockwise
+            ? cross < 0f
+            : cross > 0f;
+    }
+
+    private bool PointInsideTriangleXZ(
+        Vector3 p,
+        Vector3 a,
+        Vector3 b,
+        Vector3 c)
+    {
+        float d1 =
+            SignXZ(
+                p,
+                a,
+                b);
+
+        float d2 =
+            SignXZ(
+                p,
+                b,
+                c);
+
+        float d3 =
+            SignXZ(
+                p,
+                c,
+                a);
+
+        bool hasNegative =
+            d1 < 0f ||
+            d2 < 0f ||
+            d3 < 0f;
+
+        bool hasPositive =
+            d1 > 0f ||
+            d2 > 0f ||
+            d3 > 0f;
+
+        return !(hasNegative &&
+                 hasPositive);
+    }
+
+    private float SignXZ(
+        Vector3 p1,
+        Vector3 p2,
+        Vector3 p3)
+    {
+        return
+            (p1.x - p3.x) *
+            (p2.z - p3.z)
+            -
+            (p2.x - p3.x) *
+            (p1.z - p3.z);
+    }
+
+    public bool ContainsWorldPosition(
+    Vector3 worldPosition)
+    {
+        if (points == null ||
+            points.Count < 3)
+        {
+            return false;
+        }
+
+        /*
+         * Point-in-polygon.
+         *
+         * Pracujemy na p³aszczyŸnie XZ,
+         * poniewa¿ Y nie ma znaczenia
+         * dla pola asteroid.
+         */
+
+        float x = worldPosition.x;
+        float z = worldPosition.z;
+
+        bool inside = false;
+
+        int j =
+            points.Count - 1;
+
+        for (int i = 0;
+             i < points.Count;
+             i++)
+        {
+            Transform pointI =
+                points[i];
+
+            Transform pointJ =
+                points[j];
+
+            if (pointI == null ||
+                pointJ == null)
+            {
+                j = i;
+                continue;
+            }
+
+            float xi =
+                pointI.position.x;
+
+            float zi =
+                pointI.position.z;
+
+            float xj =
+                pointJ.position.x;
+
+            float zj =
+                pointJ.position.z;
+
+            bool intersects =
+                ((zi > z) != (zj > z)) &&
+                (x <
+                    (xj - xi) *
+                    (z - zi) /
+                    (zj - zi) +
+                    xi);
+
+            if (intersects)
+            {
+                inside =
+                    !inside;
+            }
+
+            j = i;
+        }
+
+        return inside;
     }
 }
