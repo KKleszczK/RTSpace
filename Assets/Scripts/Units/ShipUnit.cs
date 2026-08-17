@@ -1276,5 +1276,35 @@ public class ShipUnit : NetworkBehaviour
                 hp.Value + healAmount);
     }
 
+    public void RestoreShield(
+    float amount)
+    {
+        if (!IsServer)
+            return;
+
+        if (isDead.Value)
+            return;
+
+        // Statek nie posiada tarczy.
+        if (MaxShield <= 0)
+            return;
+
+        if (amount <= 0f)
+            return;
+
+        int shieldAmount =
+            Mathf.Max(
+                0,
+                Mathf.RoundToInt(amount));
+
+        if (shieldAmount <= 0)
+            return;
+
+        shield.Value =
+            Mathf.Min(
+                MaxShield,
+                shield.Value + shieldAmount);
+    }
+
 }
 
