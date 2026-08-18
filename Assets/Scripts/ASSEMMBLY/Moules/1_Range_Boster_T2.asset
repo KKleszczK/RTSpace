@@ -10,19 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0024218ce9266a34694abb828c810cd2, type: 3}
-  m_Name: 3_Shield_Braker_T3
+  m_Name: 1_Range_Boster_T2
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
-  moduleId: shield_braker_t3
-  displayName: Shield Battery
-  description: Creates kinetic explosion, disrupting energy waves in shield modules.
-    Deals 200 damage to all shields in range. Reloas takes 120s. Also boosts holder
-    movement speed by flat +1. You can possess 2 such modules at a time
-  icon: {fileID: 21300000, guid: 60bbb35fb8c931d4da081a7a72a3fe6b, type: 3}
-  tier: 3
-  type: 1
-  metalCost: 600
-  energyCost: 800
-  craftTime: 30
+  moduleId: range_booster_t2
+  displayName: Range Booster
+  description: Extends range of all offensive modules by 10%. You can possess 2 such
+    modules at a time
+  icon: {fileID: 21300000, guid: defddbbe3eea02c458d134f944403e8c, type: 3}
+  tier: 2
+  type: 2
+  metalCost: 400
+  energyCost: 100
+  craftTime: 20
   maxCopiesPerPlayer: 2
   exclusive: 1
   unlockedByDefault: 1
@@ -30,14 +29,14 @@ MonoBehaviour:
   shieldPercent: 0
   hpFlat: 0
   hpPercent: 0
-  moveSpeedFlat: 1
+  moveSpeedFlat: 0
   moveSpeedPercent: 0
   allWeaponsDamagePercent: 0
   allWeaponsAttackSpeedPercent: 0
-  haveAura: 0
-  auraRange: 3
+  haveAura: 1
+  auraRange: 4
   auraEffect: 0
-  auraEffectValue: 0
+  auraEffectValue: 10
   haveBaseBooster: 0
   baseBoosterEffect: 0
   baseBoosterValue: 0
@@ -46,10 +45,10 @@ MonoBehaviour:
   miningAmountAtFullDensity: 40
   densityRemovedPerHit: 0.04
   miningModuleDurability: 0
-  haveAbility: 1
-  abilityType: 1
-  abilityRange: 3
-  abilityCooldown: 60
+  haveAbility: 0
+  abilityType: 0
+  abilityRange: 8
+  abilityCooldown: 20
   isWeapon: 0
   weaponType: 2
   weaponRange: 4
@@ -57,7 +56,7 @@ MonoBehaviour:
   weaponHullDamage: 0
   weaponShieldDamage: 200
   projectileSpeed: 10
-  weaponHasMagazine: 0
+  weaponHasMagazine: 1
   magazineCapacity: 1
   magazineCanReload: 1
   magazineReloadTime: 120

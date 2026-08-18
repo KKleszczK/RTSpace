@@ -10,32 +10,31 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0024218ce9266a34694abb828c810cd2, type: 3}
-  m_Name: 3_Shield_Braker_T3
+  m_Name: 3_Machine_Gun_T2
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
-  moduleId: shield_braker_t3
-  displayName: Shield Battery
-  description: Creates kinetic explosion, disrupting energy waves in shield modules.
-    Deals 200 damage to all shields in range. Reloas takes 120s. Also boosts holder
-    movement speed by flat +1. You can possess 2 such modules at a time
-  icon: {fileID: 21300000, guid: 60bbb35fb8c931d4da081a7a72a3fe6b, type: 3}
-  tier: 3
+  moduleId: machine_gun_t2
+  displayName: Machine Gun
+  description: Reliable jack of all trades turret. Deals 50/s with lightning speed
+    bolts. Shoots fast and makes captain happy.
+  icon: {fileID: 21300000, guid: 811e857f556f0a741b005b868afff404, type: 3}
+  tier: 2
   type: 1
-  metalCost: 600
-  energyCost: 800
-  craftTime: 30
-  maxCopiesPerPlayer: 2
-  exclusive: 1
+  metalCost: 100
+  energyCost: 60
+  craftTime: 10
+  maxCopiesPerPlayer: 99
+  exclusive: 0
   unlockedByDefault: 1
   shieldFlat: 0
   shieldPercent: 0
   hpFlat: 0
   hpPercent: 0
-  moveSpeedFlat: 1
+  moveSpeedFlat: 0
   moveSpeedPercent: 0
   allWeaponsDamagePercent: 0
   allWeaponsAttackSpeedPercent: 0
   haveAura: 0
-  auraRange: 3
+  auraRange: 5
   auraEffect: 0
   auraEffectValue: 0
   haveBaseBooster: 0
@@ -46,33 +45,33 @@ MonoBehaviour:
   miningAmountAtFullDensity: 40
   densityRemovedPerHit: 0.04
   miningModuleDurability: 0
-  haveAbility: 1
-  abilityType: 1
-  abilityRange: 3
-  abilityCooldown: 60
-  isWeapon: 0
-  weaponType: 2
-  weaponRange: 4
-  weaponAttackInterval: 1
-  weaponHullDamage: 0
-  weaponShieldDamage: 200
-  projectileSpeed: 10
+  haveAbility: 0
+  abilityType: 0
+  abilityRange: 8
+  abilityCooldown: 20
+  isWeapon: 1
+  weaponType: 1
+  weaponRange: 3
+  weaponAttackInterval: 0.2
+  weaponHullDamage: 10
+  weaponShieldDamage: 10
+  projectileSpeed: 20
   weaponHasMagazine: 0
-  magazineCapacity: 1
+  magazineCapacity: 10
   magazineCanReload: 1
-  magazineReloadTime: 120
+  magazineReloadTime: 3
   weaponHasAoe: 0
   weaponAoeRange: 2
   weaponAoeDamageMultiplier: 1
   weaponIsStacking: 0
-  weaponMaxStacks: 5
-  stackMovementSpeedPercent: 0
-  stackDamagePercent: 0
-  stackRangePercent: 0
+  weaponMaxStacks: 20
+  stackMovementSpeedPercent: -0.5
+  stackDamagePercent: 5
+  stackRangePercent: 1
   stackAttackSpeedPercent: 0
   stackInactiveTimeToReset: 3
   canChainAttack: 0
-  maxTargets: 99
+  maxTargets: 0
   chainJumpsRange: 1
   chainDamageMultiplier: 0.5
   canSlowOnHit: 0
