@@ -23,6 +23,7 @@ MonoBehaviour:
   craftTime: 1
   maxCopiesPerPlayer: 1
   exclusive: 0
+  unlockedByDefault: 1
   shieldFlat: 0
   shieldPercent: 0
   hpFlat: 0
@@ -43,8 +44,12 @@ MonoBehaviour:
   miningAmountAtFullDensity: 1
   densityRemovedPerHit: 1
   miningModuleDurability: 0
+  haveAbility: 0
+  abilityType: 1
+  abilityRange: 8
+  abilityCooldown: 20
   isWeapon: 1
-  weaponType: 0
+  weaponType: 1
   weaponRange: 5
   weaponAttackInterval: 1
   weaponHullDamage: 10
@@ -64,10 +69,10 @@ MonoBehaviour:
   stackRangePercent: 0
   stackAttackSpeedPercent: 0
   stackInactiveTimeToReset: 3
-  maxTargets: 0
-  canChainAttack: 0
-  chainJumpsRange: 1
-  chainDamageMultiplier: 0.5
+  canChainAttack: 1
+  maxTargets: 3
+  chainJumpsRange: 10
+  chainDamageMultiplier: 1
   canSlowOnHit: 0
   slowPercent: 20
   slowDuration: 2

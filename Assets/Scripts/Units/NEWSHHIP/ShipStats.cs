@@ -40,7 +40,7 @@ public class ShipStats : MonoBehaviour
             return;
         }
 
-        MaxHp = Mathf.RoundToInt(baseMaxHp * (1f + upgrades.shipHpBonusPercent.Value));
+        //MaxHp = Mathf.RoundToInt(baseMaxHp * (1f + upgrades.shipHpBonusPercent.Value));
 
         // Na razie pozosta³e statystyki bez bonusów
         MoveSpeed = baseMoveSpeed;

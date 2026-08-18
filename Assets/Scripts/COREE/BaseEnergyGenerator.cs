@@ -15,6 +15,8 @@ public class BaseEnergyGenerator : NetworkBehaviour
     [SerializeField] private int maxFlatBonus = 0;
     [SerializeField] private float maxPercentBonus = 0.5f;
 
+    private PlayerUpgradeStats upgrades;
+
     public NetworkVariable<float> chargeProgress = new(0f);
 
     private BaseCore core;
@@ -22,6 +24,7 @@ public class BaseEnergyGenerator : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         core = GetComponent<BaseCore>();
+        FindPlayerUpgrades();
     }
 
     private void Update()
@@ -29,13 +32,18 @@ public class BaseEnergyGenerator : NetworkBehaviour
         if (!IsServer)
             return;
 
+        if (upgrades == null)
+            FindPlayerUpgrades();
+
         if (!IsUnlocked())
             return;
 
         if (chargeProgress.Value >= 1f)
             return;
 
-        chargeProgress.Value += Time.deltaTime / fullChargeTime;
+        chargeProgress.Value +=
+            Time.deltaTime /
+            fullChargeTime;
 
         if (chargeProgress.Value > 1f)
             chargeProgress.Value = 1f;
@@ -64,19 +72,78 @@ public class BaseEnergyGenerator : NetworkBehaviour
 
     public float GetPercentBonus()
     {
-        if (!IsUnlocked() || givesFlatBonus)
+        if (!IsUnlocked() ||
+            givesFlatBonus)
+        {
             return 0f;
+        }
 
-        float segmentProgress = GetActiveSegments() / 5f;
-        return maxPercentBonus * segmentProgress;
+        float segmentProgress =
+            GetActiveSegments() / 5f;
+
+        float baseBonus =
+            maxPercentBonus *
+            segmentProgress;
+
+        float researchMultiplier =
+            upgrades != null
+                ? upgrades.GetGeneratorBoostMultiplier(
+                    generatorIndex)
+                : 1f;
+
+        return baseBonus *
+               researchMultiplier;
     }
 
     public int GetFlatBonus()
     {
-        if (!IsUnlocked() || !givesFlatBonus)
+        if (!IsUnlocked() ||
+            !givesFlatBonus)
+        {
             return 0;
+        }
 
-        float segmentProgress = GetActiveSegments() / 5f;
-        return Mathf.RoundToInt(maxFlatBonus * segmentProgress);
+        float segmentProgress =
+            GetActiveSegments() / 5f;
+
+        float baseBonus =
+            maxFlatBonus *
+            segmentProgress;
+
+        float researchMultiplier =
+            upgrades != null
+                ? upgrades.GetGeneratorBoostMultiplier(
+                    generatorIndex)
+                : 1f;
+
+        return Mathf.RoundToInt(
+            baseBonus *
+            researchMultiplier);
+    }
+
+    private void FindPlayerUpgrades()
+    {
+        UnitOwner owner =
+            GetComponent<UnitOwner>();
+
+        if (owner == null)
+            return;
+
+        PlayerUpgradeStats[] all =
+            FindObjectsByType<PlayerUpgradeStats>(
+                FindObjectsSortMode.None);
+
+        foreach (PlayerUpgradeStats stats in all)
+        {
+            if (!stats.IsSpawned)
+                continue;
+
+            if (stats.OwnerClientId ==
+                owner.ownerId.Value)
+            {
+                upgrades = stats;
+                return;
+            }
+        }
     }
 }

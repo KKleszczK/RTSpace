@@ -12,11 +12,14 @@ public class ModuleDefinitionEditor : Editor
     private SerializedProperty tier;
     private SerializedProperty type;
 
+    private SerializedProperty unlockedByDefault;
+
     private SerializedProperty metalCost;
     private SerializedProperty energyCost;
     private SerializedProperty craftTime;
     private SerializedProperty maxCopiesPerPlayer;
     private SerializedProperty exclusive;
+
 
     private SerializedProperty shieldFlat;
     private SerializedProperty shieldPercent;
@@ -41,6 +44,11 @@ public class ModuleDefinitionEditor : Editor
     private SerializedProperty miningAmountAtFullDensity;
     private SerializedProperty densityRemovedPerHit;
     private SerializedProperty miningModuleDurability;
+
+    private SerializedProperty haveAbility;
+    private SerializedProperty abilityType;
+    private SerializedProperty abilityRange;
+    private SerializedProperty abilityCooldown;
 
     private SerializedProperty isWeapon;
     private SerializedProperty weaponType;
@@ -67,8 +75,9 @@ public class ModuleDefinitionEditor : Editor
     private SerializedProperty stackAttackSpeedPercent;
     private SerializedProperty stackInactiveTimeToReset;
 
-    private SerializedProperty maxTargets;
+    
     private SerializedProperty canChainAttack;
+    private SerializedProperty maxTargets;
     private SerializedProperty chainJumpsRange;
     private SerializedProperty chainDamageMultiplier;
 
@@ -87,6 +96,8 @@ public class ModuleDefinitionEditor : Editor
         icon = serializedObject.FindProperty("icon");
         tier = serializedObject.FindProperty("tier");
         type = serializedObject.FindProperty("type");
+
+        unlockedByDefault = serializedObject.FindProperty("unlockedByDefault");
 
         metalCost = serializedObject.FindProperty("metalCost");
         energyCost = serializedObject.FindProperty("energyCost");
@@ -118,6 +129,11 @@ public class ModuleDefinitionEditor : Editor
         densityRemovedPerHit = serializedObject.FindProperty("densityRemovedPerHit");
         miningModuleDurability = serializedObject.FindProperty("miningModuleDurability");
 
+        haveAbility = serializedObject.FindProperty("haveAbility");
+        abilityType = serializedObject.FindProperty("abilityType");
+        abilityRange = serializedObject.FindProperty("abilityRange");
+        abilityCooldown = serializedObject.FindProperty("abilityCooldown");
+
         isWeapon = serializedObject.FindProperty("isWeapon");
         weaponType = serializedObject.FindProperty("weaponType");
         weaponRange = serializedObject.FindProperty("weaponRange");
@@ -143,8 +159,9 @@ public class ModuleDefinitionEditor : Editor
         stackAttackSpeedPercent = serializedObject.FindProperty("stackAttackSpeedPercent");
         stackInactiveTimeToReset = serializedObject.FindProperty("stackInactiveTimeToReset");
 
-        maxTargets = serializedObject.FindProperty("maxTargets");
+        ;
         canChainAttack = serializedObject.FindProperty("canChainAttack");
+        maxTargets = serializedObject.FindProperty("maxTargets");
         chainJumpsRange = serializedObject.FindProperty("chainJumpsRange");
         chainDamageMultiplier = serializedObject.FindProperty("chainDamageMultiplier");
 
@@ -167,13 +184,18 @@ public class ModuleDefinitionEditor : Editor
         EditorGUILayout.PropertyField(icon);
         EditorGUILayout.PropertyField(tier);
         EditorGUILayout.PropertyField(type);
+        
 
         DrawHeader("CRAFTING");
         EditorGUILayout.PropertyField(metalCost);
         EditorGUILayout.PropertyField(energyCost);
         EditorGUILayout.PropertyField(craftTime);
+        
+
+        DrawHeader("RESTRICTIONS");
         EditorGUILayout.PropertyField(maxCopiesPerPlayer);
-        EditorGUILayout.PropertyField(exclusive); 
+        EditorGUILayout.PropertyField(exclusive);
+        EditorGUILayout.PropertyField(unlockedByDefault);
 
         DrawHeader("STAT MODIFIERS");
         EditorGUILayout.PropertyField(shieldFlat);
@@ -218,6 +240,18 @@ public class ModuleDefinitionEditor : Editor
             EditorGUILayout.PropertyField(miningAmountAtFullDensity);
             EditorGUILayout.PropertyField(densityRemovedPerHit);
             EditorGUILayout.PropertyField(miningModuleDurability);
+            EditorGUI.indentLevel--;
+        }
+
+        DrawHeader("ABILITY");
+        EditorGUILayout.PropertyField(haveAbility);
+
+        if (haveAbility.boolValue)
+        {
+            EditorGUI.indentLevel++;
+            EditorGUILayout.PropertyField(abilityType);
+            EditorGUILayout.PropertyField(abilityRange);
+            EditorGUILayout.PropertyField(abilityCooldown);
             EditorGUI.indentLevel--;
         }
 
@@ -283,12 +317,13 @@ public class ModuleDefinitionEditor : Editor
 
             EditorGUILayout.Space();
 
-            EditorGUILayout.PropertyField(maxTargets);
+            
             EditorGUILayout.PropertyField(canChainAttack);
 
             if (canChainAttack.boolValue)
             {
                 EditorGUI.indentLevel++;
+                EditorGUILayout.PropertyField(maxTargets);
                 EditorGUILayout.PropertyField(chainJumpsRange);
                 EditorGUILayout.PropertyField(chainDamageMultiplier);
                 EditorGUI.indentLevel--;

@@ -24,7 +24,7 @@ public class ShipWeaponManager : NetworkBehaviour
         public int CurrentStacks;
         public float LastAttackTime;
 
-        public ShipUnit CurrentTarget;
+        public IDamageable CurrentTarget;
     }
 
     [Header("Laser Visuals")]
@@ -41,7 +41,7 @@ public class ShipWeaponManager : NetworkBehaviour
     private sealed class LaserVisual
     {
         public LineRenderer Line;
-        public ShipUnit Target;
+        public IDamageable Target;
     }
 
     private readonly Dictionary<int, LaserVisual> laserVisuals = new();
@@ -488,7 +488,7 @@ public class ShipWeaponManager : NetworkBehaviour
     }
 
     private int ExecuteAuraAttack(
-        WeaponRuntime weapon)
+    WeaponRuntime weapon)
     {
         if (ship == null ||
             weapon == null ||
@@ -508,44 +508,52 @@ public class ShipWeaponManager : NetworkBehaviour
             GetFinalShieldDamage(
                 weapon);
 
+        int targetsHit = 0;
+
+        // =========================================================
+        // SHIPS
+        // =========================================================
+
         ShipUnit[] allShips =
             FindObjectsByType<ShipUnit>(
                 FindObjectsSortMode.None);
 
-        int targetsHit = 0;
-
         foreach (ShipUnit target in allShips)
         {
-            if (!IsValidAuraTarget(
+            if (TryExecuteAuraOnTarget(
+                    weapon,
                     target,
-                    range))
+                    range,
+                    hullDamage,
+                    shieldDamage))
             {
-                continue;
+                targetsHit++;
             }
-
-            target.TakeWeaponDamage(
-                hullDamage,
-                shieldDamage);
-
-            ApplySlowOnHit(
-                weapon,
-                target);
-
-            ApplyAoeDamage(
-                weapon,
-                target,
-                target.transform.position);
-
-            ApplyChainAttack(
-                weapon,
-                target,
-                hullDamage,
-                shieldDamage);
-
-            targetsHit++;
         }
 
-        if (showDebugLogs && targetsHit > 0)
+        // =========================================================
+        // BASES
+        // =========================================================
+
+        BaseUnit[] allBases =
+            FindObjectsByType<BaseUnit>(
+                FindObjectsSortMode.None);
+
+        foreach (BaseUnit target in allBases)
+        {
+            if (TryExecuteAuraOnTarget(
+                    weapon,
+                    target,
+                    range,
+                    hullDamage,
+                    shieldDamage))
+            {
+                targetsHit++;
+            }
+        }
+
+        if (showDebugLogs &&
+            targetsHit > 0)
         {
             Debug.Log(
                 $"[AURA] {ship.name} wykona³ atak. " +
@@ -558,34 +566,51 @@ public class ShipWeaponManager : NetworkBehaviour
 
         return targetsHit;
     }
-    private bool IsValidAuraTarget(
-    ShipUnit target,
-    float range)
+
+    private bool TryExecuteAuraOnTarget(
+    WeaponRuntime weapon,
+    IDamageable target,
+    float range,
+    float hullDamage,
+    float shieldDamage)
     {
-        if (target == null)
-            return false;
-
-        if (target == ship)
-            return false;
-
-        if (!target.IsSpawned)
-            return false;
-
-        if (target.isDead.Value)
-            return false;
-
-        if (target.ownerId.Value ==
-            ship.ownerId.Value)
+        if (!IsValidAuraTarget(
+                target,
+                range))
         {
             return false;
         }
 
-        float distance =
-            Vector3.Distance(
-                ship.transform.position,
-                target.transform.position);
+        target.TakeWeaponDamage(
+            hullDamage,
+            shieldDamage);
 
-        return distance <= range;
+        ApplySlowOnHit(
+            weapon,
+            target);
+
+        ApplyAoeDamage(
+            weapon,
+            target,
+            target.DamageTransform.position);
+
+        ApplyChainAttack(
+            weapon,
+            target,
+            hullDamage,
+            shieldDamage);
+
+        return true;
+    }
+
+
+    private bool IsValidAuraTarget(
+    IDamageable target,
+    float range)
+    {
+        return IsValidDamageTarget(
+            target,
+            range);
     }
     // =========================================================
     // LASER
@@ -608,7 +633,7 @@ public class ShipWeaponManager : NetworkBehaviour
     }
 
     private void UpdateLaserWeapon(
-        WeaponRuntime weapon)
+    WeaponRuntime weapon)
     {
         float range =
             GetFinalWeaponRange(weapon);
@@ -625,12 +650,18 @@ public class ShipWeaponManager : NetworkBehaviour
 
             if (weapon.CurrentTarget != null)
             {
-                StartLaserClientRpc(
-                    weapon.SlotIndex,
-                    new NetworkObjectReference(
-                        weapon.CurrentTarget.NetworkObject));
+                NetworkBehaviour targetBehaviour =
+                    weapon.CurrentTarget as NetworkBehaviour;
 
-                // Pierwsze obra¿enia dopiero po pe³nym interwale.
+                if (targetBehaviour != null &&
+                    targetBehaviour.NetworkObject != null)
+                {
+                    StartLaserClientRpc(
+                        weapon.SlotIndex,
+                        new NetworkObjectReference(
+                            targetBehaviour.NetworkObject));
+                }
+
                 weapon.NextAttackTime =
                     Time.time +
                     GetFinalAttackInterval(
@@ -662,83 +693,100 @@ public class ShipWeaponManager : NetworkBehaviour
         }
     }
 
-    private ShipUnit FindNearestEnemy(
-        float range)
+    private IDamageable FindNearestEnemy(
+    float range)
     {
-        ShipUnit[] allShips =
-            FindObjectsByType<ShipUnit>(
-                FindObjectsSortMode.None);
-
-        ShipUnit nearest = null;
+        IDamageable nearest = null;
 
         float nearestDistanceSquared =
             range * range;
 
+        // =====================================================
+        // SHIPS
+        // =====================================================
+
+        ShipUnit[] allShips =
+            FindObjectsByType<ShipUnit>(
+                FindObjectsSortMode.None);
+
         foreach (ShipUnit target in allShips)
         {
-            if (!IsValidLaserTarget(
-                    target,
-                    range))
-            {
-                continue;
-            }
+            TrySelectNearestTarget(
+                target,
+                range,
+                ref nearest,
+                ref nearestDistanceSquared);
+        }
 
-            float distanceSquared =
-                (target.transform.position -
-                 ship.transform.position)
-                .sqrMagnitude;
+        // =====================================================
+        // BASES
+        // =====================================================
 
-            if (distanceSquared >=
-                nearestDistanceSquared)
-            {
-                continue;
-            }
+        BaseUnit[] allBases =
+            FindObjectsByType<BaseUnit>(
+                FindObjectsSortMode.None);
 
-            nearestDistanceSquared =
-                distanceSquared;
-
-            nearest = target;
+        foreach (BaseUnit target in allBases)
+        {
+            TrySelectNearestTarget(
+                target,
+                range,
+                ref nearest,
+                ref nearestDistanceSquared);
         }
 
         return nearest;
     }
 
-    private bool IsValidLaserTarget(
-        ShipUnit target,
-        float range)
+    private void TrySelectNearestTarget(
+    IDamageable target,
+    float range,
+    ref IDamageable nearest,
+    ref float nearestDistanceSquared)
     {
-        if (target == null)
-            return false;
-
-        if (target == ship)
-            return false;
-
-        if (!target.IsSpawned)
-            return false;
-
-        if (target.isDead.Value)
-            return false;
-
-        if (target.ownerId.Value ==
-            ship.ownerId.Value)
+        if (!IsValidLaserTarget(
+                target,
+                range))
         {
-            return false;
+            return;
         }
 
         float distanceSquared =
-            (target.transform.position -
-             ship.transform.position)
-            .sqrMagnitude;
+            (
+                target.DamageTransform.position -
+                ship.transform.position
+            ).sqrMagnitude;
 
-        return distanceSquared <=
-               range * range;
+        if (distanceSquared >=
+            nearestDistanceSquared)
+        {
+            return;
+        }
+
+        nearestDistanceSquared =
+            distanceSquared;
+
+        nearest =
+            target;
+    }
+
+    private bool IsValidLaserTarget(
+    IDamageable target,
+    float range)
+    {
+        return IsValidDamageTarget(
+            target,
+            range);
     }
 
     private void ExecuteLaserDamage(
-        WeaponRuntime weapon,
-        ShipUnit target)
+    WeaponRuntime weapon,
+    IDamageable target)
     {
         if (target == null)
+            return;
+
+        if (target.IsDead)
             return;
 
         float hullDamage =
@@ -760,7 +808,7 @@ public class ShipWeaponManager : NetworkBehaviour
         ApplyAoeDamage(
             weapon,
             target,
-            target.transform.position);
+            target.DamageTransform.position);
 
         ApplyChainAttack(
             weapon,
@@ -771,7 +819,8 @@ public class ShipWeaponManager : NetworkBehaviour
         if (showDebugLogs)
         {
             Debug.Log(
-                $"[LASER] {ship.name} atakuje {target.name}. " +
+                $"[LASER] {ship.name} atakuje " +
+                $"{target.DamageTransform.name}. " +
                 $"Hull={hullDamage:0.##}, " +
                 $"Shield={shieldDamage:0.##}",
                 ship);
@@ -801,8 +850,8 @@ public class ShipWeaponManager : NetworkBehaviour
             return;
         }
 
-        ShipUnit target =
-            targetObject.GetComponent<ShipUnit>();
+        IDamageable target =
+            targetObject.GetComponent<IDamageable>();
 
         if (target == null)
             return;
@@ -871,8 +920,8 @@ public class ShipWeaponManager : NetworkBehaviour
                 visual == null ||
                 visual.Line == null ||
                 visual.Target == null ||
-                !visual.Target.IsSpawned ||
-                visual.Target.isDead.Value;
+                visual.Target.IsDead ||
+                visual.Target.DamageTransform == null;
 
             if (invalid)
             {
@@ -921,7 +970,7 @@ public class ShipWeaponManager : NetworkBehaviour
 
         visual.Line.SetPosition(
             1,
-            visual.Target.transform.position);
+            visual.Target.DamageTransform.position);
     }
 
     private void StopLaserVisualLocal(
@@ -1029,8 +1078,8 @@ public class ShipWeaponManager : NetworkBehaviour
     }
 
     private void FireProjectile(
-        WeaponRuntime weapon,
-        ShipUnit target)
+    WeaponRuntime weapon,
+    IDamageable target)
     {
         if (projectilePrefab == null)
         {
@@ -1041,12 +1090,14 @@ public class ShipWeaponManager : NetworkBehaviour
             return;
         }
 
-        if (target == null ||
-            !target.IsSpawned ||
-            target.isDead.Value)
-        {
+        if (target == null)
             return;
-        }
+
+        if (target.IsDead)
+            return;
+
+        if (target.DamageTransform == null)
+            return;
 
         Vector3 spawnPosition =
             transform.position;
@@ -1064,7 +1115,7 @@ public class ShipWeaponManager : NetworkBehaviour
         }
 
         Vector3 direction =
-            target.transform.position -
+            target.DamageTransform.position -
             spawnPosition;
 
         Quaternion spawnRotation =
@@ -1082,14 +1133,16 @@ public class ShipWeaponManager : NetworkBehaviour
 
         HomingProjectile projectile =
             projectileObject.GetComponent<HomingProjectile>();
- 
+
         if (projectile == null)
         {
             Debug.LogError(
                 "[PROJECTILE] Prefab nie posiada HomingProjectile.",
                 projectileObject);
 
-            Destroy(projectileObject.gameObject);
+            Destroy(
+                projectileObject.gameObject);
+
             return;
         }
 
@@ -1113,7 +1166,6 @@ public class ShipWeaponManager : NetworkBehaviour
             weapon.Definition.weaponAoeRange,
             weapon.Definition.weaponAoeDamageMultiplier,
 
-
             weapon.Definition.canChainAttack,
             weapon.Definition.maxTargets,
             weapon.Definition.chainJumpsRange,
@@ -1121,14 +1173,20 @@ public class ShipWeaponManager : NetworkBehaviour
 
         projectileObject.Spawn();
 
-        ApplySelfDamageAfterAttack(weapon);
-        ConsumeAmmoAfterAttack(weapon);
-        AddStackAfterAttack(weapon);
+        ApplySelfDamageAfterAttack(
+            weapon);
+
+        ConsumeAmmoAfterAttack(
+            weapon);
+
+        AddStackAfterAttack(
+            weapon);
 
         if (showDebugLogs)
         {
             Debug.Log(
-                $"[PROJECTILE] {ship.name} wystrzeli³ w {target.name}. " +
+                $"[PROJECTILE] {ship.name} wystrzeli³ w " +
+                $"{target.DamageTransform.name}. " +
                 $"Speed={weapon.Definition.projectileSpeed:0.##}",
                 ship);
         }
@@ -1189,7 +1247,7 @@ public class ShipWeaponManager : NetworkBehaviour
 
     private void ApplySlowOnHit(
     WeaponRuntime weapon,
-    ShipUnit target)
+    IDamageable target)
     {
         if (!IsServer)
             return;
@@ -1207,9 +1265,16 @@ public class ShipWeaponManager : NetworkBehaviour
         if (!definition.canSlowOnHit)
             return;
 
-        target.ApplySlow(
-            definition.slowPercent,
-            definition.slowDuration);
+        /*
+         * Slow dzia³a wy³¹cznie na statki.
+         * Bazy s¹ nieruchome.
+         */
+        if (target is ShipUnit shipTarget)
+        {
+            shipTarget.ApplySlow(
+                definition.slowPercent,
+                definition.slowDuration);
+        }
     }
 
     // =========================================================
@@ -1547,9 +1612,9 @@ public class ShipWeaponManager : NetworkBehaviour
     // =========================================================
 
     private void ApplyAoeDamage(
-        WeaponRuntime weapon,
-        ShipUnit primaryTarget,
-        Vector3 hitPosition)
+    WeaponRuntime weapon,
+    IDamageable primaryTarget,
+    Vector3 hitPosition)
     {
         if (!IsServer)
             return;
@@ -1590,9 +1655,9 @@ public class ShipWeaponManager : NetworkBehaviour
         float rangeSquared =
             aoeRange * aoeRange;
 
-        ShowAoeImpactClientRpc(
-            hitPosition,
-            aoeRange);
+        // =========================================================
+        // SHIPS
+        // =========================================================
 
         ShipUnit[] allShips =
             FindObjectsByType<ShipUnit>(
@@ -1600,50 +1665,34 @@ public class ShipWeaponManager : NetworkBehaviour
 
         foreach (ShipUnit target in allShips)
         {
-            if (target == null)
-                continue;
-
-            // G³ówny cel ju¿ dosta³ normalny hit.
-            if (target == primaryTarget)
-                continue;
-
-            if (target == ship)
-                continue;
-
-            if (!target.IsSpawned)
-                continue;
-
-            if (target.isDead.Value)
-                continue;
-
-            // Friendly fire wy³¹czony.
-            if (target.ownerId.Value ==
-                ship.ownerId.Value)
-            {
-                continue;
-            }
-
-            Vector3 offset =
-                target.transform.position -
-                hitPosition;
-
-            if (offset.sqrMagnitude >
-                rangeSquared)
-            {
-                continue;
-            }
-
-            target.TakeWeaponDamage(
+            ApplyAoeToTarget(
+                weapon,
+                primaryTarget,
+                target,
+                hitPosition,
+                rangeSquared,
                 aoeHullDamage,
                 aoeShieldDamage);
+        }
 
-            /*
-             * Je¿eli uznajemy AOE za hit tej samej broni,
-             * slow równie¿ mo¿e byæ aplikowany.
-             */
-            ApplySlowOnHit(
+        // =========================================================
+        // BASES
+        // =========================================================
+
+        BaseUnit[] allBases =
+            FindObjectsByType<BaseUnit>(
+                FindObjectsSortMode.None);
+
+        foreach (BaseUnit target in allBases)
+        {
+            ApplyAoeToTarget(
                 weapon,
-                target);
+                primaryTarget,
+                target,
+                hitPosition,
+                rangeSquared,
+                aoeHullDamage,
+                aoeShieldDamage);
         }
     }
 
@@ -1676,7 +1725,7 @@ public class ShipWeaponManager : NetworkBehaviour
 
     private void ApplyChainAttack(
     WeaponRuntime weapon,
-    ShipUnit primaryTarget,
+    IDamageable primaryTarget,
     float initialHullDamage,
     float initialShieldDamage)
     {
@@ -1717,12 +1766,12 @@ public class ShipWeaponManager : NetworkBehaviour
                 0f,
                 definition.chainDamageMultiplier);
 
-        List<ShipUnit> alreadyHit =
-            new List<ShipUnit>();
+        List<IDamageable> alreadyHit =
+     new List<IDamageable>();
 
         alreadyHit.Add(primaryTarget);
 
-        ShipUnit currentTarget =
+        IDamageable currentTarget =
             primaryTarget;
 
         float currentHullDamage =
@@ -1735,7 +1784,7 @@ public class ShipWeaponManager : NetworkBehaviour
              jump < maxJumps;
              jump++)
         {
-            ShipUnit nextTarget =
+            IDamageable nextTarget =
                 FindNearestChainTarget(
                     currentTarget,
                     jumpRange,
@@ -1752,8 +1801,8 @@ public class ShipWeaponManager : NetworkBehaviour
 
             // Wizualizacja przeskoku chaina.
             ShowChainVisualClientRpc(
-                currentTarget.transform.position,
-                nextTarget.transform.position);
+                currentTarget.DamageTransform.position,
+                nextTarget.DamageTransform.position);
 
             // Damage kolejnego celu.
             nextTarget.TakeWeaponDamage(
@@ -1772,67 +1821,105 @@ public class ShipWeaponManager : NetworkBehaviour
         }
     }
 
-    private ShipUnit FindNearestChainTarget(
-    ShipUnit fromTarget,
+    private IDamageable FindNearestChainTarget(
+    IDamageable fromTarget,
     float range,
-    List<ShipUnit> alreadyHit)
+    List<IDamageable> alreadyHit)
     {
         if (fromTarget == null)
             return null;
+
+        if (fromTarget.DamageTransform == null)
+            return null;
+
+        IDamageable nearest = null;
+
+        float nearestDistanceSquared =
+            range * range;
+
+        // =========================================================
+        // SHIPS
+        // =========================================================
 
         ShipUnit[] allShips =
             FindObjectsByType<ShipUnit>(
                 FindObjectsSortMode.None);
 
-        ShipUnit nearest = null;
-
-        float nearestDistanceSquared =
-            range * range;
-
         foreach (ShipUnit target in allShips)
         {
-            if (target == null)
-                continue;
+            TrySelectChainTarget(
+                fromTarget,
+                target,
+                alreadyHit,
+                ref nearest,
+                ref nearestDistanceSquared);
+        }
 
-            if (target == ship)
-                continue;
+        // =========================================================
+        // BASES
+        // =========================================================
 
-            if (!target.IsSpawned)
-                continue;
+        BaseUnit[] allBases =
+            FindObjectsByType<BaseUnit>(
+                FindObjectsSortMode.None);
 
-            if (target.isDead.Value)
-                continue;
-
-            if (target.ownerId.Value ==
-                ship.ownerId.Value)
-            {
-                continue;
-            }
-
-            if (alreadyHit.Contains(target))
-                continue;
-
-            Vector3 offset =
-                target.transform.position -
-                fromTarget.transform.position;
-
-            float distanceSquared =
-                offset.sqrMagnitude;
-
-            if (distanceSquared >
-                nearestDistanceSquared)
-            {
-                continue;
-            }
-
-            nearestDistanceSquared =
-                distanceSquared;
-
-            nearest =
-                target;
+        foreach (BaseUnit target in allBases)
+        {
+            TrySelectChainTarget(
+                fromTarget,
+                target,
+                alreadyHit,
+                ref nearest,
+                ref nearestDistanceSquared);
         }
 
         return nearest;
+    }
+
+    private void TrySelectChainTarget(
+    IDamageable fromTarget,
+    IDamageable target,
+    List<IDamageable> alreadyHit,
+    ref IDamageable nearest,
+    ref float nearestDistanceSquared)
+    {
+        if (target == null)
+            return;
+
+        if (target.IsDead)
+            return;
+
+        if (target.DamageTransform == null)
+            return;
+
+        // Friendly fire wy³¹czony.
+        if (target.OwnerId ==
+            ship.ownerId.Value)
+        {
+            return;
+        }
+
+        if (alreadyHit.Contains(target))
+            return;
+
+        Vector3 offset =
+            target.DamageTransform.position -
+            fromTarget.DamageTransform.position;
+
+        float distanceSquared =
+            offset.sqrMagnitude;
+
+        if (distanceSquared >
+            nearestDistanceSquared)
+        {
+            return;
+        }
+
+        nearestDistanceSquared =
+            distanceSquared;
+
+        nearest =
+            target;
     }
 
 
@@ -1856,5 +1943,98 @@ public class ShipWeaponManager : NetworkBehaviour
         Destroy(
             line.gameObject,
             chainVisualLifetime);
+    }
+
+    private bool IsValidDamageTarget(
+    IDamageable target,
+    float range)
+    {
+        if (target == null)
+            return false;
+
+        /*
+         * IDamageable jest interfejsem.
+         * Sprawdzamy wiêc równie¿ w³aœciwy
+         * NetworkBehaviour Unity.
+         */
+        NetworkBehaviour targetBehaviour =
+            target as NetworkBehaviour;
+
+        if (targetBehaviour == null)
+            return false;
+
+        if (!targetBehaviour.IsSpawned)
+            return false;
+
+        if (target.IsDead)
+            return false;
+
+        if (target.DamageTransform == null)
+            return false;
+
+        if (target.OwnerId ==
+            ship.ownerId.Value)
+        {
+            return false;
+        }
+
+        float distanceSquared =
+            (
+                target.DamageTransform.position -
+                ship.transform.position
+            ).sqrMagnitude;
+
+        return distanceSquared <=
+               range * range;
+    }
+
+    private void ApplyAoeToTarget(
+    WeaponRuntime weapon,
+    IDamageable primaryTarget,
+    IDamageable target,
+    Vector3 hitPosition,
+    float rangeSquared,
+    float hullDamage,
+    float shieldDamage)
+    {
+        if (target == null)
+            return;
+
+        if (ReferenceEquals(
+                target,
+                primaryTarget))
+        {
+            return;
+        }
+
+        if (target.IsDead)
+            return;
+
+        if (target.OwnerId ==
+            ship.ownerId.Value)
+        {
+            return;
+        }
+
+        if (target.DamageTransform == null)
+            return;
+
+        Vector3 offset =
+            target.DamageTransform.position -
+            hitPosition;
+
+        if (offset.sqrMagnitude >
+            rangeSquared)
+        {
+            return;
+        }
+
+        target.TakeWeaponDamage(
+            hullDamage,
+            shieldDamage);
+
+        ApplySlowOnHit(
+            weapon,
+            target);
     }
 }

@@ -35,6 +35,12 @@ public enum WeaponType
     Aura
 }
 
+public enum ModuleAbilityType
+{
+    None,
+    ShieldDisruptor
+}
+
 [CreateAssetMenu(fileName = "New Module", menuName = "RTS/Module")]
 public class ModuleDefinition : ScriptableObject
 {
@@ -49,6 +55,7 @@ public class ModuleDefinition : ScriptableObject
     public ModuleTier tier;
     public ModuleType type;
 
+
     [Header("Crafting")]
     public int metalCost = 100;
     public int energyCost = 50;
@@ -58,8 +65,8 @@ public class ModuleDefinition : ScriptableObject
     [Min(1)]
     public int maxCopiesPerPlayer = 1;
 
-    [Header("Restrictions")]
     public bool exclusive;
+    public bool unlockedByDefault = true;
 
     [Header("Stat Modifiers")]
     public float shieldFlat;
@@ -91,6 +98,13 @@ public class ModuleDefinition : ScriptableObject
     public float miningAmountAtFullDensity = 1f;
     public float densityRemovedPerHit = 1f;
     public int miningModuleDurability;
+
+    [Header("Ability")]
+    public bool haveAbility;
+    public ModuleAbilityType abilityType;
+
+    public float abilityRange = 8f;
+    public float abilityCooldown = 20f;
 
     [Header("Weapon")]
     public bool isWeapon;
@@ -125,9 +139,9 @@ public class ModuleDefinition : ScriptableObject
     public float stackInactiveTimeToReset = 3f;
 
     [Header("Multiple Targets")]
-    public int maxTargets = 0;
-
+    
     public bool canChainAttack;
+    public int maxTargets = 0;
     public float chainJumpsRange = 1.0f;
     public float chainDamageMultiplier = 0.5f;
 

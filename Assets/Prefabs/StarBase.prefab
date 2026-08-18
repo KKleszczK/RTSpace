@@ -128,6 +128,7 @@ GameObject:
   - component: {fileID: 1223153920510780178}
   - component: {fileID: 5889295483679330958}
   - component: {fileID: 8233572580603474525}
+  - component: {fileID: 2847361218970221703}
   m_Layer: 0
   m_Name: StarBase
   m_TagString: Untagged
@@ -515,6 +516,55 @@ MonoBehaviour:
   owner: {fileID: 4312695449792705201}
   safeZoneRange: 2
   updateInterval: 2
+  hullRepairEnabled: 1
+  hullRepairInterval: 1
+  hullRepairAmount: 5
+  hullRepairMetalCost: 2
+  shieldRechargeEnabled: 1
+  shieldRechargeInterval: 1
+  shieldRechargeAmount: 5
+  shieldRechargeEnergyCost: 2
+--- !u!114 &2847361218970221703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 847718449950176969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7e411ff2daca4e41a52c8ab6df5cf16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BaseUnit
+  ShowTopMostFoldoutHeaderGroup: 1
+  owner: {fileID: 4312695449792705201}
+  baseMaxHp: 1000
+  baseMaxShield: 500
+  maxHp:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 1000
+  hp:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 1000
+  maxShield:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+  shield:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+  isDead:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
 --- !u!1 &1463253415074095854
 GameObject:
   m_ObjectHideFlags: 0

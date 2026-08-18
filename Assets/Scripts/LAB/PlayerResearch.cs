@@ -14,15 +14,31 @@ public class PlayerResearch : NetworkBehaviour
 
     private PlayerResources resources;
     private ResearchDefinition currentResearch;
+    private PlayerUpgradeStats upgrades;
 
-    private HashSet<string> completedResearches = new();
+
+    public NetworkList<FixedString64Bytes> completedResearches;
+    public NetworkList<FixedString64Bytes> unlockedModules;
+
 
     private BaseSafeZone safeZone;
 
     private void Awake()
     {
-        resources = GetComponent<PlayerResources>();
-        researchQueue = new NetworkList<FixedString64Bytes>();
+        resources =
+            GetComponent<PlayerResources>();
+
+        upgrades =
+            GetComponent<PlayerUpgradeStats>();
+
+        researchQueue =
+            new NetworkList<FixedString64Bytes>();
+
+        completedResearches =
+            new NetworkList<FixedString64Bytes>();
+
+        unlockedModules =
+            new NetworkList<FixedString64Bytes>();
     }
 
     private void Update()
@@ -73,14 +89,48 @@ public class PlayerResearch : NetworkBehaviour
     }
 
     [ServerRpc]
-    private void RequestResearchServerRpc(string researchId)
+    private void RequestResearchServerRpc(
+    string researchId)
     {
-        ResearchDefinition research = ResearchDatabase.Instance.GetResearch(researchId);
+        ResearchDefinition research =
+            ResearchDatabase.Instance.GetResearch(
+                researchId);
 
         if (research == null)
             return;
 
-        if (completedResearches.Contains(researchId))
+        // =====================================================
+        // CORE TIER CHECK
+        // =====================================================
+
+        BaseCore core =
+            FindOwnedCore();
+
+        if (core == null)
+        {
+            Debug.LogWarning(
+                "[RESEARCH BLOCKED] Nie znaleziono Core gracza.");
+
+            return;
+        }
+
+        if ((int)research.tier >
+            core.tier.Value)
+        {
+            Debug.LogWarning(
+                $"[RESEARCH BLOCKED] " +
+                $"{research.researchId} wymaga Core Tier " +
+                $"{(int)research.tier}, " +
+                $"a gracz ma Tier {core.tier.Value}.");
+
+            return;
+        }
+
+        // =====================================================
+        // NORMAL VALIDATION
+        // =====================================================
+
+        if (IsCompleted(researchId))
             return;
 
         if (IsInQueue(researchId))
@@ -89,12 +139,20 @@ public class PlayerResearch : NetworkBehaviour
         if (researchQueue.Count >= MaxQueue)
             return;
 
-        if (!resources.CanAfford(research.baseMetalCost, research.baseEnergyCost))
+        if (!resources.CanAfford(
+                research.baseMetalCost,
+                research.baseEnergyCost))
+        {
             return;
+        }
 
-        resources.Spend(research.baseMetalCost, research.baseEnergyCost);
+        resources.Spend(
+            research.baseMetalCost,
+            research.baseEnergyCost);
 
-        researchQueue.Add(new FixedString64Bytes(researchId));
+        researchQueue.Add(
+            new FixedString64Bytes(
+                researchId));
     }
 
     public void RequestRemoveFromQueue(int index)
@@ -153,13 +211,22 @@ public class PlayerResearch : NetworkBehaviour
                 currentResearch.baseResearchTime);
 
         float labSpeedMultiplier =
-            safeZone != null
-                ? safeZone.GetLabSpeedMultiplier()
+    safeZone != null
+        ? safeZone.GetLabSpeedMultiplier()
+        : 1f;
+
+        float researchSpeedMultiplier =
+            upgrades != null
+                ? upgrades.GetResearchSpeedMultiplier()
                 : 1f;
+
+        float finalResearchSpeed =
+            labSpeedMultiplier *
+            researchSpeedMultiplier;
 
         currentProgress.Value +=
             Time.deltaTime *
-            labSpeedMultiplier /
+            finalResearchSpeed /
             researchTime;
 
         if (currentProgress.Value >= 1f)
@@ -174,18 +241,52 @@ public class PlayerResearch : NetworkBehaviour
         }
     }
 
-    private void CompleteResearch(ResearchDefinition research)
+    private void CompleteResearch(
+    ResearchDefinition research)
     {
-        completedResearches.Add(research.researchId);
+        if (research == null)
+            return;
 
-        
+        // =========================================================
+        // COMPLETED RESEARCH
+        // =========================================================
 
-        PlayerUpgradeStats upgrades = GetComponent<PlayerUpgradeStats>();
+        if (!IsCompleted(
+                research.researchId))
+        {
+            completedResearches.Add(
+                new FixedString64Bytes(
+                    research.researchId));
+        }
+
+        // =========================================================
+        // APPLY RESEARCH EFFECT
+        // =========================================================
+
+        PlayerUpgradeStats upgrades =
+            GetComponent<PlayerUpgradeStats>();
 
         if (upgrades != null)
-            upgrades.ApplyResearch(research);
+        {
+            upgrades.ApplyResearch(
+                research);
+        }
 
-        Debug.Log("Research complete: " + research.displayName);
+        // =========================================================
+        // MODULE UNLOCK
+        // =========================================================
+
+        if (research.effectType ==
+            ResearchEffectType.UnlockModules)
+        {
+            UnlockModulesFromResearch(
+                research);
+        }
+
+        Debug.Log(
+            $"[RESEARCH COMPLETE] " +
+            $"{research.displayName} | " +
+            $"ID={research.researchId}");
     }
 
     private bool IsInQueue(string researchId)
@@ -199,8 +300,149 @@ public class PlayerResearch : NetworkBehaviour
         return false;
     }
 
-    public bool IsCompleted(string researchId)
+    public bool IsCompleted(
+    string researchId)
     {
-        return completedResearches.Contains(researchId);
+        for (int i = 0;
+             i < completedResearches.Count;
+             i++)
+        {
+            if (completedResearches[i].ToString() ==
+                researchId)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    private void UnlockModulesFromResearch(
+    ResearchDefinition research)
+    {
+        if (!IsServer)
+            return;
+
+        if (research == null)
+            return;
+
+        if (research.unlockedModuleIds == null)
+            return;
+
+        foreach (string moduleId in
+                 research.unlockedModuleIds)
+        {
+            if (string.IsNullOrWhiteSpace(
+                    moduleId))
+            {
+                continue;
+            }
+
+            // Opcjonalne zabezpieczenie:
+            // sprawdzamy, czy taki modu³
+            // rzeczywiœcie istnieje.
+            if (ModuleDatabase.Instance == null)
+                continue;
+
+            ModuleDefinition module =
+                ModuleDatabase.Instance.GetModule(
+                    moduleId);
+
+            if (module == null)
+            {
+                Debug.LogWarning(
+                    $"[RESEARCH UNLOCK] " +
+                    $"Nie znaleziono modu³u " +
+                    $"o ID={moduleId}");
+
+                continue;
+            }
+
+            if (IsModuleInUnlockedList(
+                    moduleId))
+            {
+                continue;
+            }
+
+            unlockedModules.Add(
+                new FixedString64Bytes(
+                    moduleId));
+
+            Debug.Log(
+                $"[RESEARCH UNLOCK] " +
+                $"Odblokowano modu³: " +
+                $"{moduleId}");
+        }
+    }
+    private bool IsModuleInUnlockedList(
+    string moduleId)
+    {
+        for (int i = 0;
+             i < unlockedModules.Count;
+             i++)
+        {
+            if (unlockedModules[i].ToString() ==
+                moduleId)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public bool IsModuleUnlocked(
+    ModuleDefinition module)
+    {
+        if (module == null)
+            return false;
+
+        // Modu³ dostêpny od pocz¹tku gry.
+        if (module.unlockedByDefault)
+            return true;
+
+        // Modu³ wymagaj¹cy researchu.
+        return IsModuleInUnlockedList(
+            module.moduleId);
+    }
+
+    public bool IsModuleUnlocked(
+    string moduleId)
+    {
+        if (string.IsNullOrWhiteSpace(moduleId))
+            return false;
+
+        if (ModuleDatabase.Instance == null)
+            return false;
+
+        ModuleDefinition module =
+            ModuleDatabase.Instance.GetModule(
+                moduleId);
+
+        return IsModuleUnlocked(
+            module);
+    }
+
+    private BaseCore FindOwnedCore()
+    {
+        BaseCore[] cores =
+            FindObjectsByType<BaseCore>(
+                FindObjectsSortMode.None);
+
+        foreach (BaseCore core in cores)
+        {
+            if (core == null)
+                continue;
+
+            if (!core.IsSpawned)
+                continue;
+
+            if (core.OwnerClientId ==
+                OwnerClientId)
+            {
+                return core;
+            }
+        }
+
+        return null;
     }
 }

@@ -17,7 +17,7 @@ public class HomingProjectile : NetworkBehaviour
 
     [SerializeField] private float chainVisualLifetime = 0.2f;
 
-    private ShipUnit target;
+    private IDamageable target;
 
     private float hullDamage;
     private float shieldDamage;
@@ -49,7 +49,7 @@ public class HomingProjectile : NetworkBehaviour
     private bool hasHit;
 
     public void Initialize(
-    ShipUnit newTarget,
+    IDamageable newTarget,
     float newHullDamage,
     float newShieldDamage,
     float newMoveSpeed,
@@ -183,10 +183,10 @@ public class HomingProjectile : NetworkBehaviour
         if (target == null)
             return false;
 
-        if (!target.IsSpawned)
+        if (target.IsDead)
             return false;
 
-        if (target.isDead.Value)
+        if (target.DamageTransform == null)
             return false;
 
         return true;
@@ -195,7 +195,7 @@ public class HomingProjectile : NetworkBehaviour
     private void UpdateMovement()
     {
         Vector3 targetPosition =
-            target.transform.position;
+            target.DamageTransform.position;
 
         Vector3 direction =
             targetPosition -
@@ -265,14 +265,13 @@ public class HomingProjectile : NetworkBehaviour
         }
 
         /*
-         * Zapamiêtujemy miejsce trafienia,
-         * poniewa¿ g³ówny cel mo¿e umrzeæ
-         * od tego hita.
+         * Zapamiêtujemy pozycjê przed zadaniem damage.
+         * Cel mo¿e umrzeæ od tego trafienia.
          */
         Vector3 hitPosition =
-            target.transform.position;
+            target.DamageTransform.position;
 
-        ShipUnit primaryTarget =
+        IDamageable primaryTarget =
             target;
 
         // =====================================================
@@ -283,12 +282,13 @@ public class HomingProjectile : NetworkBehaviour
             hullDamage,
             shieldDamage);
 
+        // Slow dzia³a tylko na statki.
         if (canSlowOnHit &&
-            primaryTarget != null &&
-            primaryTarget.IsSpawned &&
-            !primaryTarget.isDead.Value)
+            primaryTarget is ShipUnit shipTarget &&
+            shipTarget.IsSpawned &&
+            !shipTarget.isDead.Value)
         {
-            primaryTarget.ApplySlow(
+            shipTarget.ApplySlow(
                 slowPercent,
                 slowDuration);
         }
@@ -329,8 +329,8 @@ public class HomingProjectile : NetworkBehaviour
     // =========================================================
 
     private void ApplyAoeDamage(
-        ShipUnit primaryTarget,
-        Vector3 hitPosition)
+    IDamageable primaryTarget,
+    Vector3 hitPosition)
     {
         if (!IsServer)
             return;
@@ -347,59 +347,104 @@ public class HomingProjectile : NetworkBehaviour
             aoeRange *
             aoeRange;
 
+        // =====================================================
+        // SHIPS
+        // =====================================================
+
         ShipUnit[] allShips =
             FindObjectsByType<ShipUnit>(
                 FindObjectsSortMode.None);
 
-        foreach (ShipUnit aoeTarget in allShips)
+        foreach (ShipUnit shipTarget in allShips)
         {
-            if (aoeTarget == null)
-                continue;
-
-            /*
-             * G³ówny cel dosta³ ju¿
-             * normalny hit.
-             */
-            if (aoeTarget == primaryTarget)
-                continue;
-
-            if (!aoeTarget.IsSpawned)
-                continue;
-
-            if (aoeTarget.isDead.Value)
-                continue;
-
-            /*
-             * Bez friendly fire.
-             */
-            if (aoeTarget.ownerId.Value ==
-                attackerOwnerId)
-            {
-                continue;
-            }
-
-            Vector3 offset =
-                aoeTarget.transform.position -
-                hitPosition;
-
-            if (offset.sqrMagnitude >
-                rangeSquared)
-            {
-                continue;
-            }
-
-            aoeTarget.TakeWeaponDamage(
+            ApplyAoeToTarget(
+                primaryTarget,
+                shipTarget,
+                hitPosition,
+                rangeSquared,
                 aoeHullDamage,
                 aoeShieldDamage);
+        }
 
-            if (canSlowOnHit &&
-                aoeTarget.IsSpawned &&
-                !aoeTarget.isDead.Value)
-            {
-                aoeTarget.ApplySlow(
-                    slowPercent,
-                    slowDuration);
-            }
+        // =====================================================
+        // BASES
+        // =====================================================
+
+        BaseUnit[] allBases =
+            FindObjectsByType<BaseUnit>(
+                FindObjectsSortMode.None);
+
+        foreach (BaseUnit baseTarget in allBases)
+        {
+            ApplyAoeToTarget(
+                primaryTarget,
+                baseTarget,
+                hitPosition,
+                rangeSquared,
+                aoeHullDamage,
+                aoeShieldDamage);
+        }
+    }
+
+    private void ApplyAoeToTarget(
+    IDamageable primaryTarget,
+    IDamageable aoeTarget,
+    Vector3 hitPosition,
+    float rangeSquared,
+    float aoeHullDamage,
+    float aoeShieldDamage)
+    {
+        if (aoeTarget == null)
+            return;
+
+        // G³ówny cel dosta³ ju¿ normalny hit.
+        if (ReferenceEquals(
+                aoeTarget,
+                primaryTarget))
+        {
+            return;
+        }
+
+        if (aoeTarget.IsDead)
+            return;
+
+        if (aoeTarget.DamageTransform == null)
+            return;
+
+        // Bez friendly fire.
+        if (aoeTarget.OwnerId ==
+            attackerOwnerId)
+        {
+            return;
+        }
+
+        Vector3 offset =
+            aoeTarget.DamageTransform.position -
+            hitPosition;
+
+        if (offset.sqrMagnitude >
+            rangeSquared)
+        {
+            return;
+        }
+
+        aoeTarget.TakeWeaponDamage(
+            aoeHullDamage,
+            aoeShieldDamage);
+
+        /*
+         * Slow jest w³aœciwoœci¹ statku,
+         * wiêc baza dostaje damage,
+         * ale nie dostaje Slow.
+         */
+        if (canSlowOnHit &&
+            aoeTarget is ShipUnit shipTarget &&
+            shipTarget.IsSpawned &&
+            !shipTarget.isDead.Value)
+        {
+            shipTarget.ApplySlow(
+                slowPercent,
+                slowDuration);
         }
     }
 
@@ -445,7 +490,7 @@ public class HomingProjectile : NetworkBehaviour
     // =========================================================
 
     private void ApplyChainAttack(
-        ShipUnit primaryTarget)
+    IDamageable primaryTarget)
     {
         if (!IsServer)
             return;
@@ -453,13 +498,13 @@ public class HomingProjectile : NetworkBehaviour
         if (primaryTarget == null)
             return;
 
-        List<ShipUnit> alreadyHit =
-            new List<ShipUnit>();
+        List<IDamageable> alreadyHit =
+            new List<IDamageable>();
 
         alreadyHit.Add(
             primaryTarget);
 
-        ShipUnit currentTarget =
+        IDamageable currentTarget =
             primaryTarget;
 
         float currentHullDamage =
@@ -472,7 +517,7 @@ public class HomingProjectile : NetworkBehaviour
              jump < maxTargets;
              jump++)
         {
-            ShipUnit nextTarget =
+            IDamageable nextTarget =
                 FindNearestChainTarget(
                     currentTarget,
                     alreadyHit);
@@ -480,10 +525,6 @@ public class HomingProjectile : NetworkBehaviour
             if (nextTarget == null)
                 break;
 
-            /*
-             * Ka¿dy kolejny skok mno¿y damage
-             * poprzedniego skoku.
-             */
             currentHullDamage *=
                 chainDamageMultiplier;
 
@@ -491,10 +532,10 @@ public class HomingProjectile : NetworkBehaviour
                 chainDamageMultiplier;
 
             Vector3 chainStart =
-                currentTarget.transform.position;
+                currentTarget.DamageTransform.position;
 
             Vector3 chainEnd =
-                nextTarget.transform.position;
+                nextTarget.DamageTransform.position;
 
             ShowChainVisualClientRpc(
                 chainStart,
@@ -504,25 +545,21 @@ public class HomingProjectile : NetworkBehaviour
                 currentHullDamage,
                 currentShieldDamage);
 
-            /*
-             * Chain jest pe³noprawnym trafieniem
-             * dla efektu Slow.
-             */
+            // Slow tylko dla statków.
             if (canSlowOnHit &&
-                nextTarget.IsSpawned &&
-                !nextTarget.isDead.Value)
+                nextTarget is ShipUnit shipTarget &&
+                shipTarget.IsSpawned &&
+                !shipTarget.isDead.Value)
             {
-                nextTarget.ApplySlow(
+                shipTarget.ApplySlow(
                     slowPercent,
                     slowDuration);
             }
 
             /*
-             * UWAGA:
-             * tutaj NIE wywo³ujemy ApplyAoeDamage().
-             * AOE odpala wy³¹cznie g³ówny hit.
+             * AOE nie uruchamia siê ponownie
+             * przy kolejnych skokach Chain.
              */
-
             alreadyHit.Add(
                 nextTarget);
 
@@ -531,66 +568,107 @@ public class HomingProjectile : NetworkBehaviour
         }
     }
 
-    private ShipUnit FindNearestChainTarget(
-    ShipUnit fromTarget,
-    List<ShipUnit> alreadyHit)
+    private IDamageable FindNearestChainTarget(
+    IDamageable fromTarget,
+    List<IDamageable> alreadyHit)
     {
         if (fromTarget == null)
             return null;
 
-        ShipUnit[] allShips =
-            FindObjectsByType<ShipUnit>(
-                FindObjectsSortMode.None);
+        if (fromTarget.DamageTransform == null)
+            return null;
 
-        ShipUnit nearest = null;
+        IDamageable nearest =
+            null;
 
         float nearestDistanceSquared =
             chainJumpsRange *
             chainJumpsRange;
 
+        // =====================================================
+        // SHIPS
+        // =====================================================
+
+        ShipUnit[] allShips =
+            FindObjectsByType<ShipUnit>(
+                FindObjectsSortMode.None);
+
         foreach (ShipUnit candidate in allShips)
         {
-            if (candidate == null)
-                continue;
+            CheckChainCandidate(
+                fromTarget,
+                candidate,
+                alreadyHit,
+                ref nearest,
+                ref nearestDistanceSquared);
+        }
 
-            if (!candidate.IsSpawned)
-                continue;
+        // =====================================================
+        // BASES
+        // =====================================================
 
-            if (candidate.isDead.Value)
-                continue;
+        BaseUnit[] allBases =
+            FindObjectsByType<BaseUnit>(
+                FindObjectsSortMode.None);
 
-            // Bez friendly fire.
-            if (candidate.ownerId.Value ==
-                attackerOwnerId)
-            {
-                continue;
-            }
-
-            // Nie wracamy na ju¿ trafiony statek.
-            if (alreadyHit.Contains(candidate))
-                continue;
-
-            Vector3 offset =
-                candidate.transform.position -
-                fromTarget.transform.position;
-
-            float distanceSquared =
-                offset.sqrMagnitude;
-
-            if (distanceSquared >
-                nearestDistanceSquared)
-            {
-                continue;
-            }
-
-            nearestDistanceSquared =
-                distanceSquared;
-
-            nearest =
-                candidate;
+        foreach (BaseUnit candidate in allBases)
+        {
+            CheckChainCandidate(
+                fromTarget,
+                candidate,
+                alreadyHit,
+                ref nearest,
+                ref nearestDistanceSquared);
         }
 
         return nearest;
+    }
+
+    private void CheckChainCandidate(
+    IDamageable fromTarget,
+    IDamageable candidate,
+    List<IDamageable> alreadyHit,
+    ref IDamageable nearest,
+    ref float nearestDistanceSquared)
+    {
+        if (candidate == null)
+            return;
+
+        if (candidate.IsDead)
+            return;
+
+        if (candidate.DamageTransform == null)
+            return;
+
+        // Bez friendly fire.
+        if (candidate.OwnerId ==
+            attackerOwnerId)
+        {
+            return;
+        }
+
+        // Nie wracamy do ju¿ trafionego celu.
+        if (alreadyHit.Contains(candidate))
+            return;
+
+        Vector3 offset =
+            candidate.DamageTransform.position -
+            fromTarget.DamageTransform.position;
+
+        float distanceSquared =
+            offset.sqrMagnitude;
+
+        if (distanceSquared >
+            nearestDistanceSquared)
+        {
+            return;
+        }
+
+        nearestDistanceSquared =
+            distanceSquared;
+
+        nearest =
+            candidate;
     }
 
     [ClientRpc]

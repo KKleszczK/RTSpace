@@ -14,21 +14,38 @@ public class PlayerModuleCrafting : NetworkBehaviour
     private PlayerResources resources;
     private PlayerModuleInventory inventory;
     private ModuleDefinition currentModule;
+    private PlayerResearch playerResearch;
 
     private BaseSafeZone safeZone;
 
     private void Awake()
     {
-        resources = GetComponent<PlayerResources>();
-        inventory = GetComponent<PlayerModuleInventory>();
+        resources =
+            GetComponent<PlayerResources>();
 
-        moduleQueue = new NetworkList<FixedString64Bytes>();
+        inventory =
+            GetComponent<PlayerModuleInventory>();
+
+        playerResearch =
+            GetComponent<PlayerResearch>();
+
+        moduleQueue =
+            new NetworkList<FixedString64Bytes>();
 
         if (resources == null)
-            Debug.LogError("[CRAFT ERROR] Brak PlayerResources na PlayerPrefab", gameObject);
+            Debug.LogError(
+                "[CRAFT ERROR] Brak PlayerResources na PlayerPrefab",
+                gameObject);
 
         if (inventory == null)
-            Debug.LogError("[CRAFT ERROR] Brak PlayerModuleInventory na PlayerPrefab", gameObject);
+            Debug.LogError(
+                "[CRAFT ERROR] Brak PlayerModuleInventory na PlayerPrefab",
+                gameObject);
+
+        if (playerResearch == null)
+            Debug.LogError(
+                "[CRAFT ERROR] Brak PlayerResearch na PlayerPrefab",
+                gameObject);
     }
 
     private void Update()
@@ -97,6 +114,8 @@ public class PlayerModuleCrafting : NetworkBehaviour
         Debug.Log("[CRAFT 04B] ServerRpc zosta³ wys³any");
     }
 
+
+
     [ServerRpc(RequireOwnership = false)]
     private void RequestCraftServerRpc(string moduleId)
     {
@@ -116,6 +135,52 @@ public class PlayerModuleCrafting : NetworkBehaviour
             Debug.LogError(
                 "[CRAFT ERROR] Nie znaleziono modu³u w ModuleDatabase: " +
                 moduleId);
+
+            return;
+        }
+
+        // =========================================================
+        // RESEARCH UNLOCK
+        // =========================================================
+
+        if (playerResearch == null)
+        {
+            Debug.LogError(
+                "[CRAFT ERROR] playerResearch == null");
+
+            return;
+        }
+
+        if (!playerResearch.IsModuleUnlocked(module))
+        {
+            Debug.LogWarning(
+                $"[CRAFT BLOCKED] Modu³ {module.moduleId} " +
+                $"nie zosta³ jeszcze odblokowany.");
+
+            return;
+        }
+
+        // =========================================================
+        // CORE TIER
+        // =========================================================
+
+        BaseCore core =
+            FindOwnedCore();
+
+        if (core == null)
+        {
+            Debug.LogError(
+                "[CRAFT ERROR] Nie znaleziono Core gracza.");
+
+            return;
+        }
+
+        if ((int)module.tier > core.tier.Value)
+        {
+            Debug.LogWarning(
+                $"[CRAFT BLOCKED] Modu³ {module.moduleId} " +
+                $"wymaga Core Tier {(int)module.tier}, " +
+                $"a gracz ma Tier {core.tier.Value}.");
 
             return;
         }
@@ -157,6 +222,8 @@ public class PlayerModuleCrafting : NetworkBehaviour
             "[CRAFT 07] Dodano modu³ do kolejki. Count=" +
             moduleQueue.Count);
     }
+
+
 
     public void RequestRemoveFromQueue(int index)
     {
@@ -265,5 +332,29 @@ public class PlayerModuleCrafting : NetworkBehaviour
         Debug.Log(
             "[CRAFT 10] Wywo³ano AddModule: " +
             module.moduleId);
+    }
+
+    private BaseCore FindOwnedCore()
+    {
+        BaseCore[] cores =
+            FindObjectsByType<BaseCore>(
+                FindObjectsSortMode.None);
+
+        foreach (BaseCore core in cores)
+        {
+            if (core == null)
+                continue;
+
+            if (!core.IsSpawned)
+                continue;
+
+            if (core.OwnerClientId ==
+                OwnerClientId)
+            {
+                return core;
+            }
+        }
+
+        return null;
     }
 }

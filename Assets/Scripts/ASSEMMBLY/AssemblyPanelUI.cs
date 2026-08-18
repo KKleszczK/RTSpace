@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using TMPro;
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
+
 
 public class AssemblyPanelUI : MonoBehaviour
 {
@@ -9,6 +11,8 @@ public class AssemblyPanelUI : MonoBehaviour
     [SerializeField] private List<ModuleDefinition> modules = new();
     [SerializeField] private Transform content;
     [SerializeField] private ModuleButtonUI buttonPrefab;
+
+    private PlayerResearch playerResearch;
 
     [Header("Info")]
     [SerializeField] private TMP_Text nameText;
@@ -44,6 +48,9 @@ public class AssemblyPanelUI : MonoBehaviour
 
         if (playerCrafting == null)
             FindLocalPlayerCrafting();
+
+        if (playerResearch == null)
+            FindLocalPlayerResearch();
 
         UpdateProgressBar();
         UpdateQueueUI();
@@ -246,10 +253,25 @@ public class AssemblyPanelUI : MonoBehaviour
             if (module == null)
                 continue;
 
-            // Modu³ wy¿szego tieru ni¿ Core
-            // nie jest jeszcze dostêpny.
+            // Core Tier.
             if ((int)module.tier > coreTier)
                 continue;
+
+            // Research unlock.
+            if (playerResearch == null)
+            {
+                /*
+                 * Je¿eli PlayerResearch jeszcze nie zosta³ znaleziony,
+                 * pokazujemy tylko modu³y dostêpne od pocz¹tku.
+                 */
+                if (!module.unlockedByDefault)
+                    continue;
+            }
+            else
+            {
+                if (!playerResearch.IsModuleUnlocked(module))
+                    continue;
+            }
 
             ModuleButtonUI button =
                 Instantiate(
@@ -269,5 +291,42 @@ public class AssemblyPanelUI : MonoBehaviour
             localCore.tier.OnValueChanged -=
                 OnCoreTierChanged;
         }
+
+        if (playerResearch != null)
+        {
+            playerResearch.unlockedModules.OnListChanged -=
+                OnUnlockedModulesChanged;
+        }
+    }
+
+    private void FindLocalPlayerResearch()
+    {
+        if (NetworkManager.Singleton == null)
+            return;
+
+        PlayerResearch[] all =
+            FindObjectsByType<PlayerResearch>(
+                FindObjectsSortMode.None);
+
+        foreach (PlayerResearch research in all)
+        {
+            if (!research.IsOwner)
+                continue;
+
+            playerResearch = research;
+
+            playerResearch.unlockedModules.OnListChanged +=
+                OnUnlockedModulesChanged;
+
+            RefreshModuleButtons();
+
+            return;
+        }
+    }
+
+    private void OnUnlockedModulesChanged(
+    NetworkListEvent<FixedString64Bytes> changeEvent)
+    {
+        RefreshModuleButtons();
     }
 }

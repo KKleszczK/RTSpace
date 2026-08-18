@@ -4,7 +4,7 @@ using Unity.Netcode;
 using UnityEngine;
 using TMPro;
 
-public class ShipUnit : NetworkBehaviour
+public class ShipUnit : NetworkBehaviour, IDamageable
 {
     // =========================================================
     // IDENTITY
@@ -40,9 +40,21 @@ public class ShipUnit : NetworkBehaviour
     [SerializeField] private float baseMoveSpeed = 5f;
 
     [Header("Final Deployed Stats")]
-    [SerializeField] private int maxHp = 0;
-    [SerializeField] private int maxShield = 0;
-    [SerializeField] private float moveSpeed = 0f;
+
+    public NetworkVariable<int> maxHp = new(
+    0,
+    NetworkVariableReadPermission.Everyone,
+    NetworkVariableWritePermission.Server);
+
+    public NetworkVariable<int> maxShield = new(
+        0,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server);
+
+    public NetworkVariable<float> moveSpeed = new(
+        0f,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server);
 
     [Header("Map Bounds")]
     [SerializeField] private float mapSize = 100f;
@@ -71,9 +83,22 @@ public class ShipUnit : NetworkBehaviour
         NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Server);
 
-    public int MaxHp => maxHp;
-    public int MaxShield => maxShield;
-    public float MoveSpeed => moveSpeed;
+    public int MaxHp => maxHp.Value;
+    public int MaxShield => maxShield.Value;
+    public float MoveSpeed => moveSpeed.Value;
+
+    // =========================================================
+    // IDAMAGEABLE
+    // =========================================================
+
+    public ulong OwnerId =>
+        ownerId.Value;
+
+    public bool IsDead =>
+        isDead.Value;
+
+    public Transform DamageTransform =>
+        transform;
 
     public float WeaponsDamageMultiplier =>
         weaponsDamageMultiplier;
@@ -155,6 +180,8 @@ public class ShipUnit : NetworkBehaviour
         ownerId.OnValueChanged += OnOwnerChanged;
         hp.OnValueChanged += OnHpChanged;
         shield.OnValueChanged += OnShieldChanged;
+        maxHp.OnValueChanged += OnMaxHpChanged;
+        maxShield.OnValueChanged += OnMaxShieldChanged;
 
         if (IsServer)
         {
@@ -173,6 +200,9 @@ public class ShipUnit : NetworkBehaviour
         ownerId.OnValueChanged -= OnOwnerChanged;
         hp.OnValueChanged -= OnHpChanged;
         shield.OnValueChanged -= OnShieldChanged;
+
+        maxHp.OnValueChanged -= OnMaxHpChanged;
+        maxShield.OnValueChanged -= OnMaxShieldChanged;
 
         base.OnNetworkDespawn();
     }
@@ -240,10 +270,10 @@ public class ShipUnit : NetworkBehaviour
         }
 
         hp.Value =
-            maxHp;
+            maxHp.Value;
 
         shield.Value =
-            maxShield;
+            maxShield.Value;
 
         isDead.Value =
             false;
@@ -509,16 +539,6 @@ public class ShipUnit : NetworkBehaviour
     // DAMAGE
     // =========================================================
 
-    [ServerRpc(RequireOwnership = false)]
-    public void TakeWeaponDamageServerRpc(
-        float hullDamage,
-        float shieldDamage)
-    {
-        TakeWeaponDamage(
-            hullDamage,
-            shieldDamage);
-    }
-
     public void TakeWeaponDamage(
         float hullDamage,
         float shieldDamage)
@@ -770,9 +790,9 @@ public class ShipUnit : NetworkBehaviour
                 Mathf.Clamp01(
                     1f - currentSlowPercent.Value / 100f);
 
-            return moveSpeed *
-                   stackMultiplier *
-                   slowMultiplier;
+            return moveSpeed.Value *
+                stackMultiplier *
+                slowMultiplier;
         }
     }
 
@@ -871,13 +891,27 @@ public class ShipUnit : NetworkBehaviour
         UpdateShieldBar();
     }
 
+    private void OnMaxHpChanged(
+    int oldValue,
+    int newValue)
+    {
+        UpdateHpBar();
+    }
+
+    private void OnMaxShieldChanged(
+        int oldValue,
+        int newValue)
+    {
+        UpdateShieldBar();
+    }
+
     private void UpdateHpBar()
     {
         if (currentHpBar != null)
         {
             float percent =
-                maxHp > 0
-                    ? (float)hp.Value / maxHp
+                maxHp.Value > 0
+                    ? (float)hp.Value / maxHp.Value
                     : 0f;
 
             percent =
@@ -897,7 +931,7 @@ public class ShipUnit : NetworkBehaviour
         if (hpText != null)
         {
             hpText.text =
-                $"{hp.Value}/{maxHp}";
+                $"{hp.Value}/{maxHp.Value}";
         }
     }
 
@@ -906,8 +940,8 @@ public class ShipUnit : NetworkBehaviour
         if (currentShieldBar != null)
         {
             float percent =
-                maxShield > 0
-                    ? (float)shield.Value / maxShield
+                maxShield.Value > 0
+                    ? (float)shield.Value / maxShield.Value
                     : 0f;
 
             percent =
@@ -927,9 +961,10 @@ public class ShipUnit : NetworkBehaviour
         if (shieldText != null)
         {
             shieldText.text =
-                $"{shield.Value}/{maxShield}";
+                $"{shield.Value}/{maxShield.Value}";
         }
     }
+
     private void RotateTowardsMovement(Vector3 movementDirection)
     {
         movementDirection.y = 0f;
@@ -974,29 +1009,96 @@ public class ShipUnit : NetworkBehaviour
             3,
             ref totals);
 
+        PlayerUpgradeStats upgrades =
+    FindPlayerUpgradeStats(
+        ownerId.Value);
+
+        float researchHpFlat = 0f;
+        float researchHpPercent = 0f;
+
+        float researchShieldFlat = 0f;
+        float researchShieldPercent = 0f;
+
+        float researchSpeedFlat = 0f;
+        float researchSpeedPercent = 0f;
+
+        if (upgrades != null)
+        {
+            researchHpFlat =
+                upgrades.shipHpFlat.Value;
+
+            researchHpPercent =
+                upgrades.shipHpPercent.Value;
+
+            researchShieldFlat =
+                upgrades.shipShieldFlat.Value;
+
+            researchShieldPercent =
+                upgrades.shipShieldPercent.Value;
+
+            researchSpeedFlat =
+                upgrades.shipSpeedFlat.Value;
+
+            researchSpeedPercent =
+                upgrades.shipSpeedPercent.Value;
+        }
+
         float calculatedMaxHp =
-            (baseMaxHp + totals.HpFlat) *
-            (1f + totals.HpPercent / 100f);
+    (
+        baseMaxHp +
+        totals.HpFlat +
+        researchHpFlat
+    )
+    *
+    (
+        1f +
+        (
+            totals.HpPercent +
+            researchHpPercent
+        ) / 100f
+    );
 
         float calculatedMaxShield =
-            (baseMaxShield + totals.ShieldFlat) *
-            (1f + totals.ShieldPercent / 100f);
+            (
+                baseMaxShield +
+                totals.ShieldFlat +
+                researchShieldFlat
+            )
+            *
+            (
+                1f +
+                (
+                    totals.ShieldPercent +
+                    researchShieldPercent
+                ) / 100f
+            );
 
         float calculatedMoveSpeed =
-            (baseMoveSpeed + totals.MoveSpeedFlat) *
-            (1f + totals.MoveSpeedPercent / 100f);
+            (
+                baseMoveSpeed +
+                totals.MoveSpeedFlat +
+                researchSpeedFlat
+            )
+            *
+            (
+                1f +
+                (
+                    totals.MoveSpeedPercent +
+                    researchSpeedPercent
+                ) / 100f
+            );
 
-        maxHp =
-            Mathf.Max(
-                1,
-                Mathf.RoundToInt(calculatedMaxHp));
+        maxHp.Value =
+    Mathf.Max(
+        1,
+        Mathf.RoundToInt(calculatedMaxHp));
 
-        maxShield =
+        maxShield.Value =
             Mathf.Max(
                 0,
                 Mathf.RoundToInt(calculatedMaxShield));
 
-        moveSpeed =
+        moveSpeed.Value =
             Mathf.Max(
                 0f,
                 calculatedMoveSpeed);
@@ -1015,9 +1117,9 @@ public class ShipUnit : NetworkBehaviour
 
         Debug.Log(
             $"[SHIP STATS] " +
-            $"HP={maxHp}, " +
-            $"Shield={maxShield}, " +
-            $"Speed={moveSpeed:0.##}, " +
+            $"HP={maxHp.Value}, " +
+            $"Shield={maxShield.Value}, " +
+            $"Speed={moveSpeed.Value:0.##}, " +
             $"Damage x{weaponsDamageMultiplier:0.##}, " +
             $"AttackSpeed x{weaponsAttackSpeedMultiplier:0.##}",
             this);
@@ -1210,28 +1312,7 @@ public class ShipUnit : NetworkBehaviour
         return 1f;
     }
 
-    private void ShowCombatText(
-    string value,
-    Color color)
-    {
-        if (combatTextPrefab == null)
-            return;
-
-        Vector3 spawnPosition =
-            combatTextOrigin != null
-                ? combatTextOrigin.position
-                : transform.position;
-
-        CombatFloatingText floatingText =
-            Instantiate(
-                combatTextPrefab,
-                spawnPosition,
-                Quaternion.identity);
-
-        floatingText.Initialize(
-            value,
-            color);
-    }
+    
 
     private float auraRangeBoostPercent;
 
@@ -1304,6 +1385,65 @@ public class ShipUnit : NetworkBehaviour
             Mathf.Min(
                 MaxShield,
                 shield.Value + shieldAmount);
+    }
+
+    public void RecalculateResearchStats()
+    {
+        if (!IsServer)
+            return;
+
+        int oldMaxHp =
+            maxHp.Value;
+
+        CalculateDeployedModuleStats();
+
+        int hpDifference =
+            maxHp.Value - oldMaxHp;
+
+        // HP dostaje wzrost wynikaj¹cy z researchu.
+        if (hpDifference > 0)
+        {
+            hp.Value =
+                Mathf.Min(
+                    maxHp.Value,
+                    hp.Value + hpDifference);
+        }
+        else
+        {
+            hp.Value =
+                Mathf.Min(
+                    hp.Value,
+                    maxHp.Value);
+        }
+
+        // Shield NIE dostaje dodatkowych punktów.
+        // Zmienia siê wy³¹cznie jego maksimum.
+        shield.Value =
+            Mathf.Min(
+                shield.Value,
+                maxShield.Value);
+    }
+
+    private PlayerUpgradeStats FindPlayerUpgradeStats(
+    ulong clientId)
+    {
+        PlayerUpgradeStats[] all =
+            FindObjectsByType<PlayerUpgradeStats>(
+                FindObjectsSortMode.None);
+
+        foreach (PlayerUpgradeStats upgrades in all)
+        {
+            if (!upgrades.IsSpawned)
+                continue;
+
+            if (upgrades.OwnerClientId ==
+                clientId)
+            {
+                return upgrades;
+            }
+        }
+
+        return null;
     }
 
 }
