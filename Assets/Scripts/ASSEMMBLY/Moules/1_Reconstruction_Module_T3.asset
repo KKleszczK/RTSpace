@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0024218ce9266a34694abb828c810cd2, type: 3}
   m_Name: 1_Reconstruction_Module_T3
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
-  moduleId: reconstruction_module
+  moduleId: reconstruction_module_t3
   displayName: Reconstruction Module
   description: Creates healing aura that repairs damaged hull by 1% every second.
     Reduces holder's hull durability by 5% (stacks)
@@ -24,6 +24,7 @@ MonoBehaviour:
   craftTime: 50
   maxCopiesPerPlayer: 99
   exclusive: 0
+  unlockedByDefault: 0
   shieldFlat: 0
   shieldPercent: 0
   hpFlat: 0
@@ -44,6 +45,10 @@ MonoBehaviour:
   miningAmountAtFullDensity: 40
   densityRemovedPerHit: 0.04
   miningModuleDurability: 0
+  haveAbility: 0
+  abilityType: 0
+  abilityRange: 8
+  abilityCooldown: 20
   isWeapon: 0
   weaponType: 0
   weaponRange: 5
@@ -65,8 +70,8 @@ MonoBehaviour:
   stackRangePercent: 0
   stackAttackSpeedPercent: 0
   stackInactiveTimeToReset: 3
-  maxTargets: 0
   canChainAttack: 0
+  maxTargets: 0
   chainJumpsRange: 1
   chainDamageMultiplier: 0.5
   canSlowOnHit: 0
