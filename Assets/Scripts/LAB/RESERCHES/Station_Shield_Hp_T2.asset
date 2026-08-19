@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced68004270e21c46bc598eb1b7d880b, type: 3}
+  m_Name: Station_Shield_Hp_T2
+  m_EditorClassIdentifier: Assembly-CSharp::ResearchDefinition
+  researchId: station_shield_hp_t2
+  displayName: Station Shield Polarization +
+  description: Increases shield hitpoints of your station by 5 000 flat
+  icon: {fileID: 21300000, guid: 334b9fda355d9a74dafa945db5087689, type: 3}
+  researchedIcon: {fileID: 21300000, guid: d702479ed6ea81f4383a7e5844263a05, type: 3}
+  tier: 2
+  baseMetalCost: 600
+  baseEnergyCost: 500
+  baseResearchTime: 60
+  effectType: 5
+  valueType: 0
+  value: 5000
+  unlockedModuleIds:
+  - 
