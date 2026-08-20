@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ced68004270e21c46bc598eb1b7d880b, type: 3}
+  m_Name: Reconstruction_Module_Research_T3
+  m_EditorClassIdentifier: Assembly-CSharp::ResearchDefinition
+  researchId: reconstruction_module_research_t3
+  displayName: Reconstruction Module Research
+  description: Enables Reconstruction Module module production
+  icon: {fileID: 21300000, guid: d5f8bfb64a2fb5345829fe8efa7ad914, type: 3}
+  researchedIcon: {fileID: 21300000, guid: a07558ec9f385cb4ab1a09cf795e4d0e, type: 3}
+  tier: 3
+  baseMetalCost: 50
+  baseEnergyCost: 100
+  baseResearchTime: 120
+  effectType: 7
+  valueType: 0
+  value: 15000
+  unlockedModuleIds:
+  - reconstruction_module_t3

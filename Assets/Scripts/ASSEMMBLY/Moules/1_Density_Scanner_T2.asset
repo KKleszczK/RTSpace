@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0024218ce9266a34694abb828c810cd2, type: 3}
   m_Name: 1_Density_Scanner_T2
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
-  moduleId: density_scanner_T2
+  moduleId: density_scanner_t2
   displayName: Density Scanner
   description: Boosts the density of nearby asteroid cluster by 20%, but reduces
     holder movement speed by 30%. Only one module can be active within an asteroid's
