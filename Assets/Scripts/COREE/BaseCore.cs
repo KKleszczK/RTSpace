@@ -55,8 +55,20 @@ public class BaseCore : NetworkBehaviour
         if (progress.Value < 1f)
             return;
 
+        int newTier =
+    Mathf.Min(
+        tier.Value + 1,
+        3);
+
         tier.Value =
-            Mathf.Min(tier.Value + 1, 3);
+            newTier;
+
+        // =========================================================
+        // NOTIFICATION
+        // =========================================================
+
+        ShowCoreUpgradeCompletedClientRpc(
+            newTier);
 
         progress.Value = 0f;
         isUpgrading.Value = false;
@@ -181,5 +193,37 @@ public class BaseCore : NetworkBehaviour
         return data != null
             ? data.upgradeTime
             : 0f;
+    }
+
+    [ClientRpc]
+    private void ShowCoreUpgradeCompletedClientRpc(
+    int newTier)
+    {
+        /*
+         * BaseCore istnieje na wszystkich klientach.
+         * Popup pokazujemy tylko w³aœcicielowi bazy.
+         */
+        if (NetworkManager.Singleton == null)
+            return;
+
+        if (OwnerClientId !=
+            NetworkManager.Singleton.LocalClientId)
+        {
+            return;
+        }
+
+        NotificationManager notificationManager =
+            FindFirstObjectByType<NotificationManager>();
+
+        if (notificationManager == null)
+        {
+            Debug.LogWarning(
+                "[NOTIFICATION] Nie znaleziono NotificationManager.");
+
+            return;
+        }
+
+        notificationManager.ShowCoreUpgrade(
+            newTier);
     }
 }

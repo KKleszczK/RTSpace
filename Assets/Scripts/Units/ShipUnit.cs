@@ -358,10 +358,9 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         if (rend == null)
             return;
 
-        if (ownerId.Value == 0)
-            rend.material.color = Color.blue;
-        else
-            rend.material.color = Color.red;
+        rend.material.color =
+            PlayerColorHelper.GetColor(
+                ownerId.Value);
     }
 
     // =========================================================

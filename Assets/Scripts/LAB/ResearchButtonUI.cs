@@ -2,41 +2,100 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ResearchButtonUI : MonoBehaviour, IPointerEnterHandler
+public class ResearchButtonUI :
+    MonoBehaviour,
+    IPointerEnterHandler
 {
-    [SerializeField] private Image iconImage;
-    [SerializeField] private Button button;
+    [SerializeField]
+    private Image iconImage;
+
+    [SerializeField]
+    private Button button;
 
     private ResearchDefinition definition;
     private LabPanelUI labPanel;
 
-    public void Setup(ResearchDefinition newDefinition, LabPanelUI newLabPanel)
-    {
-        definition = newDefinition;
-        labPanel = newLabPanel;
+    // =========================================================
+    // SETUP
+    // =========================================================
 
-        iconImage.sprite = definition.icon;
+    public void Setup(
+        ResearchDefinition newDefinition,
+        LabPanelUI newLabPanel)
+    {
+        definition =
+            newDefinition;
+
+        labPanel =
+            newLabPanel;
+
+        Refresh();
 
         button.onClick.RemoveAllListeners();
+
         button.onClick.AddListener(() =>
         {
-            labPanel.SelectResearch(definition);
+            labPanel.SelectResearch(
+                definition);
         });
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
+    // =========================================================
+    // HOVER
+    // =========================================================
+
+    public void OnPointerEnter(
+        PointerEventData eventData)
     {
-        labPanel.ShowDescription(definition);
+        if (definition == null ||
+            labPanel == null)
+        {
+            return;
+        }
+
+        labPanel.ShowDescription(
+            definition);
     }
+
+    // =========================================================
+    // REFRESH
+    // =========================================================
 
     public void Refresh()
     {
-        bool completed = labPanel.IsResearchCompleted(definition.researchId);
+        if (definition == null ||
+            labPanel == null)
+        {
+            return;
+        }
 
-        iconImage.sprite = completed && definition.researchedIcon != null
-            ? definition.researchedIcon
-            : definition.icon;
+        bool completed =
+            labPanel.IsResearchCompleted(
+                definition.researchId);
 
-        button.interactable = !completed;
+        // -----------------------------------------
+        // SPRITE
+        // -----------------------------------------
+
+        iconImage.sprite =
+            completed &&
+            definition.researchedIcon != null
+                ? definition.researchedIcon
+                : definition.icon;
+
+        // -----------------------------------------
+        // TIER COLOR
+        // -----------------------------------------
+
+        iconImage.color =
+            ResearchTierColorHelper.GetColor(
+            definition.tier);
+
+        // -----------------------------------------
+        // BUTTON
+        // -----------------------------------------
+
+        button.interactable =
+            !completed;
     }
 }

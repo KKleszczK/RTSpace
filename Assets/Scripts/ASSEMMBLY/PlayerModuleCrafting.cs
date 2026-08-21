@@ -329,9 +329,48 @@ public class PlayerModuleCrafting : NetworkBehaviour
 
         inventory.AddModule(module.moduleId);
 
+        ShowModuleCompletedClientRpc(
+            module.moduleId);
+
         Debug.Log(
             "[CRAFT 10] Wywo³ano AddModule: " +
             module.moduleId);
+    }
+
+    [ClientRpc]
+    private void ShowModuleCompletedClientRpc(
+    string moduleId)
+    {
+        /*
+         * Popup pokazujemy tylko
+         * w³aœcicielowi tego PlayerModuleCrafting.
+         */
+        if (!IsOwner)
+            return;
+
+        if (ModuleDatabase.Instance == null)
+            return;
+
+        ModuleDefinition module =
+            ModuleDatabase.Instance.GetModule(
+                moduleId);
+
+        if (module == null)
+            return;
+
+        NotificationManager notificationManager =
+            FindFirstObjectByType<NotificationManager>();
+
+        if (notificationManager == null)
+        {
+            Debug.LogWarning(
+                "[NOTIFICATION] Nie znaleziono NotificationManager.");
+
+            return;
+        }
+
+        notificationManager.ShowModuleCompleted(
+            module);
     }
 
     private BaseCore FindOwnedCore()

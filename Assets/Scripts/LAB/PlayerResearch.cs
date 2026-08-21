@@ -283,10 +283,47 @@ public class PlayerResearch : NetworkBehaviour
                 research);
         }
 
+        ShowResearchCompletedClientRpc(
+            research.researchId);
+
         Debug.Log(
             $"[RESEARCH COMPLETE] " +
             $"{research.displayName} | " +
             $"ID={research.researchId}");
+    }
+
+    [ClientRpc]
+    private void ShowResearchCompletedClientRpc(
+    string researchId)
+    {
+        // PlayerResearch istnieje na wszystkich klientach,
+        // ale popup pokazujemy tylko w³aœcicielowi.
+        if (!IsOwner)
+            return;
+
+        if (ResearchDatabase.Instance == null)
+            return;
+
+        ResearchDefinition research =
+            ResearchDatabase.Instance.GetResearch(
+                researchId);
+
+        if (research == null)
+            return;
+
+        NotificationManager notificationManager =
+            FindFirstObjectByType<NotificationManager>();
+
+        if (notificationManager == null)
+        {
+            Debug.LogWarning(
+                "[NOTIFICATION] Nie znaleziono NotificationManager.");
+
+            return;
+        }
+
+        notificationManager.ShowResearchCompleted(
+            research);
     }
 
     private bool IsInQueue(string researchId)
