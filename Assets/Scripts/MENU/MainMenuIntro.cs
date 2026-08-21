@@ -3,22 +3,44 @@ using UnityEngine;
 
 public class MainMenuIntro : MonoBehaviour
 {
-    [Header("References")]
-    [SerializeField] private CanvasGroup backgroundGroup;
-    [SerializeField] private CanvasGroup buttonsGroup;
-    [SerializeField] private CanvasGroup blackFadeGroup;
+    // =========================================================
+    // REFERENCES
+    // =========================================================
 
-    [Header("Timing")]
+    [Header("References")]
+    [SerializeField] private CanvasGroup blackFadeGroup;
+    [SerializeField] private CanvasGroup titleGroup;
+    [SerializeField] private CanvasGroup buttonsGroup;
+
+    // =========================================================
+    // TIMING
+    // =========================================================
+
+    [Header("Black Screen")]
     [SerializeField] private float blackHoldTime = 0.5f;
     [SerializeField] private float backgroundFadeTime = 1.5f;
+
+    [Header("Title")]
+    [SerializeField] private float titleDelay = 0.3f;
+    [SerializeField] private float titleFadeTime = 1f;
+
+    [Header("Buttons")]
     [SerializeField] private float buttonsDelay = 0.3f;
     [SerializeField] private float buttonsFadeTime = 1f;
+
+    // =========================================================
+    // START
+    // =========================================================
 
     private void Start()
     {
         StartCoroutine(
             PlayIntro());
     }
+
+    // =========================================================
+    // INTRO
+    // =========================================================
 
     private IEnumerator PlayIntro()
     {
@@ -27,22 +49,24 @@ public class MainMenuIntro : MonoBehaviour
         // =====================================================
 
         blackFadeGroup.alpha = 1f;
+        blackFadeGroup.interactable = true;
+        blackFadeGroup.blocksRaycasts = true;
 
-        backgroundGroup.alpha = 0f;
+        titleGroup.alpha = 0f;
 
         buttonsGroup.alpha = 0f;
         buttonsGroup.interactable = false;
         buttonsGroup.blocksRaycasts = false;
 
         // =====================================================
-        // BLACK SCREEN
+        // 1. BLACK SCREEN
         // =====================================================
 
         yield return new WaitForSeconds(
             blackHoldTime);
 
         // =====================================================
-        // BACKGROUND APPEARS
+        // 2. REVEAL BACKGROUND
         // =====================================================
 
         float time = 0f;
@@ -56,27 +80,55 @@ public class MainMenuIntro : MonoBehaviour
                     time /
                     backgroundFadeTime);
 
-            backgroundGroup.alpha =
-                progress;
-
             blackFadeGroup.alpha =
                 1f - progress;
 
             yield return null;
         }
 
-        backgroundGroup.alpha = 1f;
         blackFadeGroup.alpha = 0f;
+        blackFadeGroup.interactable = false;
+        blackFadeGroup.blocksRaycasts = false;
 
         // =====================================================
-        // DELAY BEFORE BUTTONS
+        // 3. TITLE DELAY
+        // =====================================================
+
+        yield return new WaitForSeconds(
+            titleDelay);
+
+        // =====================================================
+        // 4. TITLE FADE IN
+        // =====================================================
+
+        time = 0f;
+
+        while (time < titleFadeTime)
+        {
+            time += Time.deltaTime;
+
+            float progress =
+                Mathf.Clamp01(
+                    time /
+                    titleFadeTime);
+
+            titleGroup.alpha =
+                progress;
+
+            yield return null;
+        }
+
+        titleGroup.alpha = 1f;
+
+        // =====================================================
+        // 5. BUTTONS DELAY
         // =====================================================
 
         yield return new WaitForSeconds(
             buttonsDelay);
 
         // =====================================================
-        // BUTTONS APPEAR
+        // 6. BUTTONS FADE IN
         // =====================================================
 
         time = 0f;
@@ -98,7 +150,10 @@ public class MainMenuIntro : MonoBehaviour
 
         buttonsGroup.alpha = 1f;
 
-        // Dopiero teraz menu staje siê klikalne.
+        // =====================================================
+        // 7. MENU ACTIVE
+        // =====================================================
+
         buttonsGroup.interactable = true;
         buttonsGroup.blocksRaycasts = true;
     }
