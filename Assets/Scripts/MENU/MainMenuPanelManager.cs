@@ -1,5 +1,7 @@
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MainMenuPanelManager : MonoBehaviour
 {
@@ -24,8 +26,23 @@ public class MainMenuPanelManager : MonoBehaviour
     // LOBBY UI
     // =========================================================
 
-    [Header("Lobby UI")]
-    [SerializeField] private TMP_Text lobbyCodeText;
+    [Header("Lobby")]
+    [SerializeField] private LobbyManager lobbyManager;
+
+    [Header("Join")]
+    [SerializeField] private CanvasGroup joinGroup;
+    [SerializeField] private TMP_InputField joinCodeInput;
+    [SerializeField] private Button joinButton;
+
+    [SerializeField]
+    private Color joinInactiveColor =
+        new Color(0.45f, 0.45f, 0.45f, 1f);
+
+    [SerializeField]
+    private Color joinActiveColor =
+        Color.white;
+
+    private bool isJoining;
 
     // =========================================================
     // STATE
@@ -39,6 +56,15 @@ public class MainMenuPanelManager : MonoBehaviour
 
     private void Start()
     {
+        if (joinCodeInput != null)
+        {
+            joinCodeInput.characterLimit = 6;
+
+            joinCodeInput.onValueChanged.AddListener(
+                OnJoinCodeChanged);
+        }
+
+        RefreshJoinButton();
         ShowMainMenu();
     }
 
@@ -88,10 +114,10 @@ public class MainMenuPanelManager : MonoBehaviour
             // USTAW KOD W LOBBY
             // =============================================
 
-            if (lobbyCodeText != null)
+            if (lobbyManager != null)
             {
-                lobbyCodeText.text =
-                    "CODE: " + code;
+                lobbyManager.SetJoinCode(
+                    code);
             }
 
             // =============================================
@@ -159,6 +185,9 @@ public class MainMenuPanelManager : MonoBehaviour
         SetGroup(
             creditsGroup,
             false);
+        SetGroup(
+            joinGroup,
+            false);
 
         SetGroup(
             target,
@@ -180,5 +209,139 @@ public class MainMenuPanelManager : MonoBehaviour
 
         group.blocksRaycasts =
             visible;
+    }
+    public void ShowJoin()
+    {
+        ShowOnly(
+            joinGroup);
+
+        if (joinCodeInput != null)
+        {
+            joinCodeInput.text = "";
+            joinCodeInput.ActivateInputField();
+        }
+
+        RefreshJoinButton();
+    }
+    private void OnJoinCodeChanged(
+    string value)
+    {
+        if (joinCodeInput == null)
+            return;
+
+        string normalized =
+            value
+                .Trim()
+                .ToUpper();
+
+        if (joinCodeInput.text != normalized)
+        {
+            joinCodeInput.SetTextWithoutNotify(
+                normalized);
+        }
+
+        RefreshJoinButton();
+    }
+    private void RefreshJoinButton()
+    {
+        if (joinButton == null ||
+            joinCodeInput == null)
+        {
+            return;
+        }
+
+        bool validLength =
+            joinCodeInput.text.Trim().Length == 6;
+
+        joinButton.interactable =
+            validLength &&
+            !isJoining;
+
+        if (joinButton.image != null)
+        {
+            joinButton.image.color =
+                validLength
+                    ? joinActiveColor
+                    : joinInactiveColor;
+        }
+    }
+    public async void JoinGame()
+    {
+        if (isJoining)
+            return;
+
+        if (relayManager == null ||
+            joinCodeInput == null)
+        {
+            return;
+        }
+
+        string code =
+            joinCodeInput.text
+                .Trim()
+                .ToUpper();
+
+        if (code.Length != 6)
+            return;
+
+        isJoining = true;
+        RefreshJoinButton();
+
+        try
+        {
+            await relayManager.JoinRelay(
+                code);
+
+            /*
+             * StartClient() nie oznacza jeszcze,
+             * ¿e po³¹czenie z hostem jest ju¿ gotowe.
+             *
+             * Czekamy, a¿ klient faktycznie
+             * zostanie po³¹czony.
+             */
+            float timeout = 10f;
+            float elapsed = 0f;
+
+            while (NetworkManager.Singleton != null &&
+                   !NetworkManager.Singleton.IsConnectedClient &&
+                   elapsed < timeout)
+            {
+                elapsed += Time.deltaTime;
+                await System.Threading.Tasks.Task.Yield();
+            }
+
+            if (NetworkManager.Singleton == null ||
+                !NetworkManager.Singleton.IsConnectedClient)
+            {
+                Debug.LogWarning(
+                    "[MENU] Nie uda³o siê po³¹czyæ z lobby.");
+
+                joinCodeInput.text = "";
+                return;
+            }
+
+            // =====================================================
+            // PO£¥CZENIE UDANE
+            // =====================================================
+
+            ShowOnly(
+                lobbyGroup);
+
+            Debug.Log(
+                "[MENU] Do³¹czono do lobby jako guest.");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning(
+                "[MENU] Join failed: " +
+                e.Message);
+
+            joinCodeInput.text = "";
+        }
+        finally
+        {
+            isJoining = false;
+            RefreshJoinButton();
+        }
     }
 }
