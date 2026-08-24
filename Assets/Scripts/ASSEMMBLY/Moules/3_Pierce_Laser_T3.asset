@@ -53,7 +53,7 @@ MonoBehaviour:
   weaponType: 0
   weaponRange: 6
   weaponAttackInterval: 4
-  weaponHullDamage: 999
+  weaponHullDamage: 9999
   weaponShieldDamage: 20
   projectileSpeed: 5
   weaponHasMagazine: 0
