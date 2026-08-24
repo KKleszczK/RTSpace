@@ -14,6 +14,7 @@ public class MainMenuPanelManager : MonoBehaviour
     [SerializeField] private CanvasGroup lobbyGroup;
     [SerializeField] private CanvasGroup optionsGroup;
     [SerializeField] private CanvasGroup creditsGroup;
+    [SerializeField] private CanvasGroup backGroup;
 
     // =========================================================
     // RELAY
@@ -43,6 +44,8 @@ public class MainMenuPanelManager : MonoBehaviour
         Color.white;
 
     private bool isJoining;
+
+    private bool isLeavingLobby;
 
     // =========================================================
     // STATE
@@ -168,30 +171,24 @@ public class MainMenuPanelManager : MonoBehaviour
     // =========================================================
 
     private void ShowOnly(
-        CanvasGroup target)
+    CanvasGroup target)
     {
-        SetGroup(
-            mainMenuGroup,
-            false);
+        SetGroup(mainMenuGroup, false);
+        SetGroup(lobbyGroup, false);
+        SetGroup(optionsGroup, false);
+        SetGroup(creditsGroup, false);
+        SetGroup(joinGroup, false);
+
+        SetGroup(target, true);
+
+        // BACK jest widoczny wszêdzie
+        // poza g³ównym menu.
+        bool showBack =
+            target != mainMenuGroup;
 
         SetGroup(
-            lobbyGroup,
-            false);
-
-        SetGroup(
-            optionsGroup,
-            false);
-
-        SetGroup(
-            creditsGroup,
-            false);
-        SetGroup(
-            joinGroup,
-            false);
-
-        SetGroup(
-            target,
-            true);
+            backGroup,
+            showBack);
     }
 
     private void SetGroup(
@@ -343,5 +340,75 @@ public class MainMenuPanelManager : MonoBehaviour
             isJoining = false;
             RefreshJoinButton();
         }
+    }
+    public void QuitGame()
+    {
+        Debug.Log("[MENU] Quit Game");
+
+        #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+        #else
+            Application.Quit();
+        #endif
+    }
+
+    public void BackToMainMenu()
+    {
+        if (isLeavingLobby)
+            return;
+
+        isLeavingLobby = true;
+
+        if (NetworkManager.Singleton != null &&
+            NetworkManager.Singleton.IsListening)
+        {
+            if (NetworkManager.Singleton.IsServer &&
+                lobbyManager != null)
+            {
+                lobbyManager.ResetLobby();
+            }
+
+            NetworkManager.Singleton.Shutdown();
+        }
+
+        ShowMainMenu();
+
+        isLeavingLobby = false;
+    }
+
+    private void OnEnable()
+    {
+        if (NetworkManager.Singleton != null)
+        {
+            NetworkManager.Singleton.OnClientDisconnectCallback +=
+                OnClientDisconnected;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (NetworkManager.Singleton != null)
+        {
+            NetworkManager.Singleton.OnClientDisconnectCallback -=
+                OnClientDisconnected;
+        }
+    }
+
+    private void OnClientDisconnected(
+    ulong clientId)
+    {
+        if (NetworkManager.Singleton == null)
+            return;
+
+        // Host sam obs³uguje swój powrót przez BACK.
+        if (NetworkManager.Singleton.IsHost)
+            return;
+
+        // Je¿eli jesteœmy klientem i nast¹pi³o
+        // roz³¹czenie, wracamy do Main Menu.
+        Debug.Log(
+            "[MENU] Utracono po³¹czenie z hostem.");
+
+        ShowMainMenu();
     }
 }

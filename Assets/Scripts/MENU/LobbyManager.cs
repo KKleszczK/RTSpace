@@ -593,5 +593,30 @@ public class LobbyManager : NetworkBehaviour
         }
     }
 
-    
+    public void ResetLobby()
+    {
+        // NetworkVariable mo¿e zmieniaæ tylko serwer.
+        if (IsServer)
+        {
+            hostReady.Value = false;
+            clientReady.Value = false;
+            countdownStarted.Value = false;
+        }
+
+        currentJoinCode = "";
+
+        if (codeButtonText != null)
+        {
+            codeButtonText.text = "";
+        }
+
+        if (countdownText != null)
+        {
+            countdownText.text = "";
+            countdownText.gameObject.SetActive(false);
+        }
+
+        RefreshLobbyUI();
+        RefreshPlayerSlots();
+    }
 }
