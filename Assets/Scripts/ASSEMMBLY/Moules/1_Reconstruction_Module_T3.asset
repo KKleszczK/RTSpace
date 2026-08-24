@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Reconstruction Module
   description: Creates healing aura that repairs damaged hull by 1% every second.
     Reduces holder's hull durability by 5% (stacks)
-  icon: {fileID: 21300000, guid: daaebe26a0711224e8ca1bd15a2d17e6, type: 3}
+  icon: {fileID: 21300000, guid: 66654eb7b9335ce4285a3477f6264c99, type: 3}
   tier: 3
   type: 2
   metalCost: 200
