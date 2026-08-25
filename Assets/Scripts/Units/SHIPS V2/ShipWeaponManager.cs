@@ -642,9 +642,6 @@ public class ShipWeaponManager : NetworkBehaviour
                 weapon.CurrentTarget,
                 range))
         {
-            if (weapon.CurrentTarget != null)
-                ClearLaserTarget(weapon);
-
             weapon.CurrentTarget =
                 FindNearestEnemy(range);
 
@@ -828,9 +825,9 @@ public class ShipWeaponManager : NetworkBehaviour
     }
 
     private void ClearLaserTarget(
-        WeaponRuntime weapon)
+    WeaponRuntime weapon)
     {
-        if (weapon.CurrentTarget == null)
+        if (weapon == null)
             return;
 
         weapon.CurrentTarget = null;

@@ -82,19 +82,38 @@ public class BaseCore : NetworkBehaviour
 
     [ServerRpc(RequireOwnership = false)]
     private void RequestUpgradeServerRpc(
-        ServerRpcParams rpcParams = default)
+    ServerRpcParams rpcParams = default)
     {
+        ulong senderId =
+            rpcParams.Receive.SenderClientId;
+
+        // =====================================================
+        // OWNER CHECK
+        // =====================================================
+
+        if (senderId != OwnerClientId)
+        {
+            Debug.LogWarning(
+                $"[CORE UPGRADE BLOCKED] " +
+                $"Client {senderId} próbowa³ ulepszyæ Core " +
+                $"nale¿¹cy do Client {OwnerClientId}.");
+
+            return;
+        }
+
+        // =====================================================
+        // VALIDATION
+        // =====================================================
+
         if (isUpgrading.Value)
             return;
 
         if (tier.Value >= 3)
             return;
 
-        ulong senderId =
-            rpcParams.Receive.SenderClientId;
-
         resources =
-            FindPlayerResources(senderId);
+            FindPlayerResources(
+                senderId);
 
         if (resources == null)
             return;
@@ -106,13 +125,19 @@ public class BaseCore : NetworkBehaviour
             return;
 
         int metalCost =
-            Mathf.Max(0, upgradeData.metalCost);
+            Mathf.Max(
+                0,
+                upgradeData.metalCost);
 
         int energyCost =
-            Mathf.Max(0, upgradeData.energyCost);
+            Mathf.Max(
+                0,
+                upgradeData.energyCost);
 
         float upgradeTime =
-            Mathf.Max(0.01f, upgradeData.upgradeTime);
+            Mathf.Max(
+                0.01f,
+                upgradeData.upgradeTime);
 
         if (!resources.CanAfford(
                 metalCost,

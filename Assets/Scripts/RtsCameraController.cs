@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 public class RtsCameraController : MonoBehaviour
 {
@@ -56,6 +57,20 @@ public class RtsCameraController : MonoBehaviour
         if (Mouse.current == null)
             return;
 
+        // =====================================================
+        // BLOCK ZOOM OVER UI
+        // =====================================================
+
+        if (EventSystem.current != null &&
+            EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
+
+        // =====================================================
+        // SCROLL
+        // =====================================================
+
         float scroll =
             Mouse.current.scroll.ReadValue().y;
 
@@ -80,9 +95,8 @@ public class RtsCameraController : MonoBehaviour
             zoomMovement;
 
         /*
-         * Je¿eli zoom przekroczy³ wysokoœæ,
-         * cofamy ca³y ruch zamiast ograniczaæ tylko Y.
-         * Dziêki temu kamera zachowuje k¹t 45 stopni.
+         * Nie pozwalamy przekroczyæ
+         * minimalnej/maksymalnej wysokoœci.
          */
         if (newPosition.y < minHeight ||
             newPosition.y > maxHeight)

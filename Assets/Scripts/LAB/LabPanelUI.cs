@@ -68,20 +68,59 @@ public class LabPanelUI : MonoBehaviour
 
         for (int i = 0; i < queueSlotIcons.Length; i++)
         {
+            // =====================================================
+            // RESEARCH W KOLEJCE
+            // =====================================================
+
             if (i < playerResearch.researchQueue.Count)
             {
-                string id = playerResearch.researchQueue[i].ToString();
-                ResearchDefinition research = ResearchDatabase.Instance.GetResearch(id);
+                string id =
+                    playerResearch.researchQueue[i]
+                        .ToString();
 
-                queueSlotIcons[i].sprite = research != null ? research.icon : emptySlotSprite;
-                queueSlotButtons[i].interactable = true;
+                ResearchDefinition research =
+                    ResearchDatabase.Instance
+                        .GetResearch(id);
+
+                if (research != null)
+                {
+                    ResearchTierColorHelper.ApplyToImage(
+                        queueSlotIcons[i],
+                        research);
+
+                    queueSlotButtons[i].interactable =
+                        true;
+                }
+                else
+                {
+                    SetEmptyQueueSlot(i);
+                }
             }
+
+            // =====================================================
+            // PUSTY SLOT
+            // =====================================================
+
             else
             {
-                queueSlotIcons[i].sprite = emptySlotSprite;
-                queueSlotButtons[i].interactable = false;
+                SetEmptyQueueSlot(i);
             }
         }
+    }
+
+    private void SetEmptyQueueSlot(
+    int index)
+    {
+        queueSlotIcons[index].sprite =
+            emptySlotSprite;
+
+        // Bardzo wa¿ne:
+        // resetujemy kolor po poprzednim researchu.
+        queueSlotIcons[index].color =
+            Color.white;
+
+        queueSlotButtons[index].interactable =
+            false;
     }
 
     private void RemoveQueueItem(int index)
@@ -93,13 +132,33 @@ public class LabPanelUI : MonoBehaviour
     }
     private void CreateButtons()
     {
-        foreach (ResearchDefinition research in researches)
-        {
-            ResearchButtonUI button =
-                Instantiate(buttonPrefab, content);
+        // Tworzymy kopiê, ¿eby nie zmieniaæ
+        // kolejnoœci listy w Inspectorze.
+        List<ResearchDefinition> sortedResearches =
+            new List<ResearchDefinition>(researches);
 
-            button.Setup(research, this);
-            createdButtons.Add(button);
+        // Tier1 -> Tier2 -> Tier3
+        sortedResearches.Sort(
+            (a, b) =>
+                a.tier.CompareTo(b.tier));
+
+        foreach (ResearchDefinition research
+                 in sortedResearches)
+        {
+            if (research == null)
+                continue;
+
+            ResearchButtonUI button =
+                Instantiate(
+                    buttonPrefab,
+                    content);
+
+            button.Setup(
+                research,
+                this);
+
+            createdButtons.Add(
+                button);
         }
     }
 

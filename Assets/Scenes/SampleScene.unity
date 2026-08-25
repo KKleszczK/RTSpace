@@ -569,7 +569,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &224484903
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3721,6 +3721,7 @@ MonoBehaviour:
   joinGroup: {fileID: 311147924}
   joinCodeInput: {fileID: 1156645393}
   joinButton: {fileID: 553124299}
+  joinButtonText: {fileID: 806520142}
   joinInactiveColor: {r: 0.45, g: 0.45, b: 0.45, a: 1}
   joinActiveColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!4 &892677321

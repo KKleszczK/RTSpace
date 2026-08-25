@@ -202,6 +202,21 @@ public class LobbyManager : NetworkBehaviour
 
     private void OnReadyButtonClicked()
     {
+        // =====================================================
+        // NETWORK SAFETY
+        // =====================================================
+
+        if (NetworkManager.Singleton == null)
+            return;
+
+        if (!NetworkManager.Singleton.IsListening)
+            return;
+
+        if (!IsSpawned)
+            return;
+
+        // Jeœli countdown ju¿ wystartowa³,
+        // nie pozwalamy niczego zmieniaæ.
         if (countdownStarted.Value)
             return;
 
@@ -218,9 +233,9 @@ public class LobbyManager : NetworkBehaviour
                 return;
             }
 
-            // Host ju¿ jest READY.
-            // Przycisk dzia³a teraz jako START,
-            // ale tylko gdy guest równie¿ jest READY.
+            // Host jest ju¿ READY.
+            // Przycisk dzia³a jako START,
+            // ale tylko jeœli guest równie¿ jest READY.
             if (clientReady.Value)
             {
                 StartCountdownServerRpc();
@@ -233,7 +248,8 @@ public class LobbyManager : NetworkBehaviour
         // GUEST
         // =====================================================
 
-        // Guest mo¿e READY odklikaæ i klikn¹æ ponownie.
+        // Guest mo¿e READY klikn¹æ
+        // i odklikn¹æ a¿ do rozpoczêcia countdownu.
         ToggleReadyServerRpc();
     }
 

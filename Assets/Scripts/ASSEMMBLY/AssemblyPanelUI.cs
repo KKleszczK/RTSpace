@@ -225,6 +225,18 @@ public class AssemblyPanelUI : MonoBehaviour
         RefreshModuleButtons();
     }
 
+    private int GetModuleTypeOrder(
+    ModuleType type)
+    {
+        return type switch
+        {
+            ModuleType.Fighter => 0,
+            ModuleType.Utility => 1,
+            ModuleType.Miner => 2,
+            _ => 99
+        };
+    }
+
     private void RefreshModuleButtons()
     {
         if (content == null)
@@ -236,7 +248,10 @@ public class AssemblyPanelUI : MonoBehaviour
         if (localCore == null)
             return;
 
-        // Usuwamy stare przyciski.
+        // =====================================================
+        // REMOVE OLD BUTTONS
+        // =====================================================
+
         for (int i = content.childCount - 1;
              i >= 0;
              i--)
@@ -248,7 +263,60 @@ public class AssemblyPanelUI : MonoBehaviour
         int coreTier =
             localCore.tier.Value;
 
-        foreach (ModuleDefinition module in modules)
+        // =====================================================
+        // SORT MODULES
+        // =====================================================
+
+        List<ModuleDefinition> sortedModules =
+            new List<ModuleDefinition>(modules);
+
+        sortedModules.Sort(
+            (a, b) =>
+            {
+                // Null na koñcu.
+                if (a == null && b == null)
+                    return 0;
+
+                if (a == null)
+                    return 1;
+
+                if (b == null)
+                    return -1;
+
+                // =============================================
+                // 1. TIER
+                // =============================================
+
+                int tierComparison =
+                    a.tier.CompareTo(
+                        b.tier);
+
+                if (tierComparison != 0)
+                    return tierComparison;
+
+                // =============================================
+                // 2. TYPE
+                // Fighter -> Utility -> Miner
+                // =============================================
+
+                int typeA =
+                    GetModuleTypeOrder(
+                        a.type);
+
+                int typeB =
+                    GetModuleTypeOrder(
+                        b.type);
+
+                return typeA.CompareTo(
+                    typeB);
+            });
+
+        // =====================================================
+        // CREATE BUTTONS
+        // =====================================================
+
+        foreach (ModuleDefinition module
+                 in sortedModules)
         {
             if (module == null)
                 continue;
@@ -257,21 +325,30 @@ public class AssemblyPanelUI : MonoBehaviour
             if ((int)module.tier > coreTier)
                 continue;
 
-            // Research unlock.
+            // =================================================
+            // RESEARCH UNLOCK
+            // =================================================
+
             if (playerResearch == null)
             {
-                /*
-                 * Je¿eli PlayerResearch jeszcze nie zosta³ znaleziony,
-                 * pokazujemy tylko modu³y dostêpne od pocz¹tku.
-                 */
+                // Je¿eli PlayerResearch jeszcze nie zosta³
+                // znaleziony, pokazujemy tylko modu³y
+                // dostêpne od pocz¹tku.
                 if (!module.unlockedByDefault)
                     continue;
             }
             else
             {
-                if (!playerResearch.IsModuleUnlocked(module))
+                if (!playerResearch.IsModuleUnlocked(
+                        module))
+                {
                     continue;
+                }
             }
+
+            // =================================================
+            // BUTTON
+            // =================================================
 
             ModuleButtonUI button =
                 Instantiate(

@@ -34,6 +34,7 @@ public class MainMenuPanelManager : MonoBehaviour
     [SerializeField] private CanvasGroup joinGroup;
     [SerializeField] private TMP_InputField joinCodeInput;
     [SerializeField] private Button joinButton;
+    [SerializeField] private TMP_Text joinButtonText;
 
     [SerializeField]
     private Color joinInactiveColor =
@@ -46,6 +47,9 @@ public class MainMenuPanelManager : MonoBehaviour
     private bool isJoining;
 
     private bool isLeavingLobby;
+
+    private bool wasConnectedToLobby;
+
 
     // =========================================================
     // STATE
@@ -69,6 +73,50 @@ public class MainMenuPanelManager : MonoBehaviour
 
         RefreshJoinButton();
         ShowMainMenu();
+    }
+
+    private void Update()
+    {
+        CheckLostHostConnection();
+    }
+
+    private void CheckLostHostConnection()
+    {
+        if (!wasConnectedToLobby)
+            return;
+
+        if (isLeavingLobby)
+            return;
+
+        if (NetworkManager.Singleton == null)
+        {
+            ReturnGuestAfterHostDisconnect();
+            return;
+        }
+
+        // Je¿eli nadal jesteœmy poprawnie
+        // po³¹czonym klientem, nic nie robimy.
+        if (NetworkManager.Singleton.IsConnectedClient)
+            return;
+
+        // Nie jesteœmy ju¿ po³¹czeni z hostem.
+        ReturnGuestAfterHostDisconnect();
+    }
+
+    private void ReturnGuestAfterHostDisconnect()
+    {
+        if (!wasConnectedToLobby)
+            return;
+
+        wasConnectedToLobby = false;
+        isLeavingLobby = true;
+
+        Debug.Log(
+            "[MENU] Utracono hosta - powrót do Main Menu.");
+
+        ShowMainMenu();
+
+        isLeavingLobby = false;
     }
 
     // =========================================================
@@ -247,17 +295,25 @@ public class MainMenuPanelManager : MonoBehaviour
             return;
         }
 
-        bool validLength =
-            joinCodeInput.text.Trim().Length == 6;
+        bool hasValidLength =
+            joinCodeInput.text
+                .Trim()
+                .Length == 6;
 
-        joinButton.interactable =
-            validLength &&
+        bool canJoin =
+            hasValidLength &&
             !isJoining;
 
-        if (joinButton.image != null)
+        // Mo¿liwoœæ klikniêcia.
+        joinButton.interactable =
+            canJoin;
+
+        // Zmieniamy KOLOR NAPISU,
+        // a nie kolor Image przycisku.
+        if (joinButtonText != null)
         {
-            joinButton.image.color =
-                validLength
+            joinButtonText.color =
+                canJoin
                     ? joinActiveColor
                     : joinInactiveColor;
         }
@@ -321,6 +377,16 @@ public class MainMenuPanelManager : MonoBehaviour
             // PO£¥CZENIE UDANE
             // =====================================================
 
+            // Guest równie¿ dostaje kod lobby
+            // na przycisku COPY.
+            wasConnectedToLobby = true;
+
+            if (lobbyManager != null)
+            {
+                lobbyManager.SetJoinCode(
+                    code);
+            }
+
             ShowOnly(
                 lobbyGroup);
 
@@ -358,10 +424,13 @@ public class MainMenuPanelManager : MonoBehaviour
             return;
 
         isLeavingLobby = true;
+        wasConnectedToLobby = false;
 
         if (NetworkManager.Singleton != null &&
             NetworkManager.Singleton.IsListening)
         {
+            // Tylko serwer mo¿e resetowaæ
+            // NetworkVariable lobby.
             if (NetworkManager.Singleton.IsServer &&
                 lobbyManager != null)
             {
@@ -369,6 +438,9 @@ public class MainMenuPanelManager : MonoBehaviour
             }
 
             NetworkManager.Singleton.Shutdown();
+
+            Debug.Log(
+                "[MENU] Opuszczono sesjê.");
         }
 
         ShowMainMenu();
@@ -397,18 +469,12 @@ public class MainMenuPanelManager : MonoBehaviour
     private void OnClientDisconnected(
     ulong clientId)
     {
-        if (NetworkManager.Singleton == null)
+        if (!wasConnectedToLobby)
             return;
 
-        // Host sam obs³uguje swój powrót przez BACK.
-        if (NetworkManager.Singleton.IsHost)
+        if (isLeavingLobby)
             return;
 
-        // Je¿eli jesteœmy klientem i nast¹pi³o
-        // roz³¹czenie, wracamy do Main Menu.
-        Debug.Log(
-            "[MENU] Utracono po³¹czenie z hostem.");
-
-        ShowMainMenu();
+        ReturnGuestAfterHostDisconnect();
     }
 }
