@@ -185,6 +185,29 @@ public class PlayerModuleCrafting : NetworkBehaviour
             return;
         }
 
+        // =========================================================
+        // MAX COPIES PER PLAYER
+        // =========================================================
+
+        if (module.maxCopiesPerPlayer > 0)
+        {
+            int currentCopies =
+                GetTotalModuleCopies(
+                    module.moduleId);
+
+            if (currentCopies >=
+                module.maxCopiesPerPlayer)
+            {
+                Debug.LogWarning(
+                    $"[CRAFT BLOCKED] " +
+                    $"Module={module.moduleId} | " +
+                    $"Copies={currentCopies}/" +
+                    $"{module.maxCopiesPerPlayer}");
+
+                return;
+            }
+        }
+
         Debug.Log(
             "[CRAFT 06] Parametry modu³u: " +
             $"M={module.metalCost}, " +
@@ -289,20 +312,54 @@ public class PlayerModuleCrafting : NetworkBehaviour
             return;
         }
 
-        float craftTime =
+        float baseCraftTime =
             Mathf.Max(
-                0.01f,
-                currentModule.craftTime);
+            0f,
+        currentModule.craftTime);
 
-        float assemblySpeedMultiplier =
+        float assemblyBonusPercent =
             safeZone != null
-                ? safeZone.GetAssemblySpeedMultiplier()
-                : 1f;
+                ? safeZone.GetAssemblySpeedBonusPercent()
+                : 0f;
 
-        currentProgress.Value +=
-            Time.deltaTime *
-            assemblySpeedMultiplier /
-            craftTime;
+        assemblyBonusPercent =
+            Mathf.Clamp(
+                assemblyBonusPercent,
+                0f,
+                100f);
+
+        Debug.Log(
+    $"[CRAFT SPEED] " +
+    $"Player={OwnerClientId} | " +
+    $"SafeZone={(safeZone != null ? safeZone.name : "NULL")} | " +
+    $"AssemblyBonus={assemblyBonusPercent}% | " +
+    $"BaseTime={baseCraftTime}");
+
+        float timeMultiplier =
+            1f -
+            assemblyBonusPercent / 100f;
+
+        float finalCraftTime =
+            baseCraftTime *
+            timeMultiplier;
+
+        Debug.Log(
+    $"[CRAFT SPEED] FinalTime={finalCraftTime}s");
+
+        // =====================================================
+        // INSTANT CRAFT
+        // =====================================================
+
+        if (finalCraftTime <= 0f)
+        {
+            currentProgress.Value = 1f;
+        }
+        else
+        {
+            currentProgress.Value +=
+                Time.deltaTime /
+                finalCraftTime;
+        }
 
         if (currentProgress.Value < 1f)
             return;
@@ -395,5 +452,119 @@ public class PlayerModuleCrafting : NetworkBehaviour
         }
 
         return null;
+    }
+
+    private int GetTotalModuleCopies(
+    string moduleId)
+    {
+        if (!IsServer)
+            return 0;
+
+        if (string.IsNullOrWhiteSpace(moduleId))
+            return 0;
+
+        int total = 0;
+
+        // =====================================================
+        // 1. MODULE INVENTORY
+        // =====================================================
+
+        if (inventory != null)
+        {
+            total +=
+                inventory.GetModuleCount(
+                    moduleId);
+        }
+
+        // =====================================================
+        // 2. CRAFTING QUEUE
+        // =====================================================
+
+        for (int i = 0;
+             i < moduleQueue.Count;
+             i++)
+        {
+            if (moduleQueue[i].ToString() ==
+                moduleId)
+            {
+                total++;
+            }
+        }
+
+        // =====================================================
+        // 3. DOCKED SHIPS
+        // =====================================================
+
+        BaseHangar[] hangars =
+            FindObjectsByType<BaseHangar>(
+                FindObjectsSortMode.None);
+
+        foreach (BaseHangar hangar in hangars)
+        {
+            if (hangar == null)
+                continue;
+
+            if (!hangar.IsSpawned)
+                continue;
+
+            if (hangar.OwnerClientId !=
+                OwnerClientId)
+            {
+                continue;
+            }
+
+            for (int i = 0;
+                 i < hangar.dockedShips.Count;
+                 i++)
+            {
+                DockedShipData dockedShip =
+                    hangar.dockedShips[i];
+
+                total +=
+                    dockedShip.CountModule(
+                        moduleId);
+            }
+        }
+
+        // =====================================================
+        // 4. DEPLOYED SHIPS
+        // =====================================================
+
+        ShipUnit[] ships =
+            FindObjectsByType<ShipUnit>(
+                FindObjectsSortMode.None);
+
+        foreach (ShipUnit deployedShip in ships)
+        {
+            if (deployedShip == null)
+                continue;
+
+            if (!deployedShip.IsSpawned)
+                continue;
+
+            if (deployedShip.isDead.Value)
+                continue;
+
+            if (deployedShip.ownerId.Value !=
+                OwnerClientId)
+            {
+                continue;
+            }
+
+            for (int slotIndex = 0;
+                 slotIndex < 4;
+                 slotIndex++)
+            {
+                if (deployedShip
+                        .GetModule(slotIndex)
+                        .ToString() ==
+                    moduleId)
+                {
+                    total++;
+                }
+            }
+        }
+
+        return total;
     }
 }

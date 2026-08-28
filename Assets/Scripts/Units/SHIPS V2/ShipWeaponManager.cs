@@ -638,17 +638,29 @@ public class ShipWeaponManager : NetworkBehaviour
         float range =
             GetFinalWeaponRange(weapon);
 
+        // =====================================================
+        // VALIDATE CURRENT TARGET
+        // =====================================================
+
         if (!IsValidLaserTarget(
                 weapon.CurrentTarget,
                 range))
         {
+            // Najpierw zawsze usuwamy stary target
+            // i wy³¹czamy jego laser na wszystkich klientach.
+            ClearLaserTarget(
+                weapon);
+
+            // Dopiero potem szukamy nowego.
             weapon.CurrentTarget =
-                FindNearestEnemy(range);
+                FindNearestEnemy(
+                    range);
 
             if (weapon.CurrentTarget != null)
             {
                 NetworkBehaviour targetBehaviour =
-                    weapon.CurrentTarget as NetworkBehaviour;
+                    weapon.CurrentTarget
+                    as NetworkBehaviour;
 
                 if (targetBehaviour != null &&
                     targetBehaviour.NetworkObject != null)
@@ -676,9 +688,14 @@ public class ShipWeaponManager : NetworkBehaviour
             weapon,
             weapon.CurrentTarget);
 
-        ApplySelfDamageAfterAttack(weapon);
-        ConsumeAmmoAfterAttack(weapon);
-        AddStackAfterAttack(weapon);
+        ApplySelfDamageAfterAttack(
+            weapon);
+
+        ConsumeAmmoAfterAttack(
+            weapon);
+
+        AddStackAfterAttack(
+            weapon);
 
         if (!weapon.IsReloading &&
             !weapon.IsDisabled)
@@ -913,16 +930,13 @@ public class ShipWeaponManager : NetworkBehaviour
             int slotIndex = pair.Key;
             LaserVisual visual = pair.Value;
 
-            bool invalid =
-                visual == null ||
+            if (visual == null ||
                 visual.Line == null ||
-                visual.Target == null ||
-                visual.Target.IsDead ||
-                visual.Target.DamageTransform == null;
-
-            if (invalid)
+                !IsDamageableValid(visual.Target))
             {
-                lasersToStop.Add(slotIndex);
+                lasersToStop.Add(
+                    slotIndex);
+
                 continue;
             }
 
@@ -2033,5 +2047,29 @@ public class ShipWeaponManager : NetworkBehaviour
         ApplySlowOnHit(
             weapon,
             target);
+    }
+
+    private bool IsDamageableValid(
+    IDamageable target)
+    {
+        if (target == null)
+            return false;
+
+        UnityEngine.Object unityObject =
+            target as UnityEngine.Object;
+
+        if (unityObject == null)
+            return false;
+
+        if (target is NetworkBehaviour networkBehaviour &&
+            !networkBehaviour.IsSpawned)
+        {
+            return false;
+        }
+
+        if (target.IsDead)
+            return false;
+
+        return true;
     }
 }

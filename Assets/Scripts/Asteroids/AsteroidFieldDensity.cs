@@ -49,10 +49,10 @@ public class AsteroidFieldDensity : NetworkBehaviour
     // DENSITY BOOST
     // =========================================================
 
-    private float strongestDensityBoost;
-
-    public float DensityBoost =>
-        strongestDensityBoost;
+    public NetworkVariable<float> DensityBoost = new(
+    0f,
+    NetworkVariableReadPermission.Everyone,
+    NetworkVariableWritePermission.Server);
 
     // =========================================================
     // UI
@@ -90,6 +90,9 @@ public class AsteroidFieldDensity : NetworkBehaviour
         Density.OnValueChanged +=
             OnDensityChanged;
 
+        DensityBoost.OnValueChanged +=
+            OnDensityBoostChanged;
+
         if (IsServer)
         {
             Density.Value =
@@ -98,7 +101,7 @@ public class AsteroidFieldDensity : NetworkBehaviour
                     minimumDensity,
                     maximumDensity);
 
-            strongestDensityBoost = 0f;
+            DensityBoost.Value = 0f;
         }
 
         RefreshText(
@@ -109,6 +112,9 @@ public class AsteroidFieldDensity : NetworkBehaviour
     {
         Density.OnValueChanged -=
             OnDensityChanged;
+
+        DensityBoost.OnValueChanged -=
+            OnDensityBoostChanged;
     }
 
     // =========================================================
@@ -196,18 +202,10 @@ public class AsteroidFieldDensity : NetworkBehaviour
          * DensityBoost nie stackuje siê.
          * Zawsze bierze najwiêksz¹ wartoœæ.
          */
-        strongestDensityBoost =
+        DensityBoost.Value =
             Mathf.Max(
-                0f,
-                newStrongestBoost);
-
-        /*
-         * Density.Value mog³o siê nie zmieniæ,
-         * ale zmieni³ siê booster,
-         * wiêc rêcznie odœwie¿amy tekst.
-         */
-        RefreshText(
-            GetEffectiveDensity());
+            0f,
+            newStrongestBoost);
     }
 
     private void CheckDensityBooster(
@@ -296,7 +294,7 @@ public class AsteroidFieldDensity : NetworkBehaviour
     {
         return Mathf.Clamp(
             Density.Value +
-            strongestDensityBoost,
+            DensityBoost.Value,
             minimumDensity,
             maximumDensity);
     }
@@ -378,5 +376,13 @@ public class AsteroidFieldDensity : NetworkBehaviour
             densityText.color =
                 fieldVisual.borderColor;
         }
+    }
+
+    private void OnDensityBoostChanged(
+    float oldValue,
+    float newValue)
+    {
+        RefreshText(
+            GetEffectiveDensity());
     }
 }

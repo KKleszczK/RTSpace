@@ -26,28 +26,50 @@ public class LabPanelUI : MonoBehaviour
     [SerializeField] private Button[] queueSlotButtons;
     [SerializeField] private Sprite emptySlotSprite;
 
+    private BaseSafeZone localSafeZone;
+    private PlayerUpgradeStats localUpgradeStats;
+    private BaseCore localCore;
+
+
     private List<ResearchButtonUI> createdButtons = new();
 
     private void Start()
     {
         FindLocalPlayerResearch();
-        CreateButtons();
+        FindLocalResearchBonuses();
+        TryFindLocalCore();
+
         for (int i = 0; i < queueSlotButtons.Length; i++)
         {
             int index = i;
-            queueSlotButtons[i].onClick.AddListener(() => RemoveQueueItem(index));
+
+            queueSlotButtons[i].onClick.AddListener(
+                () => RemoveQueueItem(index));
         }
     }
 
     private void Update()
     {
+        if (localCore == null)
+            TryFindLocalCore();
+
         if (playerResearch == null)
             FindLocalPlayerResearch();
 
+        if (localSafeZone == null ||
+            localUpgradeStats == null)
+        {
+            FindLocalResearchBonuses();
+        }
+
         UpdateProgressBar();
         UpdateQueueUI();
+
         foreach (ResearchButtonUI button in createdButtons)
-            button.Refresh();
+        {
+            if (button != null)
+                button.Refresh();
+        }
     }
     private void UpdateProgressBar()
     {
@@ -59,6 +81,117 @@ public class LabPanelUI : MonoBehaviour
         Vector2 size = progressBar.sizeDelta;
         size.x = maxProgressWidth * progress;
         progressBar.sizeDelta = size;
+    }
+
+    private void TryFindLocalCore()
+    {
+        if (localCore != null)
+            return;
+
+        if (Unity.Netcode.NetworkManager.Singleton == null)
+            return;
+
+        BaseCore[] cores =
+            FindObjectsByType<BaseCore>(
+                FindObjectsSortMode.None);
+
+        foreach (BaseCore core in cores)
+        {
+            if (core == null)
+                continue;
+
+            if (!core.IsSpawned)
+                continue;
+
+            if (core.OwnerClientId !=
+                Unity.Netcode.NetworkManager.Singleton.LocalClientId)
+            {
+                continue;
+            }
+
+            localCore = core;
+
+            localCore.tier.OnValueChanged +=
+                OnCoreTierChanged;
+
+            RefreshResearchButtons();
+
+            return;
+        }
+    }
+
+    private void OnCoreTierChanged(
+    int previousTier,
+    int newTier)
+    {
+        RefreshResearchButtons();
+    }
+
+    private void FindLocalResearchBonuses()
+    {
+        if (Unity.Netcode.NetworkManager.Singleton == null)
+            return;
+
+        ulong localClientId =
+            Unity.Netcode.NetworkManager.Singleton.LocalClientId;
+
+        // =====================================================
+        // SAFE ZONE
+        // =====================================================
+
+        if (localSafeZone == null)
+        {
+            BaseSafeZone[] safeZones =
+                FindObjectsByType<BaseSafeZone>(
+                    FindObjectsSortMode.None);
+
+            foreach (BaseSafeZone safeZone in safeZones)
+            {
+                if (!safeZone.IsSpawned)
+                    continue;
+
+                UnitOwner owner =
+                    safeZone.GetComponent<UnitOwner>();
+
+                if (owner == null)
+                    continue;
+
+                if (owner.ownerId.Value !=
+                    localClientId)
+                {
+                    continue;
+                }
+
+                localSafeZone = safeZone;
+                break;
+            }
+        }
+
+        // =====================================================
+        // RESEARCH UPGRADES
+        // =====================================================
+
+        if (localUpgradeStats == null)
+        {
+            PlayerUpgradeStats[] allStats =
+                FindObjectsByType<PlayerUpgradeStats>(
+                    FindObjectsSortMode.None);
+
+            foreach (PlayerUpgradeStats stats in allStats)
+            {
+                if (!stats.IsSpawned)
+                    continue;
+
+                if (stats.OwnerClientId !=
+                    localClientId)
+                {
+                    continue;
+                }
+
+                localUpgradeStats = stats;
+                break;
+            }
+        }
     }
 
     private void UpdateQueueUI()
@@ -130,22 +263,69 @@ public class LabPanelUI : MonoBehaviour
 
         playerResearch.RequestRemoveFromQueue(index);
     }
-    private void CreateButtons()
+    private void RefreshResearchButtons()
     {
-        // Tworzymy kopiê, ¿eby nie zmieniaæ
-        // kolejnoœci listy w Inspectorze.
+        if (content == null)
+            return;
+
+        if (buttonPrefab == null)
+            return;
+
+        if (localCore == null)
+            return;
+
+        // =====================================================
+        // USUWAMY STARE PRZYCISKI
+        // =====================================================
+
+        for (int i = content.childCount - 1;
+             i >= 0;
+             i--)
+        {
+            Destroy(
+                content.GetChild(i).gameObject);
+        }
+
+        createdButtons.Clear();
+
+        // =====================================================
+        // SORTOWANIE
+        // =====================================================
+
         List<ResearchDefinition> sortedResearches =
             new List<ResearchDefinition>(researches);
 
-        // Tier1 -> Tier2 -> Tier3
         sortedResearches.Sort(
             (a, b) =>
-                a.tier.CompareTo(b.tier));
+            {
+                if (a == null && b == null)
+                    return 0;
+
+                if (a == null)
+                    return 1;
+
+                if (b == null)
+                    return -1;
+
+                return a.tier.CompareTo(b.tier);
+            });
+
+        int coreTier =
+            localCore.tier.Value;
+
+        // =====================================================
+        // TWORZENIE DOSTÊPNYCH RESEARCHY
+        // =====================================================
 
         foreach (ResearchDefinition research
                  in sortedResearches)
         {
             if (research == null)
+                continue;
+
+            // Research wy¿szego tieru ni¿ Core
+            // nie jest jeszcze widoczny.
+            if ((int)research.tier > coreTier)
                 continue;
 
             ResearchButtonUI button =
@@ -173,22 +353,93 @@ public class LabPanelUI : MonoBehaviour
             playerResearch.RequestResearch(selectedResearch);
     }
 
-    public void ShowDescription(ResearchDefinition research)
+    private void OnDestroy()
     {
-        descriptionNameText.text = research.displayName;
-        descriptionText.text = research.description;
+        if (localCore != null)
+        {
+            localCore.tier.OnValueChanged -=
+                OnCoreTierChanged;
+        }
+    }
+
+    public void ShowDescription(
+    ResearchDefinition research)
+    {
+        if (research == null)
+            return;
+
+        FindLocalResearchBonuses();
+
+        descriptionNameText.text =
+            research.displayName;
+
+        descriptionText.text =
+            research.description;
+
+        // =====================================================
+        // BONUSES
+        // =====================================================
+
+        float labBonusPercent =
+            localSafeZone != null
+                ? localSafeZone.GetLabSpeedBonusPercent()
+                : 0f;
+
+        float researchBonusPercent =
+            localUpgradeStats != null
+                ? localUpgradeStats.GetResearchSpeedBonusPercent()
+                : 0f;
+
+        float totalBonusPercent =
+            labBonusPercent +
+            researchBonusPercent;
+
+        totalBonusPercent =
+            Mathf.Clamp(
+                totalBonusPercent,
+                0f,
+                100f);
+
+        // =====================================================
+        // FINAL TIME
+        // =====================================================
+
+        float timeMultiplier =
+            1f -
+            totalBonusPercent / 100f;
+
+        float finalResearchTime =
+            Mathf.Max(
+                0f,
+                research.baseResearchTime *
+                timeMultiplier);
+
+        // =====================================================
+        // TEXT
+        // =====================================================
+
         costText.text =
-            $"Met: {research.baseMetalCost}|Ene: {research.baseEnergyCost}|Time: {research.baseResearchTime}s";
+            $"Met: {research.baseMetalCost}|" +
+            $"Ene: {research.baseEnergyCost}|" +
+            $"Time: {finalResearchTime:0.#}s";
     }
 
     private void FindLocalPlayerResearch()
     {
+        if (Unity.Netcode.NetworkManager.Singleton == null)
+            return;
+
         PlayerResearch[] all =
-            FindObjectsByType<PlayerResearch>(FindObjectsSortMode.None);
+            FindObjectsByType<PlayerResearch>(
+                FindObjectsSortMode.None);
 
         foreach (PlayerResearch pr in all)
         {
-            if (pr.OwnerClientId == Unity.Netcode.NetworkManager.Singleton.LocalClientId)
+            if (!pr.IsSpawned)
+                continue;
+
+            if (pr.OwnerClientId ==
+                Unity.Netcode.NetworkManager.Singleton.LocalClientId)
             {
                 playerResearch = pr;
                 return;

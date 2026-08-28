@@ -27,11 +27,22 @@ public class UnitHealthBarUI : MonoBehaviour
     [Header("Segments")]
     [SerializeField] private GameObject segmentPrefab;
 
+    [Header("Ship Segments")]
     [SerializeField]
-    private int hpSegmentSize = 100;
+    private int shipHpSegmentSize = 100;
 
     [SerializeField]
-    private int shieldSegmentSize = 100;
+    private int shipShieldSegmentSize = 100;
+
+    [Header("Base Segments")]
+    [SerializeField]
+    private int baseHpSegmentSize = 500;
+
+    [SerializeField]
+    private int baseShieldSegmentSize = 500;
+
+    private int hpSegmentSize;
+    private int shieldSegmentSize;
 
     // =========================================================
     // UNIT REFERENCES
@@ -44,6 +55,11 @@ public class UnitHealthBarUI : MonoBehaviour
     // =========================================================
     // CACHE
     // =========================================================
+
+    [Header("World Rotation")]
+    [SerializeField]
+    private Vector3 worldRotation =
+    Vector3.zero;
 
     private int lastMaxHp = -1;
     private int lastMaxShield = -1;
@@ -65,7 +81,44 @@ public class UnitHealthBarUI : MonoBehaviour
             baseUnit =
                 GetComponentInParent<BaseUnit>();
         }
+
+        // =====================================================
+        // SEGMENT SIZE
+        // =====================================================
+
+        if (baseUnit != null)
+        {
+            hpSegmentSize =
+                Mathf.Max(
+                    1,
+                    baseHpSegmentSize);
+
+            shieldSegmentSize =
+                Mathf.Max(
+                    1,
+                    baseShieldSegmentSize);
+        }
+        else
+        {
+            hpSegmentSize =
+                Mathf.Max(
+                    1,
+                    shipHpSegmentSize);
+
+            shieldSegmentSize =
+                Mathf.Max(
+                    1,
+                    shipShieldSegmentSize);
+        }
     }
+
+    private void Start()
+    {
+        transform.rotation =
+            Quaternion.Euler(worldRotation);
+    }
+
+    
 
     private void OnEnable()
     {

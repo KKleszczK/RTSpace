@@ -858,4 +858,52 @@ public class HangarPanelUI : MonoBehaviour
         RefreshDockSelectors();
         RefreshDeployButton();
     }
+    public void RequestMoveModule(
+    int sourceSlotIndex,
+    int targetSlotIndex)
+    {
+        // =====================================================
+        // VALIDATION
+        // =====================================================
+
+        if (!CanUseSelectedHangar())
+            return;
+
+        if (selectedDockIndex < 0 ||
+            selectedDockIndex >=
+            selectedHangar.dockedShips.Count)
+        {
+            return;
+        }
+
+        if (sourceSlotIndex < 0 ||
+            sourceSlotIndex > 3)
+        {
+            return;
+        }
+
+        if (targetSlotIndex < 0 ||
+            targetSlotIndex > 3)
+        {
+            return;
+        }
+
+        if (sourceSlotIndex == targetSlotIndex)
+            return;
+
+        // =====================================================
+        // REQUEST
+        // =====================================================
+
+        Debug.Log(
+            $"[MODULE MOVE UI] " +
+            $"dock={selectedDockIndex}, " +
+            $"source={sourceSlotIndex}, " +
+            $"target={targetSlotIndex}");
+
+        selectedHangar.RequestMoveModule(
+            selectedDockIndex,
+            sourceSlotIndex,
+            targetSlotIndex);
+    }
 }

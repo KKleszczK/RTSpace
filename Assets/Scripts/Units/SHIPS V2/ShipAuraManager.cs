@@ -218,15 +218,17 @@ public class ShipAuraManager : NetworkBehaviour
 
             case AuraEffectType.Healing:
 
-                /*
-                 * Healing ró¿nych aur sumuje siê.
-                 *
-                 * 2 HP/s + 3 HP/s = 5 HP/s.
-                 */
-                totalHealingPerSecond +=
+                float healingPercent =
                     Mathf.Max(
                         0f,
                         finalAuraValue);
+
+                float healingPerSecond =
+                    ship.MaxHp *
+                    (healingPercent / 100f);
+
+                totalHealingPerSecond +=
+                    healingPerSecond;
 
                 break;
 

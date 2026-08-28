@@ -27,6 +27,7 @@ public class AssemblyPanelUI : MonoBehaviour
     [SerializeField] private ModuleQueueSlotUI[] queueSlots;
 
     private BaseCore localCore;
+    private BaseSafeZone localSafeZone;
 
     private PlayerModuleCrafting playerCrafting;
 
@@ -57,23 +58,55 @@ public class AssemblyPanelUI : MonoBehaviour
     }
 
 
-    public void ShowModuleInfo(ModuleDefinition module)
+    public void ShowModuleInfo(
+    ModuleDefinition module)
     {
         if (module == null)
             return;
 
         if (nameText != null)
-            nameText.text = module.displayName;
+            nameText.text =
+                module.displayName;
 
         if (descriptionText != null)
-            descriptionText.text = module.description;
+            descriptionText.text =
+                module.description;
+
+        // =====================================================
+        // FINAL CRAFT TIME
+        // =====================================================
+
+        float bonusPercent =
+            localSafeZone != null
+                ? localSafeZone.GetAssemblySpeedBonusPercent()
+                : 0f;
+
+        bonusPercent =
+            Mathf.Clamp(
+                bonusPercent,
+                0f,
+                100f);
+
+        float timeMultiplier =
+            1f -
+            bonusPercent / 100f;
+
+        float finalCraftTime =
+            Mathf.Max(
+                0f,
+                module.craftTime *
+                timeMultiplier);
+
+        // =====================================================
+        // INFO
+        // =====================================================
 
         if (costText != null)
         {
             costText.text =
                 $"M: {module.metalCost} " +
                 $"E: {module.energyCost} " +
-                $"T: {module.craftTime}s";
+                $"T: {finalCraftTime:0.#}s";
         }
     }
 
@@ -208,6 +241,8 @@ public class AssemblyPanelUI : MonoBehaviour
             }
 
             localCore = core;
+            localSafeZone =
+                core.GetComponent<BaseSafeZone>();
 
             localCore.tier.OnValueChanged +=
                 OnCoreTierChanged;

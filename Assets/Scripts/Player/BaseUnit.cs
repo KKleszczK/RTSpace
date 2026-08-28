@@ -19,6 +19,14 @@ public class BaseUnit : NetworkBehaviour, IDamageable
     [SerializeField] private int baseMaxShield = 0;
 
     // =========================================================
+    // COMBAT FEEDBACK
+    // =========================================================
+
+    [Header("Combat Feedback")]
+    [SerializeField] private Transform combatTextOrigin;
+    [SerializeField] private CombatFloatingText combatTextPrefab;
+
+    // =========================================================
     // NETWORK STATS
     // =========================================================
 
@@ -230,6 +238,9 @@ public class BaseUnit : NetworkBehaviour, IDamageable
             shield.Value -=
                 actualShieldDamage;
 
+            ShowShieldDamageClientRpc(
+                actualShieldDamage);
+
             Debug.Log(
                 $"[BASE DAMAGE] " +
                 $"Shield -{actualShieldDamage} | " +
@@ -264,6 +275,9 @@ public class BaseUnit : NetworkBehaviour, IDamageable
         hp.Value -=
             actualHullDamage;
 
+        ShowHullDamageClientRpc(
+            actualHullDamage);
+
         Debug.Log(
             $"[BASE DAMAGE] " +
             $"Hull -{actualHullDamage} | " +
@@ -279,6 +293,59 @@ public class BaseUnit : NetworkBehaviour, IDamageable
 
             Die();
         }
+    }
+
+    // =========================================================
+    // COMBAT FEEDBACK
+    // =========================================================
+
+    [ClientRpc]
+    private void ShowHullDamageClientRpc(
+        int damage)
+    {
+        ShowCombatTextLocal(
+            $"-{damage}",
+            new Color(
+                1f,
+                0.2f,
+                0.2f,
+                1f));
+    }
+
+    [ClientRpc]
+    private void ShowShieldDamageClientRpc(
+        int damage)
+    {
+        ShowCombatTextLocal(
+            $"-{damage}",
+            new Color(
+                0.2f,
+                0.7f,
+                1f,
+                1f));
+    }
+
+    private void ShowCombatTextLocal(
+        string value,
+        Color color)
+    {
+        if (combatTextPrefab == null)
+            return;
+
+        Vector3 spawnPosition =
+            combatTextOrigin != null
+                ? combatTextOrigin.position
+                : transform.position;
+
+        CombatFloatingText floatingText =
+            Instantiate(
+                combatTextPrefab,
+                spawnPosition,
+                Quaternion.identity);
+
+        floatingText.Initialize(
+            value,
+            color);
     }
 
     // =========================================================

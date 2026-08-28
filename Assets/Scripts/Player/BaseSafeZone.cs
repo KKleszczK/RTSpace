@@ -71,29 +71,29 @@ public class BaseSafeZone : NetworkBehaviour
     // CURRENT BOOSTERS
     // =========================================================
 
-    public float AssemblySpeedBonusPercent
-    {
-        get;
-        private set;
-    }
+    public NetworkVariable<float> AssemblySpeedBonusPercent =
+    new NetworkVariable<float>(
+        0f,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server);
 
-    public float EnergyProductionBonusPercent
-    {
-        get;
-        private set;
-    }
+    public NetworkVariable<float> EnergyProductionBonusPercent =
+        new NetworkVariable<float>(
+            0f,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Server);
 
-    public float LabSpeedBonusPercent
-    {
-        get;
-        private set;
-    }
+    public NetworkVariable<float> LabSpeedBonusPercent =
+        new NetworkVariable<float>(
+            0f,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Server);
 
-    public float DensityBoostPercent
-    {
-        get;
-        private set;
-    }
+    public NetworkVariable<float> DensityBoostPercent =
+        new NetworkVariable<float>(
+            0f,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Server);
 
     // =========================================================
     // INITIALIZATION
@@ -184,10 +184,10 @@ public class BaseSafeZone : NetworkBehaviour
     {
         shipsInSafeZone.Clear();
 
-        AssemblySpeedBonusPercent = 0f;
-        EnergyProductionBonusPercent = 0f;
-        LabSpeedBonusPercent = 0f;
-        DensityBoostPercent = 0f;
+        AssemblySpeedBonusPercent.Value = 0f;
+        EnergyProductionBonusPercent.Value = 0f;
+        LabSpeedBonusPercent.Value = 0f;
+        DensityBoostPercent.Value = 0f;
 
         ShipUnit[] allShips =
             FindObjectsByType<ShipUnit>(
@@ -394,35 +394,37 @@ public class BaseSafeZone : NetworkBehaviour
     }
 
     private void AddBoosterValue(
-        BaseBoosterEffectType effect,
-        float value)
+    BaseBoosterEffectType effect,
+    float value)
     {
         switch (effect)
         {
             case BaseBoosterEffectType.AssemblySpeed:
 
-                AssemblySpeedBonusPercent +=
+                AssemblySpeedBonusPercent.Value +=
                     value;
 
                 break;
 
             case BaseBoosterEffectType.EnergyProduction:
 
-                EnergyProductionBonusPercent +=
+                EnergyProductionBonusPercent.Value +=
                     value;
 
                 break;
 
             case BaseBoosterEffectType.LabSpeed:
 
-                LabSpeedBonusPercent +=
-                    value;
+                LabSpeedBonusPercent.Value =
+                    Mathf.Max(
+                        LabSpeedBonusPercent.Value,
+                        value);
 
                 break;
 
             case BaseBoosterEffectType.DencityBoost:
 
-                DensityBoostPercent +=
+                DensityBoostPercent.Value +=
                     value;
 
                 break;
@@ -467,7 +469,7 @@ public class BaseSafeZone : NetworkBehaviour
         return Mathf.Max(
             0.01f,
             1f +
-            AssemblySpeedBonusPercent / 100f);
+            AssemblySpeedBonusPercent.Value / 100f);
     }
 
     public float GetEnergyProductionMultiplier()
@@ -475,7 +477,7 @@ public class BaseSafeZone : NetworkBehaviour
         return Mathf.Max(
             0.01f,
             1f +
-            EnergyProductionBonusPercent / 100f);
+            EnergyProductionBonusPercent.Value / 100f);
     }
 
     public float GetLabSpeedMultiplier()
@@ -483,7 +485,7 @@ public class BaseSafeZone : NetworkBehaviour
         return Mathf.Max(
             0.01f,
             1f +
-            LabSpeedBonusPercent / 100f);
+            LabSpeedBonusPercent.Value / 100f);
     }
 
     public float GetDensityBoostMultiplier()
@@ -491,6 +493,22 @@ public class BaseSafeZone : NetworkBehaviour
         return Mathf.Max(
             0.01f,
             1f +
-            DensityBoostPercent / 100f);
+            DensityBoostPercent.Value / 100f);
+    }
+
+    public float GetAssemblySpeedBonusPercent()
+    {
+        return Mathf.Clamp(
+            AssemblySpeedBonusPercent.Value,
+            0f,
+            100f);
+    }
+
+    public float GetLabSpeedBonusPercent()
+    {
+        return Mathf.Clamp(
+            LabSpeedBonusPercent.Value,
+            0f,
+            100f);
     }
 }

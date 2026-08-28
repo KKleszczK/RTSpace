@@ -205,29 +205,63 @@ public class PlayerResearch : NetworkBehaviour
         if (currentResearch == null)
             return;
 
-        float researchTime =
+        float baseResearchTime =
             Mathf.Max(
-                0.01f,
-                currentResearch.baseResearchTime);
+            0f,
+            currentResearch.baseResearchTime);
 
-        float labSpeedMultiplier =
-    safeZone != null
-        ? safeZone.GetLabSpeedMultiplier()
-        : 1f;
+        // =====================================================
+        // BONUSES
+        // =====================================================
 
-        float researchSpeedMultiplier =
+        float labBonusPercent =
+            safeZone != null
+                ? safeZone.GetLabSpeedBonusPercent()
+                : 0f;
+
+        float researchBonusPercent =
             upgrades != null
-                ? upgrades.GetResearchSpeedMultiplier()
-                : 1f;
+                ? upgrades.GetResearchSpeedBonusPercent()
+                : 0f;
 
-        float finalResearchSpeed =
-            labSpeedMultiplier *
-            researchSpeedMultiplier;
+        // Najpierw SUMUJEMY wszystkie bonusy.
+        float totalBonusPercent =
+            labBonusPercent +
+            researchBonusPercent;
 
-        currentProgress.Value +=
-            Time.deltaTime *
-            finalResearchSpeed /
-            researchTime;
+        // Dopiero sumê ograniczamy do 100%.
+        totalBonusPercent =
+            Mathf.Clamp(
+                totalBonusPercent,
+                0f,
+                100f);
+
+        // =====================================================
+        // FINAL TIME
+        // =====================================================
+
+        float timeMultiplier =
+            1f -
+            totalBonusPercent / 100f;
+
+        float finalResearchTime =
+            baseResearchTime *
+            timeMultiplier;
+
+        // =====================================================
+        // PROGRESS
+        // =====================================================
+
+        if (finalResearchTime <= 0f)
+        {
+            currentProgress.Value = 1f;
+        }
+        else
+        {
+            currentProgress.Value +=
+                Time.deltaTime /
+                finalResearchTime;
+        }
 
         if (currentProgress.Value >= 1f)
         {

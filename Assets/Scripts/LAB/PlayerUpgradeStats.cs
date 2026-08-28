@@ -339,6 +339,13 @@ public class PlayerUpgradeStats : NetworkBehaviour
             stationResearchSpeedPercent.Value / 100f);
     }
 
+    public float GetResearchSpeedBonusPercent()
+    {
+        return Mathf.Max(
+            0f,
+            stationResearchSpeedPercent.Value);
+    }
+
     public float GetGeneratorBoostMultiplier(
     int generatorIndex)
     {

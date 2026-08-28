@@ -87,6 +87,15 @@ public class ShipUnit : NetworkBehaviour, IDamageable
     public int MaxShield => maxShield.Value;
     public float MoveSpeed => moveSpeed.Value;
 
+    [Header("Player Colors")]
+    [SerializeField]
+    private Color localPlayerColor =
+    Color.blue;
+
+    [SerializeField]
+    private Color enemyPlayerColor =
+        Color.red;
+
     // =========================================================
     // IDAMAGEABLE
     // =========================================================
@@ -209,6 +218,16 @@ public class ShipUnit : NetworkBehaviour, IDamageable
 
     private void Update()
     {
+        // =====================================================
+        // VISUAL ROTATION
+        // =====================================================
+
+        UpdateVisualRotation();
+
+        // =====================================================
+        // SERVER LOGIC
+        // =====================================================
+
         if (!IsServer)
             return;
 
@@ -358,9 +377,17 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         if (rend == null)
             return;
 
+        if (NetworkManager.Singleton == null)
+            return;
+
+        bool isLocalPlayer =
+            ownerId.Value ==
+            NetworkManager.Singleton.LocalClientId;
+
         rend.material.color =
-            PlayerColorHelper.GetColor(
-                ownerId.Value);
+            isLocalPlayer
+                ? localPlayerColor
+                : enemyPlayerColor;
     }
 
     // =========================================================
@@ -412,7 +439,7 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         if (direction.sqrMagnitude <= 0.01f)
             return;
 
-        RotateTowardsMovement(direction);
+        
 
         Vector3 newPosition =
             Vector3.MoveTowards(
@@ -449,6 +476,24 @@ public class ShipUnit : NetworkBehaviour, IDamageable
 
         transform.position =
             newPosition;
+    }
+
+    private void UpdateVisualRotation()
+    {
+        if (shipModel == null)
+            return;
+
+        Vector3 direction =
+            targetPosition.Value -
+            transform.position;
+
+        direction.y = 0f;
+
+        if (direction.sqrMagnitude <= 0.01f)
+            return;
+
+        RotateTowardsMovement(
+            direction);
     }
 
     // =========================================================
@@ -676,6 +721,32 @@ public class ShipUnit : NetworkBehaviour, IDamageable
     {
         ShowCombatTextLocal(
             $"-{damage}",
+            new Color(
+                0.2f,
+                0.7f,
+                1f,
+                1f));
+    }
+
+    [ClientRpc]
+    private void ShowHullHealClientRpc(
+    int amount)
+    {
+        ShowCombatTextLocal(
+            $"+{amount}",
+            new Color(
+                0.2f,
+                1f,
+                0.2f,
+                1f));
+    }
+
+    [ClientRpc]
+    private void ShowShieldRestoreClientRpc(
+        int amount)
+    {
+        ShowCombatTextLocal(
+            $"+{amount}",
             new Color(
                 0.2f,
                 0.7f,
@@ -1350,10 +1421,22 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         if (healAmount <= 0)
             return;
 
-        hp.Value =
+        int missingHp =
+            MaxHp - hp.Value;
+
+        int actualHeal =
             Mathf.Min(
-                MaxHp,
-                hp.Value + healAmount);
+                missingHp,
+                healAmount);
+
+        if (actualHeal <= 0)
+            return;
+
+        hp.Value +=
+            actualHeal;
+
+        ShowHullHealClientRpc(
+            actualHeal);
     }
 
     public void RestoreShield(
@@ -1365,7 +1448,6 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         if (isDead.Value)
             return;
 
-        // Statek nie posiada tarczy.
         if (MaxShield <= 0)
             return;
 
@@ -1380,10 +1462,22 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         if (shieldAmount <= 0)
             return;
 
-        shield.Value =
+        int missingShield =
+            MaxShield - shield.Value;
+
+        int actualRestore =
             Mathf.Min(
-                MaxShield,
-                shield.Value + shieldAmount);
+                missingShield,
+                shieldAmount);
+
+        if (actualRestore <= 0)
+            return;
+
+        shield.Value +=
+            actualRestore;
+
+        ShowShieldRestoreClientRpc(
+            actualRestore);
     }
 
     public void RecalculateResearchStats()
@@ -1440,7 +1534,7 @@ public class ShipUnit : NetworkBehaviour, IDamageable
             {
                 return upgrades;
             }
-        }
+        }   
 
         return null;
     }

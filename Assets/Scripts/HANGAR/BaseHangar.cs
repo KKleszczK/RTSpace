@@ -661,6 +661,225 @@ public class BaseHangar : NetworkBehaviour
     }
 
     // =========================================================
+    // MOVE / SWAP MODULE
+    // =========================================================
+
+    public void RequestMoveModule(
+        int dockIndex,
+        int sourceSlotIndex,
+        int targetSlotIndex)
+    {
+        if (!IsSpawned)
+            return;
+
+        MoveModuleServerRpc(
+            dockIndex,
+            sourceSlotIndex,
+            targetSlotIndex);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void MoveModuleServerRpc(
+        int dockIndex,
+        int sourceSlotIndex,
+        int targetSlotIndex,
+        ServerRpcParams rpcParams = default)
+    {
+        ulong senderClientId =
+            rpcParams.Receive.SenderClientId;
+
+        // =====================================================
+        // BASIC VALIDATION
+        // =====================================================
+
+        if (!CanUseHangar(senderClientId))
+        {
+            Debug.LogWarning(
+                "[MODULE MOVE] Gracz nie jest w³aœcicielem hangaru.");
+
+            return;
+        }
+
+        if (!IsValidDockIndex(dockIndex))
+            return;
+
+        if (!IsValidSlotIndex(sourceSlotIndex))
+            return;
+
+        if (!IsValidSlotIndex(targetSlotIndex))
+            return;
+
+        if (sourceSlotIndex == targetSlotIndex)
+            return;
+
+        if (ModuleDatabase.Instance == null)
+            return;
+
+        if (ShipDatabase.Instance == null)
+            return;
+
+        // =====================================================
+        // SHIP
+        // =====================================================
+
+        DockedShipData shipData =
+            dockedShips[dockIndex];
+
+        ShipDefinition shipDefinition =
+            ShipDatabase.Instance.GetShip(
+                shipData.shipId.ToString());
+
+        if (shipDefinition == null)
+            return;
+
+        // =====================================================
+        // SOURCE MODULE
+        // =====================================================
+
+        FixedString64Bytes sourceModuleId =
+            shipData.GetModule(sourceSlotIndex);
+
+        if (sourceModuleId.IsEmpty)
+            return;
+
+        ModuleDefinition sourceModule =
+            ModuleDatabase.Instance.GetModule(
+                sourceModuleId.ToString());
+
+        if (sourceModule == null)
+            return;
+
+        // =====================================================
+        // TARGET MODULE
+        // =====================================================
+
+        FixedString64Bytes targetModuleId =
+            shipData.GetModule(targetSlotIndex);
+
+        ModuleDefinition targetModule = null;
+
+        if (!targetModuleId.IsEmpty)
+        {
+            targetModule =
+                ModuleDatabase.Instance.GetModule(
+                    targetModuleId.ToString());
+
+            if (targetModule == null)
+                return;
+        }
+
+        // =====================================================
+        // CORE TIER
+        // =====================================================
+
+        BaseCore core =
+            FindCoreForOwner(senderClientId);
+
+        if (core == null)
+            return;
+
+        int coreTier =
+            core.tier.Value;
+
+        // Nie mo¿na przenosiæ modu³u
+        // do zablokowanego normalnego slotu.
+        if (targetSlotIndex >= NormalSlot1 &&
+            targetSlotIndex <= NormalSlot3 &&
+            targetSlotIndex >= coreTier)
+        {
+            Debug.LogWarning(
+                "[MODULE MOVE] Target slot jest zablokowany.");
+
+            return;
+        }
+
+        // Przy SWAP source stanie siê targetem
+        // dla drugiego modu³u, wiêc równie¿
+        // musi byæ odblokowany.
+        if (targetModule != null &&
+            sourceSlotIndex >= NormalSlot1 &&
+            sourceSlotIndex <= NormalSlot3 &&
+            sourceSlotIndex >= coreTier)
+        {
+            Debug.LogWarning(
+                "[MODULE MOVE] Source slot jest zablokowany dla SWAP.");
+
+            return;
+        }
+
+        // =====================================================
+        // VALIDATE SOURCE -> TARGET
+        // =====================================================
+
+        if (!CanInstallModule(
+                sourceModule,
+                shipDefinition,
+                targetSlotIndex))
+        {
+            Debug.LogWarning(
+                $"[MODULE MOVE] {sourceModule.moduleId} " +
+                $"nie mo¿e wejœæ do slotu {targetSlotIndex}.");
+
+            return;
+        }
+
+        // =====================================================
+        // VALIDATE TARGET -> SOURCE
+        // tylko podczas SWAP
+        // =====================================================
+
+        if (targetModule != null)
+        {
+            if (!CanInstallModule(
+                    targetModule,
+                    shipDefinition,
+                    sourceSlotIndex))
+            {
+                Debug.LogWarning(
+                    $"[MODULE SWAP] {targetModule.moduleId} " +
+                    $"nie mo¿e wejœæ do slotu {sourceSlotIndex}.");
+
+                return;
+            }
+        }
+
+        // =====================================================
+        // MOVE / SWAP
+        // =====================================================
+
+        shipData.SetModule(
+            targetSlotIndex,
+            sourceModuleId);
+
+        if (targetModuleId.IsEmpty)
+        {
+            // MOVE na pusty slot.
+            shipData.ClearModule(
+                sourceSlotIndex);
+        }
+        else
+        {
+            // SWAP dwóch modu³ów.
+            shipData.SetModule(
+                sourceSlotIndex,
+                targetModuleId);
+        }
+
+        // NetworkList wymaga zapisania
+        // zmodyfikowanej struktury z powrotem.
+        dockedShips[dockIndex] =
+            shipData;
+
+        Debug.Log(
+            $"[MODULE MOVE OK] " +
+            $"dock={dockIndex}, " +
+            $"source={sourceSlotIndex}, " +
+            $"target={targetSlotIndex}, " +
+            $"sourceModule={sourceModuleId}, " +
+            $"targetModule={targetModuleId}");
+    }
+
+    // =========================================================
     // REMOVE MODULE
     // =========================================================
 

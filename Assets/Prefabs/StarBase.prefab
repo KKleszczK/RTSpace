@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 4250326781206775419}
   - component: {fileID: 770718875064186446}
   - component: {fileID: 4312695449792705201}
-  - component: {fileID: 6524294808548120566}
   - component: {fileID: 8741085580866989857}
   - component: {fileID: 2520353419286221697}
   - component: {fileID: 2684553389713563295}
@@ -47,6 +46,7 @@ Transform:
   m_Children:
   - {fileID: 8648945695424343136}
   - {fileID: 7627030707720575673}
+  - {fileID: 8680601878515008763}
   - {fileID: 6833310462185554226}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -174,34 +174,6 @@ MonoBehaviour:
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 0
   unitRenderer: {fileID: 6912343815264534621}
---- !u!114 &6524294808548120566
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 847718449950176969}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd11baf4c317d5943ac5ce26c8e8ea2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NetworkHealth
-  ShowTopMostFoldoutHeaderGroup: 1
-  hp:
-    UpdateTraits:
-      MinSecondsBetweenUpdates: 0
-      MaxSecondsBetweenUpdates: 0
-    m_InternalValue: 100
-  maxHp:
-    UpdateTraits:
-      MinSecondsBetweenUpdates: 0
-      MaxSecondsBetweenUpdates: 0
-    m_InternalValue: 100
-  isDead:
-    UpdateTraits:
-      MinSecondsBetweenUpdates: 0
-      MaxSecondsBetweenUpdates: 0
-    m_InternalValue: 0
 --- !u!114 &8741085580866989857
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -404,6 +376,26 @@ MonoBehaviour:
   shieldRechargeInterval: 1
   shieldRechargeAmount: 5
   shieldRechargeEnergyCost: 2
+  AssemblySpeedBonusPercent:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+  EnergyProductionBonusPercent:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+  LabSpeedBonusPercent:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
+  DensityBoostPercent:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
 --- !u!114 &2847361218970221703
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -420,6 +412,8 @@ MonoBehaviour:
   owner: {fileID: 4312695449792705201}
   baseMaxHp: 1000
   baseMaxShield: 500
+  combatTextOrigin: {fileID: 8680601878515008763}
+  combatTextPrefab: {fileID: 6625998237833649948, guid: 0704cd6e11f8a554ca2d492484010d15, type: 3}
   maxHp:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
@@ -434,12 +428,12 @@ MonoBehaviour:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
-    m_InternalValue: 0
+    m_InternalValue: 500
   shield:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
-    m_InternalValue: 0
+    m_InternalValue: 500
   isDead:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
@@ -559,6 +553,37 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+--- !u!1 &3000211799679292951
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8680601878515008763}
+  m_Layer: 0
+  m_Name: Combat Text Origin
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8680601878515008763
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3000211799679292951}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7809599685162873234}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3142514455629620804
 GameObject:
   m_ObjectHideFlags: 0
@@ -681,6 +706,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7809599685162873234}
     m_Modifications:
+    - target: {fileID: 284818124265339224, guid: 866582fe82c0c0b4da8ffd5deb760431, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3257261981835286135, guid: 866582fe82c0c0b4da8ffd5deb760431, type: 3}
       propertyPath: m_IsActive
       value: 0

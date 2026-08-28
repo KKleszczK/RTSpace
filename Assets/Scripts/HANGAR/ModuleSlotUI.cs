@@ -130,50 +130,78 @@ public class ModuleSlotUI :
     // WK£ADANIE MODU£U Z INVENTORY DO SLOTU
     // =========================================================
 
-    public void OnDrop(PointerEventData eventData)
+    public void OnDrop(
+    PointerEventData eventData)
     {
-        Debug.Log(
-            $"[MODULE SLOT DROP] slot={slotIndex}, " +
-            $"locked={isLocked}, " +
-            $"pointerDrag={(eventData.pointerDrag != null ? eventData.pointerDrag.name : "NULL")}");
-
-        if (isLocked || hangarPanel == null)
+        if (isLocked ||
+            hangarPanel == null ||
+            eventData.pointerDrag == null)
+        {
             return;
+        }
 
-        if (eventData.pointerDrag == null)
+        // =====================================================
+        // SLOT -> SLOT
+        // =====================================================
+
+        ModuleSlotUI sourceSlot =
+            eventData.pointerDrag
+                .GetComponent<ModuleSlotUI>();
+
+        if (sourceSlot == null)
+        {
+            sourceSlot =
+                eventData.pointerDrag
+                    .GetComponentInParent<ModuleSlotUI>();
+        }
+
+        if (sourceSlot != null)
+        {
+            // Nie robimy nic, jeœli upuszczamy
+            // na ten sam slot.
+            if (sourceSlot == this)
+                return;
+
+            if (sourceSlot.IsLocked)
+                return;
+
+            if (sourceSlot.GetModule() == null)
+                return;
+
+            Debug.Log(
+                $"[MODULE SLOT MOVE] " +
+                $"{sourceSlot.SlotIndex} -> {slotIndex}");
+
+            hangarPanel.RequestMoveModule(
+                sourceSlot.SlotIndex,
+                slotIndex);
+
             return;
+        }
+
+        // =====================================================
+        // INVENTORY -> SLOT
+        // =====================================================
 
         DraggableModuleUI draggedModule =
-            eventData.pointerDrag.GetComponent<DraggableModuleUI>();
+            eventData.pointerDrag
+                .GetComponent<DraggableModuleUI>();
 
         if (draggedModule == null)
         {
             draggedModule =
-                eventData.pointerDrag.GetComponentInParent<DraggableModuleUI>();
+                eventData.pointerDrag
+                    .GetComponentInParent<DraggableModuleUI>();
         }
 
         if (draggedModule == null)
-        {
-            Debug.LogWarning(
-                "[MODULE SLOT DROP] Przeci¹gany obiekt nie posiada DraggableModuleUI.");
-
             return;
-        }
 
         ModuleDefinition module =
             draggedModule.GetModule();
 
         if (module == null)
-        {
-            Debug.LogWarning(
-                "[MODULE SLOT DROP] DraggableModuleUI nie posiada modu³u.");
-
             return;
-        }
-
-        Debug.Log(
-            $"[MODULE INSTALL REQUEST] " +
-            $"module={module.moduleId}, slot={slotIndex}");
 
         hangarPanel.RequestInstallModule(
             slotIndex,
