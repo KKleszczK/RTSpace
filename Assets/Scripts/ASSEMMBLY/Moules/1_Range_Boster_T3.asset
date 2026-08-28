@@ -24,7 +24,7 @@ MonoBehaviour:
   craftTime: 40
   maxCopiesPerPlayer: 3
   exclusive: 1
-  unlockedByDefault: 0
+  unlockedByDefault: 1
   shieldFlat: 0
   shieldPercent: 0
   hpFlat: 0
