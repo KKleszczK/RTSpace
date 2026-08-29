@@ -18,9 +18,9 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: f730f3ca4a1cdb941ba2fbe8ea6d2720, type: 3}
   researchedIcon: {fileID: 21300000, guid: c74ce56c8ecb8cd47a91d48bc24a166d, type: 3}
   tier: 1
-  baseMetalCost: 150
-  baseEnergyCost: 60
-  baseResearchTime: 20
+  baseMetalCost: 50
+  baseEnergyCost: 30
+  baseResearchTime: 10
   effectType: 7
   valueType: 0
   value: 15000

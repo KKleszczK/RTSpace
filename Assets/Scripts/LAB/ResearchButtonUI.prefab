@@ -227,4 +227,4 @@ MonoBehaviour:
   backgroundImage: {fileID: 1847283247178710123}
   normalColor: {r: 0, g: 0, b: 0, a: 0.39215687}
   hoverColor: {r: 0, g: 0.9795791, b: 1, a: 1}
-  returnTime: 1
+  returnTime: 0.25
