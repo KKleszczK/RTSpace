@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Generator_Technology_T3
   m_EditorClassIdentifier: Assembly-CSharp::ResearchDefinition
   researchId: generator_technology_t3
-  displayName: Generator Technology
-  description: Optimize generator effichiency boosting its bonus by 300%
+  displayName: Generator Technology T3
+  description: Boosts T3 generator by 200%
   icon: {fileID: 21300000, guid: 180a5ce1a23d63f4ab8f5442e38d54e8, type: 3}
   researchedIcon: {fileID: 21300000, guid: d702479ed6ea81f4383a7e5844263a05, type: 3}
   tier: 3
@@ -23,6 +23,6 @@ MonoBehaviour:
   baseResearchTime: 60
   effectType: 6
   valueType: 0
-  value: 300
+  value: 200
   unlockedModuleIds:
   - 
