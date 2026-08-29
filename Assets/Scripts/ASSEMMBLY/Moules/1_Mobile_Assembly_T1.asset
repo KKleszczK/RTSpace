@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
   moduleId: mobile_assembly_t1
   displayName: Mobile Assembly
-  description: Boosts module production speed at nearby stations by 2% (stacks)
+  description: Boosts module production speed at nearby stations by 1% (stacks)
   icon: {fileID: 21300000, guid: daaebe26a0711224e8ca1bd15a2d17e6, type: 3}
   tier: 1
   type: 2
-  metalCost: 20
+  metalCost: 30
   energyCost: 10
   craftTime: 5
   maxCopiesPerPlayer: 99
