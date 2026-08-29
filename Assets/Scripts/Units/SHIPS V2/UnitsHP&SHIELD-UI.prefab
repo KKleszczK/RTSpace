@@ -245,9 +245,9 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3257261981835286135}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalPosition: {x: 0, y: 0, z: -0}
+  m_LocalScale: {x: 1.3, y: 1.3, z: 1.3}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 8934448174017740804}
   - {fileID: 8705207226822331340}
@@ -257,8 +257,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 30}
-  m_SizeDelta: {x: 115, y: 25}
+  m_AnchoredPosition: {x: -26.4, y: 35.2}
+  m_SizeDelta: {x: 115, y: 37.1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &3414269301476413027
 GameObject:
@@ -394,7 +394,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3301887, g: 0.24141155, b: 0.24141155, a: 0.56078434}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.27058825}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -753,10 +753,13 @@ MonoBehaviour:
   shieldFill: {fileID: 1425871247275373778}
   shieldSegmentsContainer: {fileID: 2476461464240206034}
   segmentPrefab: {fileID: 1099318318894217809, guid: 5cb214cfd7601fd41a29a7a3749aed9c, type: 3}
-  hpSegmentSize: 100
-  shieldSegmentSize: 100
+  shipHpSegmentSize: 100
+  shipShieldSegmentSize: 100
+  baseHpSegmentSize: 500
+  baseShieldSegmentSize: 500
   ship: {fileID: 0}
   baseUnit: {fileID: 0}
+  worldRotation: {x: 0, y: 0, z: 0}
 --- !u!114 &284818124265339224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -833,7 +836,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3301887, g: 0.24141155, b: 0.24141155, a: 0.56078434}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.27058825}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1061,14 +1064,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0, a: 0.56078434}
+  m_Color: {r: 0.94117653, g: 0, b: 0.1764706, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: bb14059add287a34b83f2686880ae035, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c88afd23ca63199418b91960045a3324, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1214,7 +1217,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3301887, g: 0.24141155, b: 0.24141155, a: 0.56078434}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.27058825}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
