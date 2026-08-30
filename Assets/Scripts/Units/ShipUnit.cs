@@ -26,6 +26,11 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Server);
 
+    private ShipDefinition shipDefinition;
+
+    public ShipDefinition ShipDefinition =>
+        shipDefinition;
+
     // =========================================================
     // STATS
     // =========================================================
@@ -96,6 +101,8 @@ public class ShipUnit : NetworkBehaviour, IDamageable
     private Color enemyPlayerColor =
         Color.red;
 
+
+
     // =========================================================
     // IDAMAGEABLE
     // =========================================================
@@ -114,6 +121,8 @@ public class ShipUnit : NetworkBehaviour, IDamageable
 
     public float WeaponsAttackSpeedMultiplier =>
         weaponsAttackSpeedMultiplier; 
+
+
 
     // =========================================================
     // MODULES
@@ -158,6 +167,7 @@ public class ShipUnit : NetworkBehaviour, IDamageable
 
     [Header("Selection")]
     [SerializeField] private GameObject selectionMarker;
+    [SerializeField] private GameObject boxSelectionMarker;
 
     [Header("HP UI")]
     [SerializeField] private RectTransform currentHpBar;
@@ -187,10 +197,14 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         rend = GetComponentInChildren<Renderer>();
 
         ownerId.OnValueChanged += OnOwnerChanged;
+        shipId.OnValueChanged += OnShipIdChanged;
+
         hp.OnValueChanged += OnHpChanged;
         shield.OnValueChanged += OnShieldChanged;
         maxHp.OnValueChanged += OnMaxHpChanged;
         maxShield.OnValueChanged += OnMaxShieldChanged;
+
+        RefreshShipDefinition();
 
         if (IsServer)
         {
@@ -207,6 +221,8 @@ public class ShipUnit : NetworkBehaviour, IDamageable
     public override void OnNetworkDespawn()
     {
         ownerId.OnValueChanged -= OnOwnerChanged;
+        shipId.OnValueChanged -= OnShipIdChanged;
+
         hp.OnValueChanged -= OnHpChanged;
         shield.OnValueChanged -= OnShieldChanged;
 
@@ -270,14 +286,22 @@ public class ShipUnit : NetworkBehaviour, IDamageable
 
         weaponStackMovementPercent = 0f;
 
-        if (definition != null)
+        shipDefinition =
+            definition;
+
+        if (shipDefinition != null)
         {
-            baseMaxHp = definition.maxHp;
-            baseMaxShield = definition.maxShield;
-            baseMoveSpeed = definition.moveSpeed;
+            baseMaxHp =
+                shipDefinition.maxHp;
+
+            baseMaxShield =
+                shipDefinition.maxShield;
+
+            baseMoveSpeed =
+                shipDefinition.moveSpeed;
         }
 
-        
+
         CalculateDeployedModuleStats();
 
         ShipWeaponManager weaponManager =
@@ -306,6 +330,8 @@ public class ShipUnit : NetworkBehaviour, IDamageable
             $"shipId={shipId.Value}, " +
             $"owner={ownerId.Value}");
     }
+
+
 
     public DockedShipData CreateDockedShipData()
     {
@@ -364,6 +390,13 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         ulong newValue)
     {
         ApplyColor();
+    }
+
+    private void OnShipIdChanged(
+    FixedString64Bytes oldValue,
+    FixedString64Bytes newValue)
+    {
+        RefreshShipDefinition();
     }
 
     private void ApplyColor()
@@ -1537,6 +1570,37 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         }   
 
         return null;
+    }
+
+    public void SetBoxSelectionPreviewLocal(
+    bool selected)
+    {
+        if (boxSelectionMarker != null)
+        {
+            boxSelectionMarker.SetActive(
+                selected);
+        }
+    }
+
+    private void RefreshShipDefinition()
+    {
+        if (ShipDatabase.Instance == null)
+        {
+            shipDefinition = null;
+            return;
+        }
+
+        string id =
+            shipId.Value.ToString();
+
+        if (string.IsNullOrEmpty(id))
+        {
+            shipDefinition = null;
+            return;
+        }
+
+        shipDefinition =
+            ShipDatabase.Instance.GetShip(id);
     }
 
 }
