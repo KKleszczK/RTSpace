@@ -663,6 +663,7 @@ GameObject:
   - component: {fileID: 8620409998910826375}
   - component: {fileID: 1166084809582768845}
   - component: {fileID: 6515205793196116842}
+  - component: {fileID: 8965158344066759935}
   m_Layer: 0
   m_Name: MinerShip
   m_TagString: Untagged
@@ -1399,6 +1400,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShipAbilityManager
   ShowTopMostFoldoutHeaderGroup: 1
+--- !u!114 &8965158344066759935
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5813241367069302835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ae84a6b8eeb7634aa17037f92a34e55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShipCommandPathVisual
+  segmentPrefab: {fileID: 8320294448372344868, guid: 8ce4d969641c982449d74b19a1d4ccd6, type: 3}
+  pathHeight: 0.05
 --- !u!1 &7144899867399493778
 GameObject:
   m_ObjectHideFlags: 0

@@ -458,6 +458,7 @@ GameObject:
   - component: {fileID: 5772870870680670538}
   - component: {fileID: 6674982160388075769}
   - component: {fileID: 1423358553319622537}
+  - component: {fileID: 2025112525246600458}
   m_Layer: 0
   m_Name: FighterShip
   m_TagString: Untagged
@@ -538,7 +539,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 4170829835
+  GlobalObjectIdHash: 3018720668
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -1194,6 +1195,20 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   ship: {fileID: 4703172838902634232}
   updateInterval: 0.25
+--- !u!114 &2025112525246600458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5813241367069302835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ae84a6b8eeb7634aa17037f92a34e55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShipCommandPathVisual
+  segmentPrefab: {fileID: 8320294448372344868, guid: 8ce4d969641c982449d74b19a1d4ccd6, type: 3}
+  pathHeight: 0.05
 --- !u!1 &5916182725526563462
 GameObject:
   m_ObjectHideFlags: 0

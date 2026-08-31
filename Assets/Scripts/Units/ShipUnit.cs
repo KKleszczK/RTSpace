@@ -1,8 +1,9 @@
-using Unity.Collections;
+using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
-using TMPro;
 
 public class ShipUnit : NetworkBehaviour, IDamageable
 {
@@ -160,6 +161,58 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Server);
 
+    public enum ShipCommandType
+    {
+        Move,
+        AttackMove,
+        Support,
+        Attack,
+        Mine,
+        Dock
+    }
+
+    public struct ShipCommand
+    {
+        public ShipCommandType Type;
+        public Vector3 TargetPosition;
+
+        public ShipCommand(
+            ShipCommandType type,
+            Vector3 targetPosition)
+        {
+            Type = type;
+            TargetPosition = targetPosition;
+        }
+    }
+
+    public struct VisualShipCommand
+    {
+        public ShipCommandType Type;
+        public Vector3 Position;
+
+        public VisualShipCommand(
+            ShipCommandType type,
+            Vector3 position)
+        {
+            Type = type;
+            Position = position;
+        }
+    }
+
+
+
+    private readonly List<VisualShipCommand> visualCommands =
+    new();
+
+    public IReadOnlyList<VisualShipCommand> VisualCommands =>
+    visualCommands;
+
+    private readonly Queue<ShipCommand> commandQueue =
+    new();
+
+    private bool hasActiveCommand;
+    private ShipCommand activeCommand;
+
 
     // =========================================================
     // UI
@@ -203,6 +256,7 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         shield.OnValueChanged += OnShieldChanged;
         maxHp.OnValueChanged += OnMaxHpChanged;
         maxShield.OnValueChanged += OnMaxShieldChanged;
+        targetPosition.OnValueChanged += OnTargetPositionChanged;
 
         RefreshShipDefinition();
 
@@ -229,6 +283,8 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         maxHp.OnValueChanged -= OnMaxHpChanged;
         maxShield.OnValueChanged -= OnMaxShieldChanged;
 
+        targetPosition.OnValueChanged -= OnTargetPositionChanged;
+
         base.OnNetworkDespawn();
     }
 
@@ -239,6 +295,7 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         // =====================================================
 
         UpdateVisualRotation();
+        UpdateVisualCommandCompletion();
 
         // =====================================================
         // SERVER LOGIC
@@ -320,6 +377,9 @@ public class ShipUnit : NetworkBehaviour, IDamageable
 
         isDead.Value =
             false;
+
+        commandQueue.Clear();
+        hasActiveCommand = false;
 
         targetPosition.Value =
             transform.position;
@@ -427,11 +487,21 @@ public class ShipUnit : NetworkBehaviour, IDamageable
     // SELECTION
     // =========================================================
 
-    public void SetSelectedLocal(bool selected)
+    public void SetSelectedLocal(
+    bool selected)
     {
         if (selectionMarker != null)
         {
             selectionMarker.SetActive(
+                selected);
+        }
+
+        ShipCommandPathVisual pathVisual =
+            GetComponent<ShipCommandPathVisual>();
+
+        if (pathVisual != null)
+        {
+            pathVisual.SetVisible(
                 selected);
         }
     }
@@ -442,8 +512,9 @@ public class ShipUnit : NetworkBehaviour, IDamageable
 
     [ServerRpc(RequireOwnership = false)]
     public void MoveToServerRpc(
-        Vector3 position,
-        ServerRpcParams rpcParams = default)
+    Vector3 position,
+    bool queue = false,
+    ServerRpcParams rpcParams = default)
     {
         ulong senderClientId =
             rpcParams.Receive.SenderClientId;
@@ -454,8 +525,16 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         if (isDead.Value)
             return;
 
-        targetPosition.Value =
-            position;
+        if (queue)
+        {
+            QueueMoveCommandServer(
+                position);
+        }
+        else
+        {
+            SetMoveCommandServer(
+                position);
+        }
     }
 
     private void UpdateMovement()
@@ -470,9 +549,16 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         direction.y = 0f;
 
         if (direction.sqrMagnitude <= 0.01f)
-            return;
+        {
+            if (hasActiveCommand)
+            {
+                CompleteCurrentCommand();
+            }
 
-        
+            return;
+        }
+
+
 
         Vector3 newPosition =
             Vector3.MoveTowards(
@@ -1603,5 +1689,163 @@ public class ShipUnit : NetworkBehaviour, IDamageable
             ShipDatabase.Instance.GetShip(id);
     }
 
+
+    public void SetMoveCommandServer(
+    Vector3 position)
+    {
+        if (!IsServer)
+            return;
+
+        commandQueue.Clear();
+
+        activeCommand =
+            new ShipCommand(
+                ShipCommandType.Move,
+                position);
+
+        hasActiveCommand = true;
+
+        targetPosition.Value =
+            position;
+    }
+
+    public void QueueMoveCommandServer(
+    Vector3 position)
+    {
+        if (!IsServer)
+            return;
+
+        ShipCommand command =
+            new ShipCommand(
+                ShipCommandType.Move,
+                position);
+
+        // Jeœli statek aktualnie nic nie robi,
+        // ten rozkaz staje siê od razu aktywny.
+        if (!hasActiveCommand)
+        {
+            activeCommand =
+                command;
+
+            hasActiveCommand = true;
+
+            targetPosition.Value =
+                position;
+
+            return;
+        }
+
+        commandQueue.Enqueue(
+            command);
+    }
+
+    private void CompleteCurrentCommand()
+    {
+        if (!IsServer)
+            return;
+
+        if (commandQueue.Count > 0)
+        {
+            activeCommand =
+                commandQueue.Dequeue();
+
+            hasActiveCommand = true;
+
+            switch (activeCommand.Type)
+            {
+                case ShipCommandType.Move:
+
+                    targetPosition.Value =
+                        activeCommand.TargetPosition;
+
+                    break;
+            }
+
+            return;
+        }
+
+        hasActiveCommand = false;
+    }
+
+
+    public void SetVisualMoveCommand(
+    Vector3 position)
+    {
+        visualCommands.Clear();
+
+        visualCommands.Add(
+            new VisualShipCommand(
+                ShipCommandType.Move,
+                position));
+    }
+
+    public void QueueVisualMoveCommand(
+    Vector3 position)
+    {
+        visualCommands.Add(
+            new VisualShipCommand(
+                ShipCommandType.Move,
+                position));
+    }
+
+    private void OnTargetPositionChanged(
+    Vector3 oldValue,
+    Vector3 newValue)
+    {
+        if (visualCommands.Count == 0)
+            return;
+
+        // Je¿eli nowy target odpowiada drugiej
+        // komendzie wizualnej, oznacza to,
+        // ¿e pierwsza zosta³a wykonana.
+        if (visualCommands.Count >= 2)
+        {
+            Vector3 nextVisualTarget =
+                visualCommands[1].Position;
+
+            if (IsSameCommandPosition(
+                    newValue,
+                    nextVisualTarget))
+            {
+                visualCommands.RemoveAt(0);
+            }
+        }
+    }
+
+    private bool IsSameCommandPosition(
+    Vector3 a,
+    Vector3 b)
+    {
+        a.y = 0f;
+        b.y = 0f;
+
+        return (a - b).sqrMagnitude <=
+               0.01f;
+    }
+
+    private void UpdateVisualCommandCompletion()
+    {
+        // Interesuje nas tylko sytuacja,
+        // kiedy zosta³a ostatnia komenda wizualna.
+        if (visualCommands.Count != 1)
+            return;
+
+        Vector3 commandPosition =
+            visualCommands[0].Position;
+
+        Vector3 currentPosition =
+            transform.position;
+
+        commandPosition.y = 0f;
+        currentPosition.y = 0f;
+
+        if ((commandPosition - currentPosition)
+            .sqrMagnitude > 0.01f)
+        {
+            return;
+        }
+
+        visualCommands.RemoveAt(0);
+    }
 }
 

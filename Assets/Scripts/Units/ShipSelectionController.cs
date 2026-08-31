@@ -46,6 +46,13 @@ public class ShipSelectionController : MonoBehaviour
     private float lastShipClickTime = -10f;
     private ShipUnit lastClickedShip;
 
+    [Header("Move Command")]
+    [SerializeField]
+    private MoveCommandMarker moveCommandMarkerPrefab;
+
+    [SerializeField]
+    private float moveCommandMarkerHeight = 0.05f;
+
 
     private void Start()
     {
@@ -354,8 +361,17 @@ public class ShipSelectionController : MonoBehaviour
             return;
         }
 
+        // Shift oznacza:
+        // true  = dodaj rozkaz do kolejki
+        // false = zast¹p aktualne rozkazy
+        bool queueCommand =
+            IsShiftPressed();
+
         Vector3 target =
             hit.point;
+
+        ShowMoveCommandMarker(
+            hit.point);
 
         target.y =
             shipFlightHeight;
@@ -370,12 +386,27 @@ public class ShipSelectionController : MonoBehaviour
                 selectedShips[0];
 
             if (ship == null ||
-                !ship.IsMine())
+                !ship.IsMine() ||
+                !ship.IsSpawned ||
+                ship.isDead.Value)
             {
                 return;
             }
 
-            ship.MoveToServerRpc(target);
+            ship.MoveToServerRpc(
+                target,
+                queueCommand);
+
+            if (queueCommand)
+            {
+                ship.QueueVisualMoveCommand(
+                    target);
+            }
+            else
+            {
+                ship.SetVisualMoveCommand(
+                    target);
+            }
 
             return;
         }
@@ -437,7 +468,6 @@ public class ShipSelectionController : MonoBehaviour
                 ship.transform.position -
                 groupCenter;
 
-            // Nie interesuje nas ró¿nica wysokoœci.
             offset.y = 0f;
 
             Vector3 shipTarget =
@@ -447,7 +477,19 @@ public class ShipSelectionController : MonoBehaviour
                 shipFlightHeight;
 
             ship.MoveToServerRpc(
-                shipTarget);
+                shipTarget,
+                queueCommand);
+
+            if (queueCommand)
+            {
+                ship.QueueVisualMoveCommand(
+                    shipTarget);
+            }
+            else
+            {
+                ship.SetVisualMoveCommand(
+                    shipTarget);
+            }
         }
     }
 
@@ -677,6 +719,8 @@ public class ShipSelectionController : MonoBehaviour
         if (difference.magnitude <
             boxSelectionThreshold)
         {
+            ClearBoxPreview();
+
             TrySelect();
             return;
         }
@@ -961,5 +1005,19 @@ public class ShipSelectionController : MonoBehaviour
 
         if (basePanel != null)
             basePanel.SetActive(false);
+    }
+    private void ShowMoveCommandMarker(
+    Vector3 position)
+    {
+        if (moveCommandMarkerPrefab == null)
+            return;
+
+        position.y +=
+            moveCommandMarkerHeight;
+
+        Instantiate(
+            moveCommandMarkerPrefab,
+            position,
+            Quaternion.identity);
     }
 }
