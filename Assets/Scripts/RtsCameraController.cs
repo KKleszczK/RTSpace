@@ -17,6 +17,10 @@ public class RtsCameraController : MonoBehaviour
     [SerializeField] private float minHeight = 5f;
     [SerializeField] private float maxHeight = 30f;
 
+    [Header("Edge Scrolling")]
+    [SerializeField] private bool edgeScrollingEnabled = true;
+    [SerializeField] private float edgeScrollSize = 15f;
+
     private void Update()
     {
         UpdateMovement();
@@ -26,22 +30,63 @@ public class RtsCameraController : MonoBehaviour
 
     private void UpdateMovement()
     {
-        if (Keyboard.current == null)
-            return;
-
         Vector3 move = Vector3.zero;
 
-        if (Keyboard.current.wKey.isPressed)
-            move.z += 1f;
+        // =====================================================
+        // KEYBOARD
+        // =====================================================
 
-        if (Keyboard.current.sKey.isPressed)
-            move.z -= 1f;
+        if (Keyboard.current != null)
+        {
+            if (Keyboard.current.wKey.isPressed)
+                move.z += 1f;
 
-        if (Keyboard.current.aKey.isPressed)
-            move.x -= 1f;
+            if (Keyboard.current.sKey.isPressed)
+                move.z -= 1f;
 
-        if (Keyboard.current.dKey.isPressed)
-            move.x += 1f;
+            if (Keyboard.current.aKey.isPressed)
+                move.x -= 1f;
+
+            if (Keyboard.current.dKey.isPressed)
+                move.x += 1f;
+        }
+
+        // =====================================================
+        // EDGE SCROLLING
+        // =====================================================
+
+        if (edgeScrollingEnabled &&
+            Mouse.current != null)
+        {
+            Vector2 mousePosition =
+                Mouse.current.position.ReadValue();
+
+            // Lewa krawêdŸ
+            if (mousePosition.x <= edgeScrollSize)
+                move.x -= 1f;
+
+            // Prawa krawêdŸ
+            if (mousePosition.x >=
+                Screen.width - edgeScrollSize)
+            {
+                move.x += 1f;
+            }
+
+            // Dolna krawêdŸ
+            if (mousePosition.y <= edgeScrollSize)
+                move.z -= 1f;
+
+            // Górna krawêdŸ
+            if (mousePosition.y >=
+                Screen.height - edgeScrollSize)
+            {
+                move.z += 1f;
+            }
+        }
+
+        // =====================================================
+        // MOVEMENT
+        // =====================================================
 
         if (move.sqrMagnitude <= 0f)
             return;
@@ -148,5 +193,101 @@ public class RtsCameraController : MonoBehaviour
 
         transform.position =
             position;
+    }
+
+    public void MoveViewToWorldPosition(Vector3 worldPosition)
+    {
+        // P³aszczyzna mapy.
+        Plane mapPlane =
+            new Plane(
+                Vector3.up,
+                Vector3.zero);
+
+        // Promieñ przez œrodek ekranu.
+        Camera cameraComponent =
+            GetComponent<Camera>();
+
+        if (cameraComponent == null)
+            return;
+
+        Ray centerRay =
+            cameraComponent.ViewportPointToRay(
+                new Vector3(
+                    0.5f,
+                    0.5f,
+                    0f));
+
+        if (!mapPlane.Raycast(
+                centerRay,
+                out float distance))
+        {
+            return;
+        }
+
+        // Punkt mapy, na który kamera patrzy TERAZ.
+        Vector3 currentViewCenter =
+            centerRay.GetPoint(distance);
+
+        // O ile musimy przesun¹æ kamerê,
+        // aby œrodek widoku znalaz³ siê
+        // w klikniêtym miejscu.
+        Vector3 offset =
+            worldPosition -
+            currentViewCenter;
+
+        // Kamera porusza siê tylko po X/Z.
+        offset.y = 0f;
+
+        transform.position += offset;
+
+        ClampCameraPosition();
+    }
+
+    public bool TryGetViewCornersOnMap(
+    out Vector3[] corners)
+    {
+        corners =
+            new Vector3[4];
+
+        Camera cam =
+            GetComponent<Camera>();
+
+        if (cam == null)
+            return false;
+
+        Plane mapPlane =
+            new Plane(
+                Vector3.up,
+                Vector3.zero);
+
+        Vector2[] viewportCorners =
+        {
+        new Vector2(0f, 0f), // bottom left
+        new Vector2(1f, 0f), // bottom right
+        new Vector2(1f, 1f), // top right
+        new Vector2(0f, 1f)  // top left
+    };
+
+        for (int i = 0; i < 4; i++)
+        {
+            Ray ray =
+                cam.ViewportPointToRay(
+                    new Vector3(
+                        viewportCorners[i].x,
+                        viewportCorners[i].y,
+                        0f));
+
+            if (!mapPlane.Raycast(
+                    ray,
+                    out float distance))
+            {
+                return false;
+            }
+
+            corners[i] =
+                ray.GetPoint(distance);
+        }
+
+        return true;
     }
 }

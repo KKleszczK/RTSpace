@@ -1,9 +1,12 @@
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class MinimapUI : MonoBehaviour
+public class MinimapUI :
+    MonoBehaviour,
+    IPointerClickHandler
 {
     [Header("Map")]
     [SerializeField] private float mapSize = 100f;
@@ -17,6 +20,10 @@ public class MinimapUI : MonoBehaviour
 
     [Header("Update")]
     [SerializeField] private float updateInterval = 0.1f;
+
+    [Header("Camera Control")]
+    [SerializeField]
+    private RtsCameraController cameraController;
 
 
     private float nextUpdateTime;
@@ -266,8 +273,8 @@ public class MinimapUI : MonoBehaviour
     // =========================================================
 
     private void UpdateMarkerPosition(
-        RectTransform marker,
-        Vector3 worldPosition)
+    RectTransform marker,
+    Vector3 worldPosition)
     {
         if (marker == null ||
             markersContainer == null)
@@ -275,6 +282,108 @@ public class MinimapUI : MonoBehaviour
             return;
         }
 
+        marker.anchoredPosition =
+            WorldToMinimapLocal(
+                worldPosition);
+    }
+
+
+    private void UpdateMarkerColor(
+    RectTransform marker,
+    ulong ownerId)
+    {
+        if (marker == null)
+            return;
+
+        Image image =
+            marker.GetComponent<Image>();
+
+        if (image == null)
+        {
+            image =
+                marker.GetComponentInChildren<Image>();
+        }
+
+        if (image == null)
+            return;
+
+        image.color =
+            PlayerColorHelper.GetColor(
+                ownerId);
+    }
+
+
+    public void OnPointerClick(
+    PointerEventData eventData)
+    {
+        if (markersContainer == null ||
+            cameraController == null)
+        {
+            return;
+        }
+
+        if (eventData.button !=
+            PointerEventData.InputButton.Left)
+        {
+            return;
+        }
+
+        Vector2 localPoint;
+
+        if (!RectTransformUtility
+                .ScreenPointToLocalPointInRectangle(
+                    markersContainer,
+                    eventData.position,
+                    eventData.pressEventCamera,
+                    out localPoint))
+        {
+            return;
+        }
+
+        Rect rect =
+            markersContainer.rect;
+
+        float normalizedX =
+            Mathf.InverseLerp(
+                rect.xMin,
+                rect.xMax,
+                localPoint.x);
+
+        float normalizedY =
+            Mathf.InverseLerp(
+                rect.yMin,
+                rect.yMax,
+                localPoint.y);
+
+        float halfMap =
+            mapSize * 0.5f;
+
+        float worldX =
+            Mathf.Lerp(
+                -halfMap,
+                halfMap,
+                normalizedX);
+
+        float worldZ =
+            Mathf.Lerp(
+                -halfMap,
+                halfMap,
+                normalizedY);
+
+        Vector3 worldPosition =
+            new Vector3(
+                worldX,
+                0f,
+                worldZ);
+
+        cameraController
+            .MoveViewToWorldPosition(
+                worldPosition);
+    }
+
+    public Vector2 WorldToMinimapLocal(
+    Vector3 worldPosition)
+    {
         float halfMap =
             mapSize * 0.5f;
 
@@ -314,32 +423,8 @@ public class MinimapUI : MonoBehaviour
             ) *
             height;
 
-        marker.anchoredPosition =
-            new Vector2(
-                x,
-                y);
-    }
-    private void UpdateMarkerColor(
-    RectTransform marker,
-    ulong ownerId)
-    {
-        if (marker == null)
-            return;
-
-        Image image =
-            marker.GetComponent<Image>();
-
-        if (image == null)
-        {
-            image =
-                marker.GetComponentInChildren<Image>();
-        }
-
-        if (image == null)
-            return;
-
-        image.color =
-            PlayerColorHelper.GetColor(
-                ownerId);
+        return new Vector2(
+            x,
+            y);
     }
 }

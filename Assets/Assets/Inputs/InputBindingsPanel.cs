@@ -23,6 +23,8 @@ public class InputBindingsPanel : MonoBehaviour
     private readonly List<InputBindingRow>
     bindingRows = new();
 
+    private InputBindingRow activeRebindingRow;
+
     private void Start()
     {
         SetRebindingInfoVisible(false);
@@ -112,6 +114,51 @@ public class InputBindingsPanel : MonoBehaviour
         if (rebindCancelInfo != null)
         {
             rebindCancelInfo.SetActive(visible);
+        }
+    }
+
+    public bool TryStartRebinding(InputBindingRow row)
+    {
+        // Jakiœ inny wiersz ju¿ czeka na klawisz.
+        if (activeRebindingRow != null)
+            return false;
+
+        activeRebindingRow = row;
+
+        SetRebindingInfoVisible(true);
+
+        // Wy³¹cz pozosta³e przyciski.
+        foreach (InputBindingRow bindingRow in bindingRows)
+        {
+            if (bindingRow != null &&
+                bindingRow != row)
+            {
+                bindingRow.SetButtonInteractable(false);
+            }
+        }
+
+        return true;
+    }
+
+
+    public void FinishRebinding(InputBindingRow row)
+    {
+        // Zabezpieczenie - tylko aktualny wiersz
+        // mo¿e zakoñczyæ rebinding.
+        if (activeRebindingRow != row)
+            return;
+
+        activeRebindingRow = null;
+
+        SetRebindingInfoVisible(false);
+
+        // Ponownie w³¹cz wszystkie przyciski.
+        foreach (InputBindingRow bindingRow in bindingRows)
+        {
+            if (bindingRow != null)
+            {
+                bindingRow.SetButtonInteractable(true);
+            }
         }
     }
 }

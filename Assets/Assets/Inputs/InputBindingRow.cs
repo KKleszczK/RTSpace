@@ -85,7 +85,11 @@ public class InputBindingRow : MonoBehaviour
         if (rebindingOperation != null)
             return;
 
-        bindingsPanel?.SetRebindingInfoVisible(true);
+        if (bindingsPanel == null)
+            return;
+
+        if (!bindingsPanel.TryStartRebinding(this))
+            return;
 
         if (bindingText != null)
         {
@@ -106,55 +110,35 @@ public class InputBindingRow : MonoBehaviour
         inputAction.Disable();
 
         rebindingOperation =
-            inputAction
-                .PerformInteractiveRebinding(BindingIndex)
+    inputAction
+        .PerformInteractiveRebinding(BindingIndex)
 
-                // ESC anuluje zmianê.
-                .WithCancelingThrough(
-                    "<Keyboard>/escape")
+        .WithCancelingThrough(
+            "<Keyboard>/escape")
 
-                // Interesuje nas klawiatura.
-                .WithControlsHavingToMatchPath(
-                    "<Keyboard>")
+        .WithControlsExcluding(
+            "<Mouse>/position")
 
-                .OnCancel(
-                    operation =>
-                    {
-                        FinishRebinding(false);
-                    })
+        .WithControlsExcluding(
+            "<Mouse>/delta")
 
-                .OnComplete(
-                    operation =>
-                    {
-                        CheckRebindingResult();
-                    });
+        .WithControlsExcluding(
+            "<Mouse>/scroll")
+
+        .OnCancel(
+            operation =>
+            {
+                FinishRebinding(false);
+            })
+
+        .OnComplete(
+            operation =>
+            {
+                CheckRebindingResult();
+            });
 
         rebindingOperation.Start();
                     }
-
-
-    // =========================================================
-    // FINISH REBIND
-    // =========================================================
-
-    private void FinishRebinding()
-    {
-        rebindingOperation?.Dispose();
-
-        rebindingOperation = null;
-
-        inputAction?.Enable();
-
-        if (bindingButton != null)
-        {
-            bindingButton.interactable = true;
-        }
-
-        bindingsPanel?.SetRebindingInfoVisible(false);
-
-        Refresh();
-    }
-
 
     // =========================================================
     // DISPLAY NAME
@@ -224,14 +208,7 @@ public class InputBindingRow : MonoBehaviour
                 .SaveBindingOverrides();
         }
 
-        if (bindingButton != null)
-        {
-            bindingButton.interactable =
-                true;
-        }
-
-        bindingsPanel?
-            .SetRebindingInfoVisible(false);
+        bindingsPanel?.FinishRebinding(this);
 
         Refresh();
     }
@@ -289,6 +266,14 @@ public class InputBindingRow : MonoBehaviour
             inputAction.ApplyBindingOverride(
                 BindingIndex,
                 previousOverridePath);
+        }
+    }
+
+    public void SetButtonInteractable(bool interactable)
+    {
+        if (bindingButton != null)
+        {
+            bindingButton.interactable = interactable;
         }
     }
 }
