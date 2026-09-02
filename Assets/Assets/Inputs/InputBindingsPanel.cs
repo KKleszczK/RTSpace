@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class InputBindingsPanel : MonoBehaviour
 {
@@ -15,9 +16,17 @@ public class InputBindingsPanel : MonoBehaviour
     [SerializeField]
     private Button resetDefaultsButton;
 
+    [Header("Rebinding")]
+    [SerializeField]
+    private GameObject rebindCancelInfo;
+
+    private readonly List<InputBindingRow>
+    bindingRows = new();
 
     private void Start()
     {
+        SetRebindingInfoVisible(false);
+
         GenerateBindings();
 
         if (resetDefaultsButton != null)
@@ -70,15 +79,39 @@ public class InputBindingsPanel : MonoBehaviour
                     bindingRowPrefab,
                     content);
 
-            row.Initialize(
-                action);
+                row.Initialize(
+                    action,
+                    this);
+
+                bindingRows.Add(
+                    row);
         }
     }
 
 
     private void ResetToDefaults()
     {
-        Debug.Log(
-            "[INPUT] Reset to defaults - do implementacji.");
+        if (GameInputManager.Instance == null)
+            return;
+
+        GameInputManager.Instance
+            .ResetBindingOverrides();
+
+        foreach (InputBindingRow row
+                 in bindingRows)
+        {
+            if (row != null)
+            {
+                row.Refresh();
+            }
+        }
+    }
+
+    public void SetRebindingInfoVisible(bool visible)
+    {
+        if (rebindCancelInfo != null)
+        {
+            rebindCancelInfo.SetActive(visible);
+        }
     }
 }

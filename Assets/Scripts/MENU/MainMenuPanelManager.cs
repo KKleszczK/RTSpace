@@ -119,7 +119,7 @@ public class MainMenuPanelManager : MonoBehaviour
                 Time.unscaledDeltaTime);
         }
     }
-
+ 
     private void SetHostLoading(
     bool visible)
     {
@@ -157,16 +157,17 @@ public class MainMenuPanelManager : MonoBehaviour
         if (Keyboard.current == null)
             return;
 
-        if (joinCodeInput == null ||
+        if (joinGroup == null ||
             joinButton == null)
         {
             return;
         }
 
-        if (!joinCodeInput.isFocused)
+        // Join panel nie jest aktualnie aktywny.
+        if (!joinGroup.gameObject.activeInHierarchy)
             return;
 
-        
+        // Nie mo¿na aktualnie wykonaæ Join.
         if (!joinButton.interactable)
             return;
 
