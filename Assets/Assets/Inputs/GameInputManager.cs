@@ -132,4 +132,66 @@ public class GameInputManager : MonoBehaviour
         Debug.Log(
             "[INPUT] Binding overrides reset to defaults.");
     }
+
+    public bool HasBindingConflict(
+    UnityEngine.InputSystem.InputAction actionToCheck,
+    int bindingIndex,
+    out UnityEngine.InputSystem.InputAction conflictingAction)
+    {
+        conflictingAction = null;
+
+        if (inputActions == null ||
+            actionToCheck == null)
+        {
+            return false;
+        }
+
+        if (bindingIndex < 0 ||
+            bindingIndex >= actionToCheck.bindings.Count)
+        {
+            return false;
+        }
+
+        string effectivePath =
+            actionToCheck.bindings[bindingIndex].effectivePath;
+
+        if (string.IsNullOrEmpty(effectivePath))
+            return false;
+
+
+        foreach (UnityEngine.InputSystem.InputActionMap map
+                 in inputActions.asset.actionMaps)
+        {
+            foreach (UnityEngine.InputSystem.InputAction action
+                     in map.actions)
+            {
+                // Nie porównujemy akcji z sam¹ sob¹.
+                if (action == actionToCheck)
+                    continue;
+
+                foreach (UnityEngine.InputSystem.InputBinding binding
+                         in action.bindings)
+                {
+                    if (string.IsNullOrEmpty(
+                            binding.effectivePath))
+                    {
+                        continue;
+                    }
+
+                    if (string.Equals(
+                            binding.effectivePath,
+                            effectivePath,
+                            System.StringComparison.OrdinalIgnoreCase))
+                    {
+                        conflictingAction =
+                            action;
+
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
 }

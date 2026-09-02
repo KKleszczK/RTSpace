@@ -100,6 +100,177 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Move"",
+                    ""type"": ""Button"",
+                    ""id"": ""adb3f508-afa0-41f0-8c3d-2bd4ed4f5909"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""AttackMove"",
+                    ""type"": ""Button"",
+                    ""id"": ""c5c5d364-c58c-4cfd-a4da-aebce027743c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Dock"",
+                    ""type"": ""Button"",
+                    ""id"": ""8a6d56ca-41ca-4ba4-8f7a-6dc03464962e"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Attack"",
+                    ""type"": ""Button"",
+                    ""id"": ""c7257247-6739-4341-84d9-a095541cea7b"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Stop"",
+                    ""type"": ""Button"",
+                    ""id"": ""fbab4fc9-e1f9-4d08-b81a-662318cce05d"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Patrol"",
+                    ""type"": ""Button"",
+                    ""id"": ""dcf827b3-0f34-42ce-aff2-42211d58059d"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CameraUp"",
+                    ""type"": ""Button"",
+                    ""id"": ""0d4234de-5bb3-48f4-b2bb-166f26de9f41"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CameraDown"",
+                    ""type"": ""Button"",
+                    ""id"": ""c023fdd5-3bf3-4627-bbf5-f8ceffeba752"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CameraLeft"",
+                    ""type"": ""Button"",
+                    ""id"": ""e1fd8f0a-9584-421e-9f0c-eeb37d15e10e"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CameraRight"",
+                    ""type"": ""Button"",
+                    ""id"": ""ba60c5ee-e5bb-421d-aa5b-56321a562f6c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ControlGroup1"",
+                    ""type"": ""Button"",
+                    ""id"": ""e3647472-8e5e-4d72-b60f-b19ccc3f316e"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ControlGroup2"",
+                    ""type"": ""Button"",
+                    ""id"": ""a760a326-8842-4c9f-9644-98f606380b19"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ControlGroup3"",
+                    ""type"": ""Button"",
+                    ""id"": ""da29babe-def5-4a8d-adf2-ab640e18d997"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ControlGroup4"",
+                    ""type"": ""Button"",
+                    ""id"": ""da462086-bb59-4f3c-9bb3-941265b387c8"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ControlGroup5"",
+                    ""type"": ""Button"",
+                    ""id"": ""dd93e286-06f8-4ea9-aff2-5abf13e7e470"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""BaseCameraJump"",
+                    ""type"": ""Button"",
+                    ""id"": ""fc91a63b-cd99-4ded-8057-b272a8da71ab"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MinerCraft"",
+                    ""type"": ""Button"",
+                    ""id"": ""af91ee0d-75b8-4906-9bf0-248ac6a524f3"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""FigherCraft"",
+                    ""type"": ""Button"",
+                    ""id"": ""0f3ca5cb-a589-4f47-8442-2e3df80ed6db"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""UtilityCraft"",
+                    ""type"": ""Button"",
+                    ""id"": ""27871428-5509-4ff5-ab7d-4acaa7af20cd"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -113,6 +284,215 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""QueueCommand"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9f975141-6991-418d-840b-313d5c3a23b8"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""444c075d-7dfe-4951-8e84-25421d0c9ade"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""AttackMove"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a046fd9c-1fb5-4443-9a03-4ef5f7d5eb94"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9baba469-68b6-4af8-90b8-8de198cea369"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Stop"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b476c32f-e52d-4d30-bccd-8336f4a053c3"",
+                    ""path"": ""<Keyboard>/p"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Patrol"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c5263299-2de8-4d03-b596-478362472136"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CameraUp"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fcdce63b-5a71-49f4-a541-96d4ce6ec277"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CameraDown"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b4a4a2a3-d100-496d-bc6c-62ab7da41866"",
+                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CameraLeft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a87f1a0f-4603-4d59-9be7-0c30d45a4d99"",
+                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CameraRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""886c42dd-d145-49f3-97d0-c434b3e4fb67"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ControlGroup1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9940abcf-e05c-4b6a-a31a-46511407999d"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ControlGroup2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""28e129ae-b666-426d-9861-fc136c2d3661"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ControlGroup3"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3997125e-e77b-4f21-9e51-916efa6104c0"",
+                    ""path"": ""<Keyboard>/4"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ControlGroup4"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""47a6735f-76d3-44ff-9bf0-b557516a69eb"",
+                    ""path"": ""<Keyboard>/5"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ControlGroup5"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6ad36e67-1830-4b2d-ad15-37a137778108"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Dock"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9a4eecb2-68c8-49bd-b81d-302433e007e0"",
+                    ""path"": ""<Keyboard>/b"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""BaseCameraJump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f0c2ccef-b2a9-4238-a0cf-56c7198c75f5"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MinerCraft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""496cb75a-9c0e-4266-9102-91e5ffb11576"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""FigherCraft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""01302cec-1992-4db6-abfd-c6e2f22f235c"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UtilityCraft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -122,6 +502,25 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         // Gameplay
         m_Gameplay = asset.FindActionMap("Gameplay", throwIfNotFound: true);
         m_Gameplay_QueueCommand = m_Gameplay.FindAction("QueueCommand", throwIfNotFound: true);
+        m_Gameplay_Move = m_Gameplay.FindAction("Move", throwIfNotFound: true);
+        m_Gameplay_AttackMove = m_Gameplay.FindAction("AttackMove", throwIfNotFound: true);
+        m_Gameplay_Dock = m_Gameplay.FindAction("Dock", throwIfNotFound: true);
+        m_Gameplay_Attack = m_Gameplay.FindAction("Attack", throwIfNotFound: true);
+        m_Gameplay_Stop = m_Gameplay.FindAction("Stop", throwIfNotFound: true);
+        m_Gameplay_Patrol = m_Gameplay.FindAction("Patrol", throwIfNotFound: true);
+        m_Gameplay_CameraUp = m_Gameplay.FindAction("CameraUp", throwIfNotFound: true);
+        m_Gameplay_CameraDown = m_Gameplay.FindAction("CameraDown", throwIfNotFound: true);
+        m_Gameplay_CameraLeft = m_Gameplay.FindAction("CameraLeft", throwIfNotFound: true);
+        m_Gameplay_CameraRight = m_Gameplay.FindAction("CameraRight", throwIfNotFound: true);
+        m_Gameplay_ControlGroup1 = m_Gameplay.FindAction("ControlGroup1", throwIfNotFound: true);
+        m_Gameplay_ControlGroup2 = m_Gameplay.FindAction("ControlGroup2", throwIfNotFound: true);
+        m_Gameplay_ControlGroup3 = m_Gameplay.FindAction("ControlGroup3", throwIfNotFound: true);
+        m_Gameplay_ControlGroup4 = m_Gameplay.FindAction("ControlGroup4", throwIfNotFound: true);
+        m_Gameplay_ControlGroup5 = m_Gameplay.FindAction("ControlGroup5", throwIfNotFound: true);
+        m_Gameplay_BaseCameraJump = m_Gameplay.FindAction("BaseCameraJump", throwIfNotFound: true);
+        m_Gameplay_MinerCraft = m_Gameplay.FindAction("MinerCraft", throwIfNotFound: true);
+        m_Gameplay_FigherCraft = m_Gameplay.FindAction("FigherCraft", throwIfNotFound: true);
+        m_Gameplay_UtilityCraft = m_Gameplay.FindAction("UtilityCraft", throwIfNotFound: true);
     }
 
     ~@GameInputActions()
@@ -203,6 +602,25 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Gameplay;
     private List<IGameplayActions> m_GameplayActionsCallbackInterfaces = new List<IGameplayActions>();
     private readonly InputAction m_Gameplay_QueueCommand;
+    private readonly InputAction m_Gameplay_Move;
+    private readonly InputAction m_Gameplay_AttackMove;
+    private readonly InputAction m_Gameplay_Dock;
+    private readonly InputAction m_Gameplay_Attack;
+    private readonly InputAction m_Gameplay_Stop;
+    private readonly InputAction m_Gameplay_Patrol;
+    private readonly InputAction m_Gameplay_CameraUp;
+    private readonly InputAction m_Gameplay_CameraDown;
+    private readonly InputAction m_Gameplay_CameraLeft;
+    private readonly InputAction m_Gameplay_CameraRight;
+    private readonly InputAction m_Gameplay_ControlGroup1;
+    private readonly InputAction m_Gameplay_ControlGroup2;
+    private readonly InputAction m_Gameplay_ControlGroup3;
+    private readonly InputAction m_Gameplay_ControlGroup4;
+    private readonly InputAction m_Gameplay_ControlGroup5;
+    private readonly InputAction m_Gameplay_BaseCameraJump;
+    private readonly InputAction m_Gameplay_MinerCraft;
+    private readonly InputAction m_Gameplay_FigherCraft;
+    private readonly InputAction m_Gameplay_UtilityCraft;
     /// <summary>
     /// Provides access to input actions defined in input action map "Gameplay".
     /// </summary>
@@ -218,6 +636,82 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Gameplay/QueueCommand".
         /// </summary>
         public InputAction @QueueCommand => m_Wrapper.m_Gameplay_QueueCommand;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/Move".
+        /// </summary>
+        public InputAction @Move => m_Wrapper.m_Gameplay_Move;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/AttackMove".
+        /// </summary>
+        public InputAction @AttackMove => m_Wrapper.m_Gameplay_AttackMove;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/Dock".
+        /// </summary>
+        public InputAction @Dock => m_Wrapper.m_Gameplay_Dock;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/Attack".
+        /// </summary>
+        public InputAction @Attack => m_Wrapper.m_Gameplay_Attack;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/Stop".
+        /// </summary>
+        public InputAction @Stop => m_Wrapper.m_Gameplay_Stop;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/Patrol".
+        /// </summary>
+        public InputAction @Patrol => m_Wrapper.m_Gameplay_Patrol;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/CameraUp".
+        /// </summary>
+        public InputAction @CameraUp => m_Wrapper.m_Gameplay_CameraUp;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/CameraDown".
+        /// </summary>
+        public InputAction @CameraDown => m_Wrapper.m_Gameplay_CameraDown;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/CameraLeft".
+        /// </summary>
+        public InputAction @CameraLeft => m_Wrapper.m_Gameplay_CameraLeft;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/CameraRight".
+        /// </summary>
+        public InputAction @CameraRight => m_Wrapper.m_Gameplay_CameraRight;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/ControlGroup1".
+        /// </summary>
+        public InputAction @ControlGroup1 => m_Wrapper.m_Gameplay_ControlGroup1;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/ControlGroup2".
+        /// </summary>
+        public InputAction @ControlGroup2 => m_Wrapper.m_Gameplay_ControlGroup2;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/ControlGroup3".
+        /// </summary>
+        public InputAction @ControlGroup3 => m_Wrapper.m_Gameplay_ControlGroup3;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/ControlGroup4".
+        /// </summary>
+        public InputAction @ControlGroup4 => m_Wrapper.m_Gameplay_ControlGroup4;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/ControlGroup5".
+        /// </summary>
+        public InputAction @ControlGroup5 => m_Wrapper.m_Gameplay_ControlGroup5;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/BaseCameraJump".
+        /// </summary>
+        public InputAction @BaseCameraJump => m_Wrapper.m_Gameplay_BaseCameraJump;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/MinerCraft".
+        /// </summary>
+        public InputAction @MinerCraft => m_Wrapper.m_Gameplay_MinerCraft;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/FigherCraft".
+        /// </summary>
+        public InputAction @FigherCraft => m_Wrapper.m_Gameplay_FigherCraft;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/UtilityCraft".
+        /// </summary>
+        public InputAction @UtilityCraft => m_Wrapper.m_Gameplay_UtilityCraft;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -247,6 +741,63 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
             @QueueCommand.started += instance.OnQueueCommand;
             @QueueCommand.performed += instance.OnQueueCommand;
             @QueueCommand.canceled += instance.OnQueueCommand;
+            @Move.started += instance.OnMove;
+            @Move.performed += instance.OnMove;
+            @Move.canceled += instance.OnMove;
+            @AttackMove.started += instance.OnAttackMove;
+            @AttackMove.performed += instance.OnAttackMove;
+            @AttackMove.canceled += instance.OnAttackMove;
+            @Dock.started += instance.OnDock;
+            @Dock.performed += instance.OnDock;
+            @Dock.canceled += instance.OnDock;
+            @Attack.started += instance.OnAttack;
+            @Attack.performed += instance.OnAttack;
+            @Attack.canceled += instance.OnAttack;
+            @Stop.started += instance.OnStop;
+            @Stop.performed += instance.OnStop;
+            @Stop.canceled += instance.OnStop;
+            @Patrol.started += instance.OnPatrol;
+            @Patrol.performed += instance.OnPatrol;
+            @Patrol.canceled += instance.OnPatrol;
+            @CameraUp.started += instance.OnCameraUp;
+            @CameraUp.performed += instance.OnCameraUp;
+            @CameraUp.canceled += instance.OnCameraUp;
+            @CameraDown.started += instance.OnCameraDown;
+            @CameraDown.performed += instance.OnCameraDown;
+            @CameraDown.canceled += instance.OnCameraDown;
+            @CameraLeft.started += instance.OnCameraLeft;
+            @CameraLeft.performed += instance.OnCameraLeft;
+            @CameraLeft.canceled += instance.OnCameraLeft;
+            @CameraRight.started += instance.OnCameraRight;
+            @CameraRight.performed += instance.OnCameraRight;
+            @CameraRight.canceled += instance.OnCameraRight;
+            @ControlGroup1.started += instance.OnControlGroup1;
+            @ControlGroup1.performed += instance.OnControlGroup1;
+            @ControlGroup1.canceled += instance.OnControlGroup1;
+            @ControlGroup2.started += instance.OnControlGroup2;
+            @ControlGroup2.performed += instance.OnControlGroup2;
+            @ControlGroup2.canceled += instance.OnControlGroup2;
+            @ControlGroup3.started += instance.OnControlGroup3;
+            @ControlGroup3.performed += instance.OnControlGroup3;
+            @ControlGroup3.canceled += instance.OnControlGroup3;
+            @ControlGroup4.started += instance.OnControlGroup4;
+            @ControlGroup4.performed += instance.OnControlGroup4;
+            @ControlGroup4.canceled += instance.OnControlGroup4;
+            @ControlGroup5.started += instance.OnControlGroup5;
+            @ControlGroup5.performed += instance.OnControlGroup5;
+            @ControlGroup5.canceled += instance.OnControlGroup5;
+            @BaseCameraJump.started += instance.OnBaseCameraJump;
+            @BaseCameraJump.performed += instance.OnBaseCameraJump;
+            @BaseCameraJump.canceled += instance.OnBaseCameraJump;
+            @MinerCraft.started += instance.OnMinerCraft;
+            @MinerCraft.performed += instance.OnMinerCraft;
+            @MinerCraft.canceled += instance.OnMinerCraft;
+            @FigherCraft.started += instance.OnFigherCraft;
+            @FigherCraft.performed += instance.OnFigherCraft;
+            @FigherCraft.canceled += instance.OnFigherCraft;
+            @UtilityCraft.started += instance.OnUtilityCraft;
+            @UtilityCraft.performed += instance.OnUtilityCraft;
+            @UtilityCraft.canceled += instance.OnUtilityCraft;
         }
 
         /// <summary>
@@ -261,6 +812,63 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
             @QueueCommand.started -= instance.OnQueueCommand;
             @QueueCommand.performed -= instance.OnQueueCommand;
             @QueueCommand.canceled -= instance.OnQueueCommand;
+            @Move.started -= instance.OnMove;
+            @Move.performed -= instance.OnMove;
+            @Move.canceled -= instance.OnMove;
+            @AttackMove.started -= instance.OnAttackMove;
+            @AttackMove.performed -= instance.OnAttackMove;
+            @AttackMove.canceled -= instance.OnAttackMove;
+            @Dock.started -= instance.OnDock;
+            @Dock.performed -= instance.OnDock;
+            @Dock.canceled -= instance.OnDock;
+            @Attack.started -= instance.OnAttack;
+            @Attack.performed -= instance.OnAttack;
+            @Attack.canceled -= instance.OnAttack;
+            @Stop.started -= instance.OnStop;
+            @Stop.performed -= instance.OnStop;
+            @Stop.canceled -= instance.OnStop;
+            @Patrol.started -= instance.OnPatrol;
+            @Patrol.performed -= instance.OnPatrol;
+            @Patrol.canceled -= instance.OnPatrol;
+            @CameraUp.started -= instance.OnCameraUp;
+            @CameraUp.performed -= instance.OnCameraUp;
+            @CameraUp.canceled -= instance.OnCameraUp;
+            @CameraDown.started -= instance.OnCameraDown;
+            @CameraDown.performed -= instance.OnCameraDown;
+            @CameraDown.canceled -= instance.OnCameraDown;
+            @CameraLeft.started -= instance.OnCameraLeft;
+            @CameraLeft.performed -= instance.OnCameraLeft;
+            @CameraLeft.canceled -= instance.OnCameraLeft;
+            @CameraRight.started -= instance.OnCameraRight;
+            @CameraRight.performed -= instance.OnCameraRight;
+            @CameraRight.canceled -= instance.OnCameraRight;
+            @ControlGroup1.started -= instance.OnControlGroup1;
+            @ControlGroup1.performed -= instance.OnControlGroup1;
+            @ControlGroup1.canceled -= instance.OnControlGroup1;
+            @ControlGroup2.started -= instance.OnControlGroup2;
+            @ControlGroup2.performed -= instance.OnControlGroup2;
+            @ControlGroup2.canceled -= instance.OnControlGroup2;
+            @ControlGroup3.started -= instance.OnControlGroup3;
+            @ControlGroup3.performed -= instance.OnControlGroup3;
+            @ControlGroup3.canceled -= instance.OnControlGroup3;
+            @ControlGroup4.started -= instance.OnControlGroup4;
+            @ControlGroup4.performed -= instance.OnControlGroup4;
+            @ControlGroup4.canceled -= instance.OnControlGroup4;
+            @ControlGroup5.started -= instance.OnControlGroup5;
+            @ControlGroup5.performed -= instance.OnControlGroup5;
+            @ControlGroup5.canceled -= instance.OnControlGroup5;
+            @BaseCameraJump.started -= instance.OnBaseCameraJump;
+            @BaseCameraJump.performed -= instance.OnBaseCameraJump;
+            @BaseCameraJump.canceled -= instance.OnBaseCameraJump;
+            @MinerCraft.started -= instance.OnMinerCraft;
+            @MinerCraft.performed -= instance.OnMinerCraft;
+            @MinerCraft.canceled -= instance.OnMinerCraft;
+            @FigherCraft.started -= instance.OnFigherCraft;
+            @FigherCraft.performed -= instance.OnFigherCraft;
+            @FigherCraft.canceled -= instance.OnFigherCraft;
+            @UtilityCraft.started -= instance.OnUtilityCraft;
+            @UtilityCraft.performed -= instance.OnUtilityCraft;
+            @UtilityCraft.canceled -= instance.OnUtilityCraft;
         }
 
         /// <summary>
@@ -308,5 +916,138 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnQueueCommand(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Move" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMove(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "AttackMove" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnAttackMove(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Dock" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDock(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Attack" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnAttack(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Stop" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnStop(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Patrol" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPatrol(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "CameraUp" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCameraUp(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "CameraDown" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCameraDown(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "CameraLeft" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCameraLeft(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "CameraRight" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCameraRight(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ControlGroup1" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnControlGroup1(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ControlGroup2" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnControlGroup2(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ControlGroup3" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnControlGroup3(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ControlGroup4" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnControlGroup4(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ControlGroup5" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnControlGroup5(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "BaseCameraJump" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnBaseCameraJump(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "MinerCraft" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMinerCraft(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "FigherCraft" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnFigherCraft(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "UtilityCraft" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnUtilityCraft(InputAction.CallbackContext context);
     }
 }

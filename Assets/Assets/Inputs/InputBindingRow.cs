@@ -23,6 +23,10 @@ public class InputBindingRow : MonoBehaviour
 
     private InputBindingsPanel bindingsPanel;
 
+    private const int BindingIndex = 0;
+
+    private string previousOverridePath;
+
 
     // =========================================================
     // INITIALIZE
@@ -95,11 +99,15 @@ public class InputBindingRow : MonoBehaviour
                 false;
         }
 
+        previousOverridePath =
+            inputAction.bindings[BindingIndex].overridePath;
+
+
         inputAction.Disable();
 
         rebindingOperation =
             inputAction
-                .PerformInteractiveRebinding(0)
+                .PerformInteractiveRebinding(BindingIndex)
 
                 // ESC anuluje zmianê.
                 .WithCancelingThrough(
@@ -114,14 +122,14 @@ public class InputBindingRow : MonoBehaviour
                     {
                         FinishRebinding(false);
                     })
-                
+
                 .OnComplete(
                     operation =>
                     {
-                        FinishRebinding(true);
+                        CheckRebindingResult();
                     });
-                
-                        rebindingOperation.Start();
+
+        rebindingOperation.Start();
                     }
 
 
@@ -226,5 +234,61 @@ public class InputBindingRow : MonoBehaviour
             .SetRebindingInfoVisible(false);
 
         Refresh();
+    }
+
+    private void CheckRebindingResult()
+    {
+        if (GameInputManager.Instance == null)
+        {
+            RestorePreviousBinding();
+            FinishRebinding(false);
+            return;
+        }
+
+        bool hasConflict =
+            GameInputManager.Instance
+                .HasBindingConflict(
+                    inputAction,
+                    BindingIndex,
+                    out InputAction conflictingAction);
+
+        if (hasConflict)
+        {
+            Debug.LogWarning(
+                "[INPUT] Binding conflict: " +
+                inputAction.name +
+                " cannot use " +
+                inputAction.bindings[BindingIndex].effectivePath +
+                " because it is already assigned to " +
+                conflictingAction.name);
+
+            RestorePreviousBinding();
+
+            FinishRebinding(false);
+
+            return;
+        }
+
+        // Wszystko OK.
+        FinishRebinding(true);
+    }
+
+    private void RestorePreviousBinding()
+    {
+        if (inputAction == null)
+            return;
+
+        if (string.IsNullOrEmpty(
+                previousOverridePath))
+        {
+            inputAction.RemoveBindingOverride(
+                BindingIndex);
+        }
+        else
+        {
+            inputAction.ApplyBindingOverride(
+                BindingIndex,
+                previousOverridePath);
+        }
     }
 }
