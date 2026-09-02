@@ -131,6 +131,9 @@ public class MainMenuIntro : MonoBehaviour
         // 6. BUTTONS FADE IN
         // =====================================================
 
+        buttonsGroup.interactable = true;
+        buttonsGroup.blocksRaycasts = true;
+
         time = 0f;
 
         while (time < buttonsFadeTime)
@@ -150,11 +153,5 @@ public class MainMenuIntro : MonoBehaviour
 
         buttonsGroup.alpha = 1f;
 
-        // =====================================================
-        // 7. MENU ACTIVE
-        // =====================================================
-
-        buttonsGroup.interactable = true;
-        buttonsGroup.blocksRaycasts = true;
     }
 }

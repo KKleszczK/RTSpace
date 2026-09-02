@@ -2,6 +2,7 @@ using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class MainMenuPanelManager : MonoBehaviour
 {
@@ -44,6 +45,20 @@ public class MainMenuPanelManager : MonoBehaviour
     private Color joinActiveColor =
         Color.white;
 
+    [Header("Host Loading")]
+    [SerializeField] private TMP_Text hostLoadingText;
+    [SerializeField] private RectTransform hostLoadingSpinner;
+
+    [Header("Join Loading")]
+    [SerializeField] private TMP_Text joinLoadingText;
+    [SerializeField] private RectTransform joinLoadingSpinner;
+
+    [SerializeField]
+    private float loadingSpinnerSpeed = 180f;
+
+
+
+
     private bool isJoining;
 
     private bool isLeavingLobby;
@@ -78,6 +93,91 @@ public class MainMenuPanelManager : MonoBehaviour
     private void Update()
     {
         CheckLostHostConnection();
+        CheckJoinEnter();
+        UpdateLoadingSpinners();
+    }
+
+    private void UpdateLoadingSpinners()
+    {
+        if (isCreatingLobby &&
+            hostLoadingSpinner != null)
+        {
+            hostLoadingSpinner.Rotate(
+                0f,
+                0f,
+                -loadingSpinnerSpeed *
+                Time.unscaledDeltaTime);
+        }
+
+        if (isJoining &&
+            joinLoadingSpinner != null)
+        {
+            joinLoadingSpinner.Rotate(
+                0f,
+                0f,
+                -loadingSpinnerSpeed *
+                Time.unscaledDeltaTime);
+        }
+    }
+
+    private void SetHostLoading(
+    bool visible)
+    {
+        if (hostLoadingText != null)
+        {
+            hostLoadingText.gameObject.SetActive(
+                visible);
+        }
+
+        if (hostLoadingSpinner != null)
+        {
+            hostLoadingSpinner.gameObject.SetActive(
+                visible);
+        }
+    }
+
+    private void SetJoinLoading(
+    bool visible)
+    {
+        if (joinLoadingText != null)
+        {
+            joinLoadingText.gameObject.SetActive(
+                visible);
+        }
+
+        if (joinLoadingSpinner != null)
+        {
+            joinLoadingSpinner.gameObject.SetActive(
+                visible);
+        }
+    }
+
+    private void CheckJoinEnter()
+    {
+        if (Keyboard.current == null)
+            return;
+
+        if (joinCodeInput == null ||
+            joinButton == null)
+        {
+            return;
+        }
+
+        if (!joinCodeInput.isFocused)
+            return;
+
+        
+        if (!joinButton.interactable)
+            return;
+
+        bool enterPressed =
+            Keyboard.current.enterKey.wasPressedThisFrame ||
+            Keyboard.current.numpadEnterKey.wasPressedThisFrame;
+
+        if (!enterPressed)
+            return;
+
+        JoinGame();
     }
 
     private void CheckLostHostConnection()
@@ -148,6 +248,8 @@ public class MainMenuPanelManager : MonoBehaviour
 
         isCreatingLobby = true;
 
+        SetHostLoading(true);
+        await System.Threading.Tasks.Task.Yield();
         try
         {
             string code =
@@ -191,6 +293,8 @@ public class MainMenuPanelManager : MonoBehaviour
         finally
         {
             isCreatingLobby = false;
+
+            SetHostLoading(false);
         }
     }
 
@@ -340,6 +444,9 @@ public class MainMenuPanelManager : MonoBehaviour
         isJoining = true;
         RefreshJoinButton();
 
+        SetJoinLoading(true);
+        await System.Threading.Tasks.Task.Yield();
+
         try
         {
             await relayManager.JoinRelay(
@@ -405,6 +512,7 @@ public class MainMenuPanelManager : MonoBehaviour
         {
             isJoining = false;
             RefreshJoinButton();
+            SetJoinLoading(false);
         }
     }
     public void QuitGame()

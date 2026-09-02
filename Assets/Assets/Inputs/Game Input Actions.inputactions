@@ -1,0 +1,35 @@
+{
+    "version": 1,
+    "name": "Game Input Actions",
+    "maps": [
+        {
+            "name": "Gameplay",
+            "id": "017fd155-5c5c-41c4-8dd4-08be46a9435c",
+            "actions": [
+                {
+                    "name": "QueueCommand",
+                    "type": "Button",
+                    "id": "7c2bb632-347c-4648-a860-9605ffdfcc02",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "32084841-b8cf-471f-b698-ac9b884af7b8",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "QueueCommand",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

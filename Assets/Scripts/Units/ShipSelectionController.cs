@@ -365,7 +365,8 @@ public class ShipSelectionController : MonoBehaviour
         // true  = dodaj rozkaz do kolejki
         // false = zast¹p aktualne rozkazy
         bool queueCommand =
-            IsShiftPressed();
+            GameInputManager.Instance != null &&
+            GameInputManager.Instance.QueueCommandPressed;
 
         Vector3 target =
             hit.point;
