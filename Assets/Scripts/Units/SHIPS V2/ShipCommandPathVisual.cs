@@ -56,6 +56,8 @@ public class ShipCommandPathVisual : MonoBehaviour
         if (ship == null)
             return;
 
+        ship.RefreshVisualCommandTargets();
+
         IReadOnlyList<ShipUnit.VisualShipCommand> commands =
             ship.VisualCommands;
 
@@ -68,15 +70,13 @@ public class ShipCommandPathVisual : MonoBehaviour
         startPosition.y =
             pathHeight;
 
-        for (int i = 0;
-             i < commands.Count;
-             i++)
+        for (int i = 0; i < commands.Count; i++)
         {
             ShipUnit.VisualShipCommand command =
                 commands[i];
 
             Vector3 endPosition =
-                command.Position;
+                command.GetCurrentPosition();
 
             endPosition.y =
                 pathHeight;

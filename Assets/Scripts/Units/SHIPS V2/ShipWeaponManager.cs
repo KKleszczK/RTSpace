@@ -59,6 +59,8 @@ public class ShipWeaponManager : NetworkBehaviour
 
     private readonly List<WeaponRuntime> weapons = new();
 
+    private IDamageable priorityTarget;
+
     public int WeaponCount => weapons.Count;
 
     private void Awake()
@@ -207,7 +209,7 @@ public class ShipWeaponManager : NetworkBehaviour
         {
             WeaponRuntime weapon = weapons[i];
 
-            
+
             UpdateStackReset(weapon);
         }
     }
@@ -343,6 +345,40 @@ public class ShipWeaponManager : NetworkBehaviour
     public bool HasAnyWeapon()
     {
         return weapons.Count > 0;
+    }
+
+    public float GetMaxWeaponRange()
+    {
+        float maxRange = 0f;
+
+        for (int i = 0;
+             i < weapons.Count;
+             i++)
+        {
+            WeaponRuntime weapon =
+                weapons[i];
+
+            if (weapon == null ||
+                weapon.Definition == null)
+            {
+                continue;
+            }
+
+            if (weapon.IsDisabled)
+                continue;
+
+            float range =
+                GetFinalWeaponRange(
+                    weapon);
+
+            if (range > maxRange)
+            {
+                maxRange =
+                    range;
+            }
+        }
+
+        return maxRange;
     }
 
     private float GetFinalWeaponRange(
@@ -638,6 +674,15 @@ public class ShipWeaponManager : NetworkBehaviour
         float range =
             GetFinalWeaponRange(weapon);
 
+        if (priorityTarget != null &&
+            !ReferenceEquals(
+            weapon.CurrentTarget,
+            priorityTarget))
+            {
+                ClearLaserTarget(
+                weapon);
+            }
+
         // =====================================================
         // VALIDATE CURRENT TARGET
         // =====================================================
@@ -653,8 +698,8 @@ public class ShipWeaponManager : NetworkBehaviour
 
             // Dopiero potem szukamy nowego.
             weapon.CurrentTarget =
-                FindNearestEnemy(
-                    range);
+                FindTargetForWeapon(
+                weapon);
 
             if (weapon.CurrentTarget != null)
             {
@@ -750,6 +795,48 @@ public class ShipWeaponManager : NetworkBehaviour
         }
 
         return nearest;
+    }
+
+    private IDamageable FindTargetForWeapon(
+    WeaponRuntime weapon)
+    {
+        if (weapon == null ||
+            weapon.Definition == null)
+        {
+            return null;
+        }
+
+        float range =
+            GetFinalWeaponRange(
+                weapon);
+
+        // =========================================================
+        // DIRECT ATTACK LOCK
+        // =========================================================
+
+        if (priorityTarget != null)
+        {
+            // Mamy bezpoœredni¹ komendê Attack.
+            // Broñ mo¿e atakowaæ WY£¥CZNIE ten cel.
+            if (IsValidDamageTarget(
+                    priorityTarget,
+                    range))
+            {
+                return priorityTarget;
+            }
+
+            // Cel istnieje, ale np. jest poza zasiêgiem.
+            // NIE wybieramy innego przeciwnika.
+            return null;
+        }
+
+
+        // =========================================================
+        // AUTOMATIC TARGETING
+        // =========================================================
+
+        return FindNearestEnemy(
+            range);
     }
 
     private void TrySelectNearestTarget(
@@ -1056,17 +1143,40 @@ public class ShipWeaponManager : NetworkBehaviour
     }
 
     private void UpdateProjectileWeapon(
-        WeaponRuntime weapon)
+    WeaponRuntime weapon)
     {
         float range =
-            GetFinalWeaponRange(weapon);
+            GetFinalWeaponRange(
+                weapon);
+        // =========================================================
+        // DIRECT ATTACK LOCK
+        // =========================================================
 
-        if (!IsValidLaserTarget(
-                weapon.CurrentTarget,
-                range))
+        if (priorityTarget != null)
         {
+            // Przy bezpoœrednim Attack broñ mo¿e mieæ
+            // wy³¹cznie wskazany przez gracza cel.
             weapon.CurrentTarget =
-                FindNearestEnemy(range);
+                IsValidDamageTarget(
+                    priorityTarget,
+                    range)
+                ? priorityTarget
+                : null;
+        }
+        else
+        {
+            // =====================================================
+            // AUTOMATIC TARGETING
+            // =====================================================
+
+            if (!IsValidDamageTarget(
+                    weapon.CurrentTarget,
+                    range))
+            {
+                weapon.CurrentTarget =
+                    FindTargetForWeapon(
+                        weapon);
+            }
         }
 
         if (weapon.CurrentTarget == null)
@@ -1079,7 +1189,8 @@ public class ShipWeaponManager : NetworkBehaviour
             weapon,
             weapon.CurrentTarget);
 
-        if (!weapon.IsReloading && !weapon.IsDisabled)
+        if (!weapon.IsReloading &&
+            !weapon.IsDisabled)
         {
             weapon.NextAttackTime =
                 Time.time +
@@ -2072,4 +2183,23 @@ public class ShipWeaponManager : NetworkBehaviour
 
         return true;
     }
+
+    public void SetPriorityTarget(
+    IDamageable target)
+    {
+        if (!IsServer)
+            return;
+
+        priorityTarget = target;
+    }
+
+    public void ClearPriorityTarget()
+    {
+        if (!IsServer)
+            return;
+
+        priorityTarget = null;
+    }
+
+
 }

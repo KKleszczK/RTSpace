@@ -19,6 +19,26 @@ public class GameInputManager : MonoBehaviour
         inputActions != null &&
         inputActions.Gameplay.QueueCommand.IsPressed();
 
+    public bool StopPressed =>
+        inputActions != null &&
+        inputActions.Gameplay.Stop.WasPressedThisFrame();
+
+    public bool CameraUpPressed =>
+        inputActions != null &&
+        inputActions.Gameplay.CameraUp.IsPressed();
+
+    public bool CameraDownPressed =>
+        inputActions != null &&
+        inputActions.Gameplay.CameraDown.IsPressed();
+
+    public bool CameraLeftPressed =>
+        inputActions != null &&
+        inputActions.Gameplay.CameraLeft.IsPressed();
+
+    public bool CameraRightPressed =>
+        inputActions != null &&
+        inputActions.Gameplay.CameraRight.IsPressed();
+
 
     // =========================================================
     // UNITY

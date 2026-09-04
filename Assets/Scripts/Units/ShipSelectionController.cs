@@ -78,7 +78,11 @@ public class ShipSelectionController : MonoBehaviour
         if (Mouse.current.rightButton.wasPressedThisFrame)
             TryMove();
 
+        TryStop();
+
         UpdateDockButton();
+
+        RefreshAttackTargetMarkers();
     }
 
     private void TrySelect()
@@ -361,12 +365,55 @@ public class ShipSelectionController : MonoBehaviour
             return;
         }
 
-        // Shift oznacza:
-        // true  = dodaj rozkaz do kolejki
-        // false = zast¹p aktualne rozkazy
         bool queueCommand =
             GameInputManager.Instance != null &&
             GameInputManager.Instance.QueueCommandPressed;
+
+        // =========================================================
+        // RIGHT CLICK ON ENEMY SHIP = ATTACK
+        // =========================================================
+
+        ShipUnit targetShip =
+            hit.collider.GetComponentInParent<ShipUnit>();
+
+        if (targetShip != null &&
+            targetShip.IsSpawned &&
+            !targetShip.isDead.Value &&
+            !targetShip.IsMine())
+        {
+            foreach (ShipUnit ship in selectedShips)
+            {
+                if (ship == null)
+                    continue;
+
+                if (!ship.IsMine())
+                    continue;
+
+                if (!ship.IsSpawned)
+                    continue;
+
+                if (ship.isDead.Value)
+                    continue;
+
+                if (queueCommand)
+                {
+                    ship.QueueVisualAttackCommand(
+                        targetShip);
+                }
+                else
+                {
+                    ship.SetVisualAttackCommand(
+                        targetShip);
+                }
+
+                ship.AttackServerRpc(
+                    new NetworkObjectReference(
+                        targetShip.NetworkObject),
+                    queueCommand);
+            }
+
+            return;
+        }
 
         Vector3 target =
             hit.point;
@@ -1020,5 +1067,78 @@ public class ShipSelectionController : MonoBehaviour
             moveCommandMarkerPrefab,
             position,
             Quaternion.identity);
+    }
+
+    private void TryStop()
+    {
+        if (GameInputManager.Instance == null)
+            return;
+
+        if (!GameInputManager.Instance.StopPressed)
+            return;
+
+        foreach (ShipUnit ship in selectedShips)
+        {
+            if (ship == null)
+                continue;
+
+            if (!ship.IsMine())
+                continue;
+
+            ship.ClearVisualCommands();
+            ship.StopServerRpc();
+        }
+    }
+
+    private void RefreshAttackTargetMarkers()
+    {
+        ShipUnit[] allShips =
+            FindObjectsByType<ShipUnit>(
+                FindObjectsSortMode.None);
+
+        // Najpierw wy³¹czamy wszystkie markery.
+        foreach (ShipUnit ship in allShips)
+        {
+            if (ship == null)
+                continue;
+
+            ship.SetAttackTargetMarkerLocal(
+                false);
+        }
+
+
+        // Nastêpnie szukamy celów Attack
+        // zaznaczonych przez nas statków.
+        foreach (ShipUnit selectedShip in selectedShips)
+        {
+            if (selectedShip == null)
+                continue;
+
+            foreach (
+                ShipUnit.VisualShipCommand command
+                in selectedShip.VisualCommands)
+            {
+                if (command.Type !=
+                    ShipUnit.ShipCommandType.Attack)
+                {
+                    continue;
+                }
+
+                ShipUnit targetShip =
+                    command.TargetShip;
+
+                if (targetShip == null)
+                    continue;
+
+                if (!targetShip.IsSpawned)
+                    continue;
+
+                if (targetShip.isDead.Value)
+                    continue;
+
+                targetShip.SetAttackTargetMarkerLocal(
+                    true);
+            }
+        }
     }
 }

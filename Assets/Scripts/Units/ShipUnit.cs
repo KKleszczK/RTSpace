@@ -4,6 +4,7 @@ using TMPro;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
+using static UnityEngine.CullingGroup;
 
 public class ShipUnit : NetworkBehaviour, IDamageable
 {
@@ -161,41 +162,190 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Server);
 
+
+    [Header("Attack")]
+    [SerializeField]
+    private float attackRangeMargin = 0.25f;
+
     public enum ShipCommandType
     {
         Move,
         AttackMove,
-        Support,
         Attack,
-        Mine,
-        Dock
+        Guard,
+        Follow,
+        Escort,
+        BackToBase,
+        Dock,
+        Mine
     }
+
+    private static bool IsTerminalCommand(
+    ShipCommandType type)
+    {
+        switch (type)
+        {
+            case ShipCommandType.Guard:
+            case ShipCommandType.Follow:
+            case ShipCommandType.Escort:
+            case ShipCommandType.Dock:
+                return true;
+
+            default:
+                return false;
+        }
+    }
+
+    public enum ShipState
+    {
+        Passive,
+        Moving,
+        AttackMoving,
+        Attacking,
+        Guard,
+        Follow,
+        Escort,
+        BackToBase,
+        Docking
+    }
+
+    private NetworkVariable<ShipState> currentState = new(
+    ShipState.Passive,
+    NetworkVariableReadPermission.Everyone,
+    NetworkVariableWritePermission.Server);
+
+    public ShipState CurrentState =>
+        currentState.Value;
+
 
     public struct ShipCommand
     {
         public ShipCommandType Type;
+
+        // Dla komend pozycyjnych:
+        // Move, AttackMove, Guard...
         public Vector3 TargetPosition;
+
+        // Dla komend wskazuj¹cych obiekt:
+        // Attack, Follow, Escort, BackToBase, Dock...
+        public NetworkObjectReference TargetObject;
+
+
+        // =========================================================
+        // POSITION COMMAND
+        // =========================================================
 
         public ShipCommand(
             ShipCommandType type,
             Vector3 targetPosition)
         {
-            Type = type;
-            TargetPosition = targetPosition;
+            Type =
+                type;
+
+            TargetPosition =
+                targetPosition;
+
+            TargetObject =
+                default;
+        }
+
+
+        // =========================================================
+        // OBJECT COMMAND
+        // =========================================================
+
+        public ShipCommand(
+            ShipCommandType type,
+            NetworkObject targetObject)
+        {
+            Type =
+                type;
+
+            TargetPosition =
+                Vector3.zero;
+
+            TargetObject =
+                targetObject != null
+                    ? new NetworkObjectReference(targetObject)
+                    : default;
         }
     }
 
     public struct VisualShipCommand
     {
         public ShipCommandType Type;
+
+        // Dla komend pozycyjnych.
         public Vector3 Position;
+
+        // Dla komend wskazuj¹cych statek.
+        public ShipUnit TargetShip;
+
+        // Ostatnia znana pozycja ruchomego celu.
+        // Dziêki temu po zniszczeniu TargetShip
+        // nigdy nie zwracamy Vector3.zero.
+        public Vector3 LastKnownPosition;
+
+
+        // =========================================================
+        // POSITION COMMAND
+        // =========================================================
 
         public VisualShipCommand(
             ShipCommandType type,
             Vector3 position)
         {
             Type = type;
-            Position = position;
+
+            Position =
+                position;
+
+            TargetShip =
+                null;
+
+            LastKnownPosition =
+                position;
+        }
+
+
+        // =========================================================
+        // SHIP TARGET COMMAND
+        // =========================================================
+
+        public VisualShipCommand(
+            ShipCommandType type,
+            ShipUnit targetShip)
+        {
+            Type = type;
+
+            TargetShip =
+                targetShip;
+
+            Vector3 position =
+                targetShip != null
+                    ? targetShip.transform.position
+                    : Vector3.zero;
+
+            Position =
+                position;
+
+            LastKnownPosition =
+                position;
+        }
+
+
+        // =========================================================
+        // CURRENT TARGET POSITION
+        // =========================================================
+
+        public Vector3 GetCurrentPosition()
+        {
+            if (TargetShip != null)
+            {
+                return TargetShip.transform.position;
+            }
+
+            return LastKnownPosition;
         }
     }
 
@@ -207,8 +357,7 @@ public class ShipUnit : NetworkBehaviour, IDamageable
     public IReadOnlyList<VisualShipCommand> VisualCommands =>
     visualCommands;
 
-    private readonly Queue<ShipCommand> commandQueue =
-    new();
+    private readonly List<ShipCommand> commandQueue = new();
 
     private bool hasActiveCommand;
     private ShipCommand activeCommand;
@@ -221,6 +370,9 @@ public class ShipUnit : NetworkBehaviour, IDamageable
     [Header("Selection")]
     [SerializeField] private GameObject selectionMarker;
     [SerializeField] private GameObject boxSelectionMarker;
+
+    [Header("Target")]
+    [SerializeField] private GameObject attackTargetMarker;
 
     [Header("HP UI")]
     [SerializeField] private RectTransform currentHpBar;
@@ -238,6 +390,9 @@ public class ShipUnit : NetworkBehaviour, IDamageable
     [Header("Combat Feedback")]
     [SerializeField] private Transform combatTextOrigin;
     [SerializeField] private CombatFloatingText combatTextPrefab;
+
+    [Header("Debug State UI")]
+    [SerializeField] private TMP_Text stateDebugText;
 
     // =========================================================
     // NETWORK
@@ -257,6 +412,7 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         maxHp.OnValueChanged += OnMaxHpChanged;
         maxShield.OnValueChanged += OnMaxShieldChanged;
         targetPosition.OnValueChanged += OnTargetPositionChanged;
+        currentState.OnValueChanged += OnStateChanged;
 
         RefreshShipDefinition();
 
@@ -267,9 +423,11 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         }
 
         SetSelectedLocal(false);
+        SetAttackTargetMarkerLocal(false);
         ApplyColor();
         UpdateHpBar();
         UpdateShieldBar();
+        UpdateStateDebugText();
     }
 
     public override void OnNetworkDespawn()
@@ -417,6 +575,8 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         };
     }
 
+
+
     // =========================================================
     // OWNERSHIP
     // =========================================================
@@ -542,15 +702,46 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         if (isDead.Value)
             return;
 
+
+        // =========================================================
+        // ACTIVE ATTACK
+        // =========================================================
+
+        if (hasActiveCommand &&
+            activeCommand.Type ==
+                ShipCommandType.Attack)
+        {
+            UpdateAttackCommandServer();
+        }
+
+
+        // =========================================================
+        // MOVEMENT DIRECTION
+        // =========================================================
+
         Vector3 direction =
             targetPosition.Value -
             transform.position;
 
         direction.y = 0f;
 
+
+        // =========================================================
+        // TARGET POSITION REACHED
+        // =========================================================
+
         if (direction.sqrMagnitude <= 0.01f)
         {
-            if (hasActiveCommand)
+            /*
+             * Attack NIE koñczy siê tylko dlatego,
+             * ¿e statek aktualnie stoi.
+             *
+             * Mo¿e staæ dlatego, ¿e przeciwnik
+             * znajduje siê w zasiêgu.
+             */
+            if (hasActiveCommand &&
+                activeCommand.Type !=
+                    ShipCommandType.Attack)
             {
                 CompleteCurrentCommand();
             }
@@ -559,12 +750,20 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         }
 
 
+        // =========================================================
+        // MOVE
+        // =========================================================
 
         Vector3 newPosition =
             Vector3.MoveTowards(
                 transform.position,
                 targetPosition.Value,
                 CurrentMoveSpeed * Time.deltaTime);
+
+
+        // =========================================================
+        // MAP BOUNDS
+        // =========================================================
 
         float halfMapSize =
             mapSize * 0.5f;
@@ -613,6 +812,19 @@ public class ShipUnit : NetworkBehaviour, IDamageable
 
         RotateTowardsMovement(
             direction);
+    }
+
+    private void SetStateServer(
+    ShipState newState)
+    {
+        if (!IsServer)
+            return;
+
+        if (currentState.Value == newState)
+            return;
+
+        currentState.Value =
+            newState;
     }
 
     // =========================================================
@@ -1696,6 +1908,8 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         if (!IsServer)
             return;
 
+        ClearAttackPriorityTargetServer();
+
         commandQueue.Clear();
 
         activeCommand =
@@ -1707,6 +1921,9 @@ public class ShipUnit : NetworkBehaviour, IDamageable
 
         targetPosition.Value =
             position;
+
+        SetStateServer(
+            ShipState.Moving);
     }
 
     public void QueueMoveCommandServer(
@@ -1720,8 +1937,6 @@ public class ShipUnit : NetworkBehaviour, IDamageable
                 ShipCommandType.Move,
                 position);
 
-        // Jeœli statek aktualnie nic nie robi,
-        // ten rozkaz staje siê od razu aktywny.
         if (!hasActiveCommand)
         {
             activeCommand =
@@ -1732,10 +1947,13 @@ public class ShipUnit : NetworkBehaviour, IDamageable
             targetPosition.Value =
                 position;
 
+            SetStateServer(
+                ShipState.Moving);
+
             return;
         }
 
-        commandQueue.Enqueue(
+        AddCommandToQueueServer(
             command);
     }
 
@@ -1744,27 +1962,102 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         if (!IsServer)
             return;
 
-        if (commandQueue.Count > 0)
+        // Koñczymy poprzedni¹ aktywn¹ komendê.
+        // Je¿eli by³ to Attack, zdejmujemy blokadê celu.
+        if (hasActiveCommand &&
+            activeCommand.Type ==
+                ShipCommandType.Attack)
         {
-            activeCommand =
-                commandQueue.Dequeue();
+            ClearAttackPriorityTargetServer();
+        }
 
-            hasActiveCommand = true;
+
+        // =========================================================
+        // FIND NEXT VALID COMMAND
+        // =========================================================
+
+        while (commandQueue.Count > 0)
+        {
+            ShipCommand nextCommand =
+                commandQueue[0];
+
+            commandQueue.RemoveAt(0);
+
+
+            // Komenda przesta³a byæ mo¿liwa do wykonania.
+            // Pomijamy j¹ i sprawdzamy nastêpn¹.
+            if (!IsCommandValidServer(
+                    nextCommand))
+            {
+                continue;
+            }
+
+
+            // =====================================================
+            // ACTIVATE COMMAND
+            // =====================================================
+
+            activeCommand =
+                nextCommand;
+
+            hasActiveCommand =
+                true;
+
 
             switch (activeCommand.Type)
             {
                 case ShipCommandType.Move:
-
                     targetPosition.Value =
                         activeCommand.TargetPosition;
 
-                    break;
-            }
+                    SetStateServer(
+                        ShipState.Moving);
 
-            return;
+                    return;
+
+
+                case ShipCommandType.Attack:
+                    {
+                        targetPosition.Value =
+                            transform.position;
+
+                        if (activeCommand.TargetObject.TryGet(
+                                out NetworkObject targetObject))
+                        {
+                            IDamageable damageTarget =
+                                targetObject.GetComponent<IDamageable>();
+
+                            ShipWeaponManager weaponManager =
+                                GetComponent<ShipWeaponManager>();
+
+                            if (weaponManager != null)
+                            {
+                                weaponManager.SetPriorityTarget(
+                                    damageTarget);
+                            }
+                        }
+
+                        SetStateServer(
+                            ShipState.Attacking);
+
+                        return;
+                    }
+            }
         }
 
-        hasActiveCommand = false;
+
+        // =========================================================
+        // NO MORE VALID COMMANDS
+        // =========================================================
+
+        hasActiveCommand =
+            false;
+
+        targetPosition.Value =
+            transform.position;
+
+        SetStateServer(
+            ShipState.Passive);
     }
 
 
@@ -1788,28 +2081,31 @@ public class ShipUnit : NetworkBehaviour, IDamageable
                 position));
     }
 
+    public void SetVisualAttackCommand(
+    ShipUnit targetShip)
+    {
+        visualCommands.Clear();
+
+        visualCommands.Add(
+            new VisualShipCommand(
+                ShipCommandType.Attack,
+                targetShip));
+    }
+
+
+    public void QueueVisualAttackCommand(
+        ShipUnit targetShip)
+    {
+        visualCommands.Add(
+            new VisualShipCommand(
+                ShipCommandType.Attack,
+                targetShip));
+    }
+
     private void OnTargetPositionChanged(
     Vector3 oldValue,
     Vector3 newValue)
     {
-        if (visualCommands.Count == 0)
-            return;
-
-        // Je¿eli nowy target odpowiada drugiej
-        // komendzie wizualnej, oznacza to,
-        // ¿e pierwsza zosta³a wykonana.
-        if (visualCommands.Count >= 2)
-        {
-            Vector3 nextVisualTarget =
-                visualCommands[1].Position;
-
-            if (IsSameCommandPosition(
-                    newValue,
-                    nextVisualTarget))
-            {
-                visualCommands.RemoveAt(0);
-            }
-        }
     }
 
     private bool IsSameCommandPosition(
@@ -1825,27 +2121,456 @@ public class ShipUnit : NetworkBehaviour, IDamageable
 
     private void UpdateVisualCommandCompletion()
     {
-        // Interesuje nas tylko sytuacja,
-        // kiedy zosta³a ostatnia komenda wizualna.
-        if (visualCommands.Count != 1)
+        if (visualCommands.Count == 0)
             return;
 
-        Vector3 commandPosition =
-            visualCommands[0].Position;
+        VisualShipCommand command =
+            visualCommands[0];
 
-        Vector3 currentPosition =
+
+        // =========================================================
+        // ATTACK
+        // =========================================================
+
+        if (command.Type ==
+            ShipCommandType.Attack)
+        {
+            ShipUnit targetShip =
+                command.TargetShip;
+
+            // Cel nadal istnieje.
+            if (targetShip != null &&
+                targetShip.IsSpawned &&
+                !targetShip.isDead.Value)
+            {
+                return;
+            }
+
+            // Cel Attack zgin¹³ / znikn¹³.
+            visualCommands.RemoveAt(0);
+
+            return;
+        }
+
+
+        // =========================================================
+        // MOVE
+        // =========================================================
+
+        if (command.Type ==
+            ShipCommandType.Move)
+        {
+            Vector3 commandPosition =
+                command.Position;
+
+            Vector3 currentPosition =
+                transform.position;
+
+            commandPosition.y = 0f;
+            currentPosition.y = 0f;
+
+            if ((commandPosition - currentPosition)
+                .sqrMagnitude > 0.01f)
+            {
+                return;
+            }
+
+            visualCommands.RemoveAt(0);
+        }
+    }
+
+    private void UpdateStateDebugText()
+    {
+        if (stateDebugText == null)
+            return;
+
+        stateDebugText.text =
+            currentState.Value.ToString();
+    }
+
+    private void OnStateChanged(
+    ShipState oldState,
+    ShipState newState)
+    {
+        UpdateStateDebugText();
+    }
+
+    public void StopCommandServer()
+    {
+        if (!IsServer)
+            return;
+
+        ClearAttackPriorityTargetServer();
+
+        commandQueue.Clear();
+
+        hasActiveCommand = false;
+
+        targetPosition.Value =
             transform.position;
 
-        commandPosition.y = 0f;
-        currentPosition.y = 0f;
+        SetStateServer(
+            ShipState.Passive);
+    }
 
-        if ((commandPosition - currentPosition)
-            .sqrMagnitude > 0.01f)
+    [ServerRpc(RequireOwnership = false)]
+    public void StopServerRpc(
+    ServerRpcParams rpcParams = default)
+    {
+        ulong senderClientId =
+            rpcParams.Receive.SenderClientId;
+
+        if (senderClientId != ownerId.Value)
+            return;
+
+        if (isDead.Value)
+            return;
+
+        StopCommandServer();
+    }
+
+    public void ClearVisualCommands()
+    {
+        visualCommands.Clear();
+    }
+
+    public void CompleteFirstVisualCommand()
+    {
+        if (visualCommands.Count == 0)
+            return;
+
+        visualCommands.RemoveAt(0);
+    }
+
+    private void AddCommandToQueueServer(
+    ShipCommand command)
+    {
+        if (!IsServer)
+            return;
+
+        // Je¿eli ostatnia oczekuj¹ca komenda jest terminalna,
+        // usuwamy j¹ przed dodaniem nowej.
+        if (commandQueue.Count > 0)
+        {
+            int lastIndex =
+                commandQueue.Count - 1;
+
+            if (IsTerminalCommand(
+                    commandQueue[lastIndex].Type))
+            {
+                commandQueue.RemoveAt(
+                    lastIndex);
+            }
+        }
+
+        commandQueue.Add(
+            command);
+    }
+
+    private void ClearAttackPriorityTargetServer()
+    {
+        if (!IsServer)
+            return;
+
+        ShipWeaponManager weaponManager =
+            GetComponent<ShipWeaponManager>();
+
+        if (weaponManager != null)
+        {
+            weaponManager.ClearPriorityTarget();
+        }
+    }
+
+    public void SetAttackCommandServer(
+    NetworkObject target)
+    {
+        if (!IsServer)
+            return;
+
+        if (target == null)
+            return;
+
+        // Usuwamy ewentualny poprzedni Attack lock.
+        ClearAttackPriorityTargetServer();
+
+        commandQueue.Clear();
+
+        activeCommand =
+            new ShipCommand(
+                ShipCommandType.Attack,
+                target);
+
+        hasActiveCommand =
+            true;
+
+        IDamageable damageTarget =
+            target.GetComponent<IDamageable>();
+
+        ShipWeaponManager weaponManager =
+            GetComponent<ShipWeaponManager>();
+
+        if (weaponManager != null)
+        {
+            weaponManager.SetPriorityTarget(
+                damageTarget);
+        }
+
+        SetStateServer(
+            ShipState.Attacking);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void AttackServerRpc(
+    NetworkObjectReference targetReference,
+    bool queue,
+    ServerRpcParams rpcParams = default)
+    {
+        ulong senderClientId =
+            rpcParams.Receive.SenderClientId;
+
+        if (senderClientId != ownerId.Value)
+            return;
+
+        if (isDead.Value)
+            return;
+
+        if (!targetReference.TryGet(
+                out NetworkObject target))
         {
             return;
         }
 
-        visualCommands.RemoveAt(0);
+        ShipUnit targetShip =
+            target.GetComponent<ShipUnit>();
+
+        if (targetShip == null)
+            return;
+
+        if (targetShip.isDead.Value)
+            return;
+
+        // Nie mo¿na atakowaæ w³asnego statku.
+        if (targetShip.ownerId.Value ==
+            ownerId.Value)
+        {
+            return;
+        }
+
+        if (queue)
+        {
+            QueueAttackCommandServer(
+                target);
+        }
+        else
+        {
+            SetAttackCommandServer(
+                target);
+        }
     }
+
+    private void UpdateAttackCommandServer()
+    {
+        if (!IsServer)
+            return;
+
+        if (!activeCommand.TargetObject.TryGet(
+                out NetworkObject targetObject))
+        {
+            CompleteCurrentCommand();
+            return;
+        }
+
+        ShipUnit targetShip =
+            targetObject.GetComponent<ShipUnit>();
+
+        if (targetShip == null ||
+            !targetShip.IsSpawned ||
+            targetShip.isDead.Value)
+        {
+            CompleteCurrentCommand();
+            return;
+        }
+
+        Vector3 target =
+            targetShip.transform.position;
+
+        Vector3 difference =
+            target -
+            transform.position;
+
+        difference.y = 0f;
+
+        float distance =
+            difference.magnitude;
+
+        // Cel jest w zasiêgu.
+        ShipWeaponManager weaponManager =
+            GetComponent<ShipWeaponManager>();
+
+        float weaponRange =
+            weaponManager != null
+                ? weaponManager.GetMaxWeaponRange()
+                : 0f;
+
+        float stopDistance =
+            Mathf.Max(
+                0f,
+                weaponRange - attackRangeMargin);
+
+
+        if (weaponRange > 0f &&
+            distance <= stopDistance)
+        {
+            targetPosition.Value =
+                transform.position;
+
+            return;
+        }
+
+        // Cel jest poza zasiêgiem.
+        // Lecimy za jego AKTUALN¥ pozycj¹.
+        target.y =
+            transform.position.y;
+
+        targetPosition.Value =
+            target;
+    }
+
+    public void QueueAttackCommandServer(
+    NetworkObject target)
+    {
+        if (!IsServer)
+            return;
+
+        if (target == null)
+            return;
+
+        ShipCommand command =
+            new ShipCommand(
+                ShipCommandType.Attack,
+                target);
+
+        // =========================================================
+        // NO ACTIVE COMMAND
+        // =========================================================
+
+        if (!hasActiveCommand)
+        {
+            activeCommand =
+                command;
+
+            hasActiveCommand =
+                true;
+
+            IDamageable damageTarget =
+                target.GetComponent<IDamageable>();
+
+            ShipWeaponManager weaponManager =
+                GetComponent<ShipWeaponManager>();
+
+            if (weaponManager != null)
+            {
+                weaponManager.SetPriorityTarget(
+                    damageTarget);
+            }
+
+            SetStateServer(
+                ShipState.Attacking);
+
+            return;
+        }
+
+
+        // =========================================================
+        // QUEUE
+        // =========================================================
+
+        AddCommandToQueueServer(
+            command);
+    }
+
+    public void SetAttackTargetMarkerLocal(
+    bool visible)
+    {
+        if (attackTargetMarker == null)
+            return;
+
+        attackTargetMarker.SetActive(
+            visible);
+    }
+
+    public void RefreshVisualCommandTargets()
+    {
+        for (int i = 0;
+             i < visualCommands.Count;
+             i++)
+        {
+            VisualShipCommand command =
+                visualCommands[i];
+
+            if (command.TargetShip == null)
+                continue;
+
+            command.LastKnownPosition =
+                command.TargetShip.transform.position;
+
+            visualCommands[i] =
+                command;
+        }
+    }
+    private bool IsCommandValidServer(
+    ShipCommand command)
+    {
+        if (!IsServer)
+            return false;
+
+        switch (command.Type)
+        {
+            case ShipCommandType.Move:
+                return true;
+
+
+            case ShipCommandType.Attack:
+                {
+                    if (!command.TargetObject.TryGet(
+                            out NetworkObject targetObject))
+                    {
+                        return false;
+                    }
+
+                    if (targetObject == null ||
+                        !targetObject.IsSpawned)
+                    {
+                        return false;
+                    }
+
+                    ShipUnit targetShip =
+                        targetObject.GetComponent<ShipUnit>();
+
+                    if (targetShip == null)
+                        return false;
+
+                    if (targetShip.isDead.Value)
+                        return false;
+
+                    if (targetShip.ownerId.Value ==
+                        ownerId.Value)
+                    {
+                        return false;
+                    }
+
+                    return true;
+                }
+
+
+            default:
+                // Pozosta³ych komend jeszcze nie wykonujemy,
+                // wiêc na tym etapie ich tutaj nie walidujemy.
+                return true;
+        }
+    }
+
+
+
 }
 

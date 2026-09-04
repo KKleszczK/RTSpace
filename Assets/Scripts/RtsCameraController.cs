@@ -36,18 +36,18 @@ public class RtsCameraController : MonoBehaviour
         // KEYBOARD
         // =====================================================
 
-        if (Keyboard.current != null)
+        if (GameInputManager.Instance != null)
         {
-            if (Keyboard.current.wKey.isPressed)
+            if (GameInputManager.Instance.CameraUpPressed)
                 move.z += 1f;
 
-            if (Keyboard.current.sKey.isPressed)
+            if (GameInputManager.Instance.CameraDownPressed)
                 move.z -= 1f;
 
-            if (Keyboard.current.aKey.isPressed)
+            if (GameInputManager.Instance.CameraLeftPressed)
                 move.x -= 1f;
 
-            if (Keyboard.current.dKey.isPressed)
+            if (GameInputManager.Instance.CameraRightPressed)
                 move.x += 1f;
         }
 

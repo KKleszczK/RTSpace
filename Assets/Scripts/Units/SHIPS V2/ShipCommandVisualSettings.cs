@@ -12,10 +12,16 @@ public class ShipCommandVisualSettings : MonoBehaviour
     [Header("Command Colors")]
     [SerializeField] private Color moveColor = Color.green;
     [SerializeField] private Color attackMoveColor = Color.red;
-    [SerializeField] private Color supportColor = Color.cyan;
     [SerializeField] private Color attackColor = Color.red;
-    [SerializeField] private Color mineColor = Color.blue;
+
+    [SerializeField] private Color guardColor = Color.cyan;
+    [SerializeField] private Color followColor = Color.cyan;
+    [SerializeField] private Color escortColor = Color.cyan;
+
+    [SerializeField] private Color backToBaseColor = Color.yellow;
     [SerializeField] private Color dockColor = Color.yellow;
+
+    [SerializeField] private Color mineColor = Color.blue;
 
     public Color GetColor(
         ShipUnit.ShipCommandType commandType)
@@ -28,17 +34,26 @@ public class ShipCommandVisualSettings : MonoBehaviour
             ShipUnit.ShipCommandType.AttackMove =>
                 attackMoveColor,
 
-            ShipUnit.ShipCommandType.Support =>
-                supportColor,
-
             ShipUnit.ShipCommandType.Attack =>
                 attackColor,
 
-            ShipUnit.ShipCommandType.Mine =>
-                mineColor,
+            ShipUnit.ShipCommandType.Guard =>
+                guardColor,
+
+            ShipUnit.ShipCommandType.Follow =>
+                followColor,
+
+            ShipUnit.ShipCommandType.Escort =>
+                escortColor,
+
+            ShipUnit.ShipCommandType.BackToBase =>
+                backToBaseColor,
 
             ShipUnit.ShipCommandType.Dock =>
                 dockColor,
+
+            ShipUnit.ShipCommandType.Mine =>
+                mineColor,
 
             _ =>
                 Color.white
