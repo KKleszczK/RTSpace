@@ -80,6 +80,18 @@ public class ShipWeaponManager : NetworkBehaviour
         UpdateWeaponTimers();
         UpdateMagazineReloads();
 
+        // =========================================================
+        // WEAPONS DISABLED DURING PURE MOVE
+        // =========================================================
+
+        if (ship != null &&
+            ship.CurrentState ==
+                ShipUnit.ShipState.Moving)
+        {
+            ClearAllWeaponTargetsServer();
+            return;
+        }
+
         UpdateAuraWeapons();
         UpdateLaserWeapons();
         UpdateProjectileWeapons();
@@ -2199,6 +2211,37 @@ public class ShipWeaponManager : NetworkBehaviour
             return;
 
         priorityTarget = null;
+    }
+
+    private void ClearAllWeaponTargetsServer()
+    {
+        if (!IsServer)
+            return;
+
+        for (int i = 0; i < weapons.Count; i++)
+        {
+            WeaponRuntime weapon =
+                weapons[i];
+
+            if (weapon == null)
+                continue;
+
+            if (weapon.CurrentTarget == null)
+                continue;
+
+            if (weapon.Definition != null &&
+                weapon.Definition.weaponType ==
+                    WeaponType.Laser)
+            {
+                ClearLaserTarget(
+                    weapon);
+            }
+            else
+            {
+                weapon.CurrentTarget =
+                    null;
+            }
+        }
     }
 
 
