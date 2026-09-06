@@ -1170,7 +1170,7 @@ MonoBehaviour:
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 0
   shipModel: {fileID: 426709058800807883}
-  rotationSpeed: 400
+  rotationSpeed: 1200
   baseMaxHp: 100
   baseMaxShield: 0
   baseMoveSpeed: 5
@@ -1501,7 +1501,7 @@ MonoBehaviour:
         byte0059: 0
         byte0060: 0
         byte0061: 0
-  attackStopDistance: 5
+  attackRangeMargin: 0.25
   selectionMarker: {fileID: 9130022619943765371}
   boxSelectionMarker: {fileID: 1901440431737934976}
   attackTargetMarker: {fileID: 4748901671543416326}

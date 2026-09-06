@@ -652,7 +652,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 4170829835
+  GlobalObjectIdHash: 3018720668
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -828,7 +828,7 @@ MonoBehaviour:
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 0
   shipModel: {fileID: 3822455753922855988}
-  rotationSpeed: 400
+  rotationSpeed: 1200
   baseMaxHp: 100
   baseMaxShield: 0
   baseMoveSpeed: 5
@@ -1159,7 +1159,7 @@ MonoBehaviour:
         byte0059: 0
         byte0060: 0
         byte0061: 0
-  attackStopDistance: 5
+  attackRangeMargin: 0.25
   selectionMarker: {fileID: 6710708638853331118}
   boxSelectionMarker: {fileID: 5009656654209793603}
   attackTargetMarker: {fileID: 5770028737406741560}
