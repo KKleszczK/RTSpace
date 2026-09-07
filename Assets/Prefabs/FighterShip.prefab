@@ -1160,6 +1160,12 @@ MonoBehaviour:
         byte0060: 0
         byte0061: 0
   attackRangeMargin: 0.25
+  attackMoveLeashRange: 3
+  AttackMoveProgressAnchor:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: {x: 0, y: 0, z: 0}
   selectionMarker: {fileID: 6710708638853331118}
   boxSelectionMarker: {fileID: 5009656654209793603}
   attackTargetMarker: {fileID: 5770028737406741560}
@@ -1325,6 +1331,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShipCommandPathVisual
   segmentPrefab: {fileID: 8320294448372344868, guid: 8ce4d969641c982449d74b19a1d4ccd6, type: 3}
   pathHeight: 0.05
+  attackMoveProgressMarker: {fileID: 8761050842241937610, guid: 0f713aa2b736f2348b793c0b2f79ca52, type: 3}
 --- !u!1 &5916182725526563462
 GameObject:
   m_ObjectHideFlags: 0

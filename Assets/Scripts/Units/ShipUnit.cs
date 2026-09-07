@@ -167,6 +167,24 @@ public class ShipUnit : NetworkBehaviour, IDamageable
     [SerializeField]
     private float attackRangeMargin = 0.25f;
 
+
+    [Header("Attack Move")]
+    [SerializeField]
+    private float attackMoveLeashRange = 3f;
+
+    private Vector3 attackMoveRouteStart;
+    private Vector3 attackMoveRouteEnd;
+    private Vector3 attackMoveRouteDirection;
+
+    private float attackMoveRouteLength;
+    private float attackMoveProgress;
+
+    public NetworkVariable<Vector3> AttackMoveProgressAnchor =
+    new NetworkVariable<Vector3>(
+        Vector3.zero,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server);
+
     public enum ShipCommandType
     {
         Move,
@@ -728,6 +746,9 @@ public class ShipUnit : NetworkBehaviour, IDamageable
     {
         if (isDead.Value)
             return;
+
+
+        UpdateAttackMoveProgressServer();
 
 
         // =========================================================
@@ -2001,6 +2022,9 @@ public class ShipUnit : NetworkBehaviour, IDamageable
 
         hasActiveCommand = true;
 
+        InitializeAttackMoveServer(
+            position);
+
         targetPosition.Value =
             position;
 
@@ -2026,6 +2050,9 @@ public class ShipUnit : NetworkBehaviour, IDamageable
                 command;
 
             hasActiveCommand = true;
+
+            InitializeAttackMoveServer(
+                position);
 
             targetPosition.Value =
                 position;
@@ -2127,6 +2154,10 @@ public class ShipUnit : NetworkBehaviour, IDamageable
                     }
 
                 case ShipCommandType.AttackMove:
+
+                    InitializeAttackMoveServer(
+                        activeCommand.TargetPosition);
+
                     targetPosition.Value =
                         activeCommand.TargetPosition;
 
@@ -2686,6 +2717,78 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         }
     }
 
+
+    private void InitializeAttackMoveServer(
+    Vector3 endPosition)
+    {
+        if (!IsServer)
+            return;
+
+        attackMoveRouteStart =
+            transform.position;
+
+        attackMoveRouteEnd =
+            endPosition;
+
+        Vector3 route =
+            attackMoveRouteEnd -
+            attackMoveRouteStart;
+
+        route.y = 0f;
+
+        attackMoveRouteLength =
+            route.magnitude;
+
+        attackMoveRouteDirection =
+            attackMoveRouteLength > 0.001f
+                ? route / attackMoveRouteLength
+                : Vector3.zero;
+
+        attackMoveProgress = 0f;
+
+        AttackMoveProgressAnchor.Value =
+            attackMoveRouteStart;
+    }
+
+    private void UpdateAttackMoveProgressServer()
+    {
+        if (!IsServer)
+            return;
+
+        if (!hasActiveCommand ||
+            activeCommand.Type !=
+                ShipCommandType.AttackMove)
+        {
+            return;
+        }
+
+        if (attackMoveRouteLength <= 0.001f)
+            return;
+
+        Vector3 fromStart =
+            transform.position -
+            attackMoveRouteStart;
+
+        fromStart.y = 0f;
+
+        float projectedProgress =
+            Vector3.Dot(
+                fromStart,
+                attackMoveRouteDirection);
+
+        attackMoveProgress =
+            Mathf.Clamp(
+                Mathf.Max(
+                    attackMoveProgress,
+                    projectedProgress),
+                0f,
+                attackMoveRouteLength);
+
+        AttackMoveProgressAnchor.Value =
+            attackMoveRouteStart +
+            attackMoveRouteDirection *
+            attackMoveProgress;
+    }
 
 
 }

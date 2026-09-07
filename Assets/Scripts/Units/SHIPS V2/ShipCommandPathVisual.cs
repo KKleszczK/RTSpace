@@ -18,6 +18,9 @@ public class ShipCommandPathVisual : MonoBehaviour
 
     private bool visible;
 
+    [SerializeField]
+    private Transform attackMoveProgressMarker;
+
 
     private void Awake()
     {
@@ -32,6 +35,7 @@ public class ShipCommandPathVisual : MonoBehaviour
             return;
 
         RefreshPath();
+        RefreshAttackMoveProgressMarker();
     }
 
 
@@ -148,5 +152,37 @@ public class ShipCommandPathVisual : MonoBehaviour
             if (line != null)
                 line.gameObject.SetActive(false);
         }
+    }
+
+    private void RefreshAttackMoveProgressMarker()
+    {
+        if (attackMoveProgressMarker == null ||
+            ship == null)
+        {
+            return;
+        }
+
+        bool show =
+            ship.CurrentState ==
+                ShipUnit.ShipState.AttackMoving ||
+            ship.CurrentState ==
+                ShipUnit.ShipState.Attacking;
+
+        if (!show)
+        {
+            attackMoveProgressMarker.gameObject.SetActive(false);
+            return;
+        }
+
+        Vector3 position =
+            ship.AttackMoveProgressAnchor.Value;
+
+        position.y =
+            pathHeight;
+
+        attackMoveProgressMarker.position =
+            position;
+
+        attackMoveProgressMarker.gameObject.SetActive(true);
     }
 }
