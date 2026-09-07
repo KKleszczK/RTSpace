@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using static ShipUnit;
 
 public class ShipSelectionController : MonoBehaviour
 {
@@ -77,6 +78,8 @@ public class ShipSelectionController : MonoBehaviour
 
         if (Mouse.current.rightButton.wasPressedThisFrame)
             TryMove();
+
+        TryAttackMove();
 
         TryStop();
 
@@ -1141,4 +1144,166 @@ public class ShipSelectionController : MonoBehaviour
             }
         }
     }
+
+    private void TryAttackMove()
+    {
+        if (GameInputManager.Instance == null)
+            return;
+
+        if (!GameInputManager.Instance.AttackMovePressed)
+            return;
+
+        if (EventSystem.current.IsPointerOverGameObject())
+            return;
+
+        if (selectedShips.Count == 0)
+            return;
+
+        if (Camera.main == null)
+            return;
+
+        Ray ray =
+            Camera.main.ScreenPointToRay(
+                Mouse.current.position.ReadValue());
+
+        if (!Physics.Raycast(
+                ray,
+                out RaycastHit hit))
+        {
+            return;
+        }
+
+        bool queueCommand =
+            GameInputManager.Instance.QueueCommandPressed;
+
+        Vector3 target =
+            hit.point;
+
+        ShowMoveCommandMarker(
+            hit.point);
+
+        target.y =
+            shipFlightHeight;
+
+
+        // =========================================================
+        // SINGLE SHIP
+        // =========================================================
+
+        if (selectedShips.Count == 1)
+        {
+            ShipUnit ship =
+                selectedShips[0];
+
+            if (ship == null ||
+                !ship.IsMine() ||
+                !ship.IsSpawned ||
+                ship.isDead.Value)
+            {
+                return;
+            }
+
+
+            // VISUAL
+            if (queueCommand)
+            {
+                ship.QueueVisualAttackMoveCommand(
+                    target);
+            }
+            else
+            {
+                ship.SetVisualAttackMoveCommand(
+                    target);
+            }
+
+
+            // SERVER
+            ship.AttackMoveServerRpc(
+                target,
+                queueCommand);
+
+            return;
+        }
+
+
+        // =========================================================
+        // GROUP
+        // =========================================================
+
+        Vector3 groupCenter =
+            Vector3.zero;
+
+        int validShipCount = 0;
+
+        foreach (ShipUnit ship in selectedShips)
+        {
+            if (ship == null ||
+                !ship.IsMine() ||
+                !ship.IsSpawned ||
+                ship.isDead.Value)
+            {
+                continue;
+            }
+
+            groupCenter +=
+                ship.transform.position;
+
+            validShipCount++;
+        }
+
+        if (validShipCount == 0)
+            return;
+
+        groupCenter /=
+            validShipCount;
+
+
+        // =========================================================
+        // INDIVIDUAL TARGETS
+        // =========================================================
+
+        foreach (ShipUnit ship in selectedShips)
+        {
+            if (ship == null ||
+                !ship.IsMine() ||
+                !ship.IsSpawned ||
+                ship.isDead.Value)
+            {
+                continue;
+            }
+
+            Vector3 offset =
+                ship.transform.position -
+                groupCenter;
+
+            offset.y = 0f;
+
+            Vector3 shipTarget =
+                target + offset;
+
+            shipTarget.y =
+                shipFlightHeight;
+
+
+            // VISUAL
+            if (queueCommand)
+            {
+                ship.QueueVisualAttackMoveCommand(
+                    shipTarget);
+            }
+            else
+            {
+                ship.SetVisualAttackMoveCommand(
+                    shipTarget);
+            }
+
+
+            // SERVER
+            ship.AttackMoveServerRpc(
+                shipTarget,
+                queueCommand);
+        }
+    }
+
+
 }

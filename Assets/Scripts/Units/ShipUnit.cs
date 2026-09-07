@@ -697,6 +697,33 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         }
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    public void AttackMoveServerRpc(
+    Vector3 position,
+    bool queue = false,
+    ServerRpcParams rpcParams = default)
+    {
+        ulong senderClientId =
+            rpcParams.Receive.SenderClientId;
+
+        if (senderClientId != ownerId.Value)
+            return;
+
+        if (isDead.Value)
+            return;
+
+        if (queue)
+        {
+            QueueAttackMoveCommandServer(
+                position);
+        }
+        else
+        {
+            SetAttackMoveCommandServer(
+                position);
+        }
+    }
+
     private void UpdateMovement()
     {
         if (isDead.Value)
@@ -1957,6 +1984,62 @@ public class ShipUnit : NetworkBehaviour, IDamageable
             command);
     }
 
+    public void SetAttackMoveCommandServer(
+    Vector3 position)
+    {
+        if (!IsServer)
+            return;
+
+        ClearAttackPriorityTargetServer();
+
+        commandQueue.Clear();
+
+        activeCommand =
+            new ShipCommand(
+                ShipCommandType.AttackMove,
+                position);
+
+        hasActiveCommand = true;
+
+        targetPosition.Value =
+            position;
+
+        SetStateServer(
+            ShipState.AttackMoving);
+    }
+
+
+    public void QueueAttackMoveCommandServer(
+        Vector3 position)
+    {
+        if (!IsServer)
+            return;
+
+        ShipCommand command =
+            new ShipCommand(
+                ShipCommandType.AttackMove,
+                position);
+
+        if (!hasActiveCommand)
+        {
+            activeCommand =
+                command;
+
+            hasActiveCommand = true;
+
+            targetPosition.Value =
+                position;
+
+            SetStateServer(
+                ShipState.AttackMoving);
+
+            return;
+        }
+
+        AddCommandToQueueServer(
+            command);
+    }
+
     private void CompleteCurrentCommand()
     {
         if (!IsServer)
@@ -2042,6 +2125,15 @@ public class ShipUnit : NetworkBehaviour, IDamageable
 
                         return;
                     }
+
+                case ShipCommandType.AttackMove:
+                    targetPosition.Value =
+                        activeCommand.TargetPosition;
+
+                    SetStateServer(
+                        ShipState.AttackMoving);
+
+                    return;
             }
         }
 
@@ -2102,6 +2194,27 @@ public class ShipUnit : NetworkBehaviour, IDamageable
                 targetShip));
     }
 
+    public void SetVisualAttackMoveCommand(
+    Vector3 position)
+    {
+        visualCommands.Clear();
+
+        visualCommands.Add(
+            new VisualShipCommand(
+                ShipCommandType.AttackMove,
+                position));
+    }
+
+
+    public void QueueVisualAttackMoveCommand(
+        Vector3 position)
+    {
+        visualCommands.Add(
+            new VisualShipCommand(
+                ShipCommandType.AttackMove,
+                position));
+    }
+
     private void OnTargetPositionChanged(
     Vector3 oldValue,
     Vector3 newValue)
@@ -2158,7 +2271,9 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         // =========================================================
 
         if (command.Type ==
-            ShipCommandType.Move)
+        ShipCommandType.Move ||
+            command.Type ==
+        ShipCommandType.AttackMove)
         {
             Vector3 commandPosition =
                 command.Position;
@@ -2527,6 +2642,7 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         switch (command.Type)
         {
             case ShipCommandType.Move:
+            case ShipCommandType.AttackMove:
                 return true;
 
 

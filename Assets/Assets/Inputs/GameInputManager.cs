@@ -39,6 +39,10 @@ public class GameInputManager : MonoBehaviour
         inputActions != null &&
         inputActions.Gameplay.CameraRight.IsPressed();
 
+    public bool AttackMovePressed =>
+    inputActions != null &&
+    inputActions.Gameplay.AttackMove.WasPressedThisFrame();
+
 
     // =========================================================
     // UNITY
