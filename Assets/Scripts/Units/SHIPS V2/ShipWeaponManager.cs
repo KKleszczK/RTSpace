@@ -2244,5 +2244,20 @@ public class ShipWeaponManager : NetworkBehaviour
         }
     }
 
+    public IDamageable FindAttackMoveTarget()
+    {
+        if (!IsServer)
+            return null;
+
+        float range =
+            GetMaxWeaponRange();
+
+        if (range <= 0f)
+            return null;
+
+        return FindNearestEnemy(
+            range);
+    }
+
 
 }

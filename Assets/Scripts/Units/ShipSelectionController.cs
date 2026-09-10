@@ -81,11 +81,16 @@ public class ShipSelectionController : MonoBehaviour
 
         TryAttackMove();
 
+        TryGuard();
+
+        TryFollow();
+
         TryStop();
 
         UpdateDockButton();
 
         RefreshAttackTargetMarkers();
+        RefreshFollowTargetMarkers();
     }
 
     private void TrySelect()
@@ -1305,5 +1310,310 @@ public class ShipSelectionController : MonoBehaviour
         }
     }
 
+    private void TryGuard()
+    {
+        if (GameInputManager.Instance == null)
+            return;
+
+        if (!GameInputManager.Instance.GuardPressed)
+            return;
+
+        if (EventSystem.current.IsPointerOverGameObject())
+            return;
+
+        if (selectedShips.Count == 0)
+            return;
+
+        if (Camera.main == null)
+            return;
+
+        Ray ray =
+            Camera.main.ScreenPointToRay(
+                Mouse.current.position.ReadValue());
+
+        if (!Physics.Raycast(
+                ray,
+                out RaycastHit hit))
+        {
+            return;
+        }
+
+        bool queueCommand =
+            GameInputManager.Instance.QueueCommandPressed;
+
+        Vector3 target =
+            hit.point;
+
+        ShowMoveCommandMarker(
+            hit.point);
+
+        target.y =
+            shipFlightHeight;
+
+
+        // =========================================================
+        // SINGLE SHIP
+        // =========================================================
+
+        if (selectedShips.Count == 1)
+        {
+            ShipUnit ship =
+                selectedShips[0];
+
+            if (ship == null ||
+                !ship.IsMine() ||
+                !ship.IsSpawned ||
+                ship.isDead.Value)
+            {
+                return;
+            }
+
+            // VISUAL
+            if (queueCommand)
+            {
+                ship.QueueVisualGuardCommand(
+                    target);
+            }
+            else
+            {
+                ship.SetVisualGuardCommand(
+                    target);
+            }
+
+            // SERVER
+            ship.GuardServerRpc(
+                target,
+                queueCommand);
+
+            return;
+        }
+
+
+        // =========================================================
+        // GROUP CENTER
+        // =========================================================
+
+        Vector3 groupCenter =
+            Vector3.zero;
+
+        int validShipCount = 0;
+
+        foreach (ShipUnit ship in selectedShips)
+        {
+            if (ship == null ||
+                !ship.IsMine() ||
+                !ship.IsSpawned ||
+                ship.isDead.Value)
+            {
+                continue;
+            }
+
+            groupCenter +=
+                ship.transform.position;
+
+            validShipCount++;
+        }
+
+        if (validShipCount == 0)
+            return;
+
+        groupCenter /=
+            validShipCount;
+
+
+        // =========================================================
+        // INDIVIDUAL GUARD POINTS
+        // =========================================================
+
+        foreach (ShipUnit ship in selectedShips)
+        {
+            if (ship == null ||
+                !ship.IsMine() ||
+                !ship.IsSpawned ||
+                ship.isDead.Value)
+            {
+                continue;
+            }
+
+            Vector3 offset =
+                ship.transform.position -
+                groupCenter;
+
+            offset.y = 0f;
+
+            Vector3 shipTarget =
+                target + offset;
+
+            shipTarget.y =
+                shipFlightHeight;
+
+            // VISUAL
+            if (queueCommand)
+            {
+                ship.QueueVisualGuardCommand(
+                    shipTarget);
+            }
+            else
+            {
+                ship.SetVisualGuardCommand(
+                    shipTarget);
+            }
+
+            // SERVER
+            ship.GuardServerRpc(
+                shipTarget,
+                queueCommand);
+
+        }
+    }
+
+    private void TryFollow()
+    {
+        if (GameInputManager.Instance == null)
+            return;
+
+        if (!GameInputManager.Instance.FollowPressed)
+            return;
+
+        if (EventSystem.current != null &&
+            EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
+
+        if (selectedShips.Count == 0)
+            return;
+
+        if (Camera.main == null)
+            return;
+
+        Ray ray =
+            Camera.main.ScreenPointToRay(
+                Mouse.current.position.ReadValue());
+
+        if (!Physics.Raycast(
+                ray,
+                out RaycastHit hit))
+        {
+            return;
+        }
+
+        ShipUnit targetShip =
+            hit.collider.GetComponentInParent<ShipUnit>();
+
+        if (targetShip == null)
+            return;
+
+        if (!targetShip.IsSpawned)
+            return;
+
+        if (targetShip.isDead.Value)
+            return;
+
+        // Follow tylko w³asnego statku.
+        if (!targetShip.IsMine())
+            return;
+
+        bool queueCommand =
+            GameInputManager.Instance.QueueCommandPressed;
+
+
+        foreach (ShipUnit ship in selectedShips)
+        {
+            if (ship == null)
+                continue;
+
+            if (!ship.IsMine())
+                continue;
+
+            if (!ship.IsSpawned)
+                continue;
+
+            if (ship.isDead.Value)
+                continue;
+
+            // Statek nie mo¿e Followowaæ samego siebie.
+            if (ship == targetShip)
+                continue;
+
+
+            // =====================================================
+            // VISUAL
+            // =====================================================
+
+            if (queueCommand)
+            {
+                ship.QueueVisualFollowCommand(
+                    targetShip);
+            }
+            else
+            {
+                ship.SetVisualFollowCommand(
+                    targetShip);
+            }
+
+
+            // =====================================================
+            // SERVER
+            // =====================================================
+
+            ship.FollowServerRpc(
+                new NetworkObjectReference(
+                    targetShip.NetworkObject),
+                queueCommand);
+        }
+    }
+
+    private void RefreshFollowTargetMarkers()
+    {
+        ShipUnit[] allShips =
+            FindObjectsByType<ShipUnit>(
+                FindObjectsSortMode.None);
+
+        // Najpierw chowamy wszystkie markery.
+        foreach (ShipUnit ship in allShips)
+        {
+            if (ship == null)
+                continue;
+
+            ship.SetFollowTargetMarkerLocal(
+                false);
+        }
+
+
+        // Pokazujemy marker tylko dla Follow
+        // zaznaczonych przez nas statków.
+        foreach (ShipUnit selectedShip in selectedShips)
+        {
+            if (selectedShip == null)
+                continue;
+
+            foreach (
+                ShipUnit.VisualShipCommand command
+                in selectedShip.VisualCommands)
+            {
+                if (command.Type !=
+                    ShipUnit.ShipCommandType.Follow)
+                {
+                    continue;
+                }
+
+                ShipUnit targetShip =
+                    command.TargetShip;
+
+                if (targetShip == null)
+                    continue;
+
+                if (!targetShip.IsSpawned)
+                    continue;
+
+                if (targetShip.isDead.Value)
+                    continue;
+
+                targetShip.SetFollowTargetMarkerLocal(
+                    true);
+            }
+        }
+    }
 
 }

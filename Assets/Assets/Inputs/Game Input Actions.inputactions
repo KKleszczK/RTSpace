@@ -61,9 +61,27 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Patrol",
+                    "name": "Guard",
                     "type": "Button",
                     "id": "dcf827b3-0f34-42ce-aff2-42211d58059d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Follow",
+                    "type": "Button",
+                    "id": "2d2789ff-c161-4f52-979a-1cc522e5a9a2",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Escort",
+                    "type": "Button",
+                    "id": "2584398c-29a2-46fb-bc57-17a16f26553f",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -246,11 +264,11 @@
                 {
                     "name": "",
                     "id": "b476c32f-e52d-4d30-bccd-8336f4a053c3",
-                    "path": "<Keyboard>/p",
+                    "path": "<Keyboard>/g",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Patrol",
+                    "action": "Guard",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -405,6 +423,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "UtilityCraft",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "387720d1-7e05-4d8f-9d1d-120a313da8b0",
+                    "path": "<Keyboard>/z",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Follow",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cb18fd2d-85b0-4fec-8055-16025e5be619",
+                    "path": "<Keyboard>/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Escort",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

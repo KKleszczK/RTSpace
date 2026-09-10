@@ -147,9 +147,27 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Patrol"",
+                    ""name"": ""Guard"",
                     ""type"": ""Button"",
                     ""id"": ""dcf827b3-0f34-42ce-aff2-42211d58059d"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Follow"",
+                    ""type"": ""Button"",
+                    ""id"": ""2d2789ff-c161-4f52-979a-1cc522e5a9a2"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Escort"",
+                    ""type"": ""Button"",
+                    ""id"": ""2584398c-29a2-46fb-bc57-17a16f26553f"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -332,11 +350,11 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""b476c32f-e52d-4d30-bccd-8336f4a053c3"",
-                    ""path"": ""<Keyboard>/p"",
+                    ""path"": ""<Keyboard>/g"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Patrol"",
+                    ""action"": ""Guard"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -493,6 +511,28 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""UtilityCraft"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""387720d1-7e05-4d8f-9d1d-120a313da8b0"",
+                    ""path"": ""<Keyboard>/z"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Follow"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cb18fd2d-85b0-4fec-8055-16025e5be619"",
+                    ""path"": ""<Keyboard>/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Escort"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -507,7 +547,9 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         m_Gameplay_Dock = m_Gameplay.FindAction("Dock", throwIfNotFound: true);
         m_Gameplay_Attack = m_Gameplay.FindAction("Attack", throwIfNotFound: true);
         m_Gameplay_Stop = m_Gameplay.FindAction("Stop", throwIfNotFound: true);
-        m_Gameplay_Patrol = m_Gameplay.FindAction("Patrol", throwIfNotFound: true);
+        m_Gameplay_Guard = m_Gameplay.FindAction("Guard", throwIfNotFound: true);
+        m_Gameplay_Follow = m_Gameplay.FindAction("Follow", throwIfNotFound: true);
+        m_Gameplay_Escort = m_Gameplay.FindAction("Escort", throwIfNotFound: true);
         m_Gameplay_CameraUp = m_Gameplay.FindAction("CameraUp", throwIfNotFound: true);
         m_Gameplay_CameraDown = m_Gameplay.FindAction("CameraDown", throwIfNotFound: true);
         m_Gameplay_CameraLeft = m_Gameplay.FindAction("CameraLeft", throwIfNotFound: true);
@@ -607,7 +649,9 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Dock;
     private readonly InputAction m_Gameplay_Attack;
     private readonly InputAction m_Gameplay_Stop;
-    private readonly InputAction m_Gameplay_Patrol;
+    private readonly InputAction m_Gameplay_Guard;
+    private readonly InputAction m_Gameplay_Follow;
+    private readonly InputAction m_Gameplay_Escort;
     private readonly InputAction m_Gameplay_CameraUp;
     private readonly InputAction m_Gameplay_CameraDown;
     private readonly InputAction m_Gameplay_CameraLeft;
@@ -657,9 +701,17 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Stop => m_Wrapper.m_Gameplay_Stop;
         /// <summary>
-        /// Provides access to the underlying input action "Gameplay/Patrol".
+        /// Provides access to the underlying input action "Gameplay/Guard".
         /// </summary>
-        public InputAction @Patrol => m_Wrapper.m_Gameplay_Patrol;
+        public InputAction @Guard => m_Wrapper.m_Gameplay_Guard;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/Follow".
+        /// </summary>
+        public InputAction @Follow => m_Wrapper.m_Gameplay_Follow;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/Escort".
+        /// </summary>
+        public InputAction @Escort => m_Wrapper.m_Gameplay_Escort;
         /// <summary>
         /// Provides access to the underlying input action "Gameplay/CameraUp".
         /// </summary>
@@ -756,9 +808,15 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
             @Stop.started += instance.OnStop;
             @Stop.performed += instance.OnStop;
             @Stop.canceled += instance.OnStop;
-            @Patrol.started += instance.OnPatrol;
-            @Patrol.performed += instance.OnPatrol;
-            @Patrol.canceled += instance.OnPatrol;
+            @Guard.started += instance.OnGuard;
+            @Guard.performed += instance.OnGuard;
+            @Guard.canceled += instance.OnGuard;
+            @Follow.started += instance.OnFollow;
+            @Follow.performed += instance.OnFollow;
+            @Follow.canceled += instance.OnFollow;
+            @Escort.started += instance.OnEscort;
+            @Escort.performed += instance.OnEscort;
+            @Escort.canceled += instance.OnEscort;
             @CameraUp.started += instance.OnCameraUp;
             @CameraUp.performed += instance.OnCameraUp;
             @CameraUp.canceled += instance.OnCameraUp;
@@ -827,9 +885,15 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
             @Stop.started -= instance.OnStop;
             @Stop.performed -= instance.OnStop;
             @Stop.canceled -= instance.OnStop;
-            @Patrol.started -= instance.OnPatrol;
-            @Patrol.performed -= instance.OnPatrol;
-            @Patrol.canceled -= instance.OnPatrol;
+            @Guard.started -= instance.OnGuard;
+            @Guard.performed -= instance.OnGuard;
+            @Guard.canceled -= instance.OnGuard;
+            @Follow.started -= instance.OnFollow;
+            @Follow.performed -= instance.OnFollow;
+            @Follow.canceled -= instance.OnFollow;
+            @Escort.started -= instance.OnEscort;
+            @Escort.performed -= instance.OnEscort;
+            @Escort.canceled -= instance.OnEscort;
             @CameraUp.started -= instance.OnCameraUp;
             @CameraUp.performed -= instance.OnCameraUp;
             @CameraUp.canceled -= instance.OnCameraUp;
@@ -952,12 +1016,26 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnStop(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "Patrol" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Guard" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnPatrol(InputAction.CallbackContext context);
+        void OnGuard(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Follow" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnFollow(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Escort" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnEscort(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "CameraUp" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>

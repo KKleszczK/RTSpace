@@ -48,6 +48,10 @@ public class ShipCommandPathVisual : MonoBehaviour
         if (!visible)
         {
             ClearSegments();
+
+            if (attackMoveProgressMarker != null)
+                attackMoveProgressMarker.gameObject.SetActive(false);
+
             return;
         }
 
@@ -65,55 +69,202 @@ public class ShipCommandPathVisual : MonoBehaviour
         IReadOnlyList<ShipUnit.VisualShipCommand> commands =
             ship.VisualCommands;
 
-        EnsureSegmentCount(
-            commands.Count);
+        IReadOnlyList<Vector3> guardPoints =
+            ship.VisualGuardPoints;
 
-        Vector3 startPosition =
-            ship.transform.position;
+        
 
-        startPosition.y =
-            pathHeight;
+
+        // =========================================================
+        // LICZYMY POTRZEBNE SEGMENTY
+        // =========================================================
+
+        int requiredSegments = 0;
 
         for (int i = 0; i < commands.Count; i++)
         {
             ShipUnit.VisualShipCommand command =
                 commands[i];
 
-            Vector3 endPosition =
-                command.GetCurrentPosition();
+            if (command.Type ==
+                ShipUnit.ShipCommandType.Guard &&
+                    guardPoints.Count > 0)
+            {
+                bool guardAlreadyStarted =
+                    guardPoints.Count > 1 &&
+                    ship.CurrentState !=
+                        ShipUnit.ShipState.Passive;
 
-            endPosition.y =
+                requiredSegments +=
+                    guardAlreadyStarted
+                        ? guardPoints.Count - 1
+                        : guardPoints.Count;
+            }
+            else
+            {
+                requiredSegments++;
+            }
+        }
+
+
+        // =========================================================
+        // LEASH: SHIP -> P
+        // Tylko gdy P rzeczywiœcie reprezentuje progress/leash.
+        // =========================================================
+
+        bool firstIsAttackMove =
+            commands.Count > 0 &&
+            commands[0].Type ==
+                ShipUnit.ShipCommandType.AttackMove;
+
+        bool firstIsGuard =
+            commands.Count > 0 &&
+            commands[0].Type ==
+                ShipUnit.ShipCommandType.Guard;
+
+        bool showLeash =
+            (
+                firstIsAttackMove &&
+                (
+                    ship.CurrentState ==
+                        ShipUnit.ShipState.Attacking ||
+                    ship.AttackMoveReturningToProgress.Value
+                )
+            )
+            ||
+            (
+                firstIsGuard &&
+                guardPoints.Count > 1 &&
+                (
+                    ship.CurrentState ==
+                        ShipUnit.ShipState.Attacking ||
+                    ship.AttackMoveReturningToProgress.Value
+                )
+            );
+
+        if (showLeash)
+            requiredSegments++;
+
+
+        EnsureSegmentCount(
+            requiredSegments);
+
+
+        Vector3 shipPosition =
+            ship.transform.position;
+
+        shipPosition.y =
+            pathHeight;
+
+        Vector3 startPosition =
+            shipPosition;
+
+        int segmentIndex = 0;
+
+
+        // =========================================================
+        // SHIP -> PROGRESS POINT
+        // =========================================================
+
+        if (showLeash)
+        {
+            Vector3 progressPoint =
+                ship.AttackMoveProgressAnchor.Value;
+
+            progressPoint.y =
                 pathHeight;
 
-            LineRenderer line =
-                segments[i];
-
-            line.gameObject.SetActive(true);
-
-            line.positionCount = 2;
-
-            line.SetPosition(
-                0,
-                startPosition);
-
-            line.SetPosition(
-                1,
-                endPosition);
-
-            Color color =
-                ShipCommandVisualSettings.Instance != null
-                    ? ShipCommandVisualSettings.Instance.GetColor(
-                        command.Type)
-                    : Color.white;
-
-            line.startColor =
-                color;
-
-            line.endColor =
-                color;
+            DrawSegment(
+                segmentIndex++,
+                shipPosition,
+                progressPoint,
+                commands[0].Type);
 
             startPosition =
-                endPosition;
+                progressPoint;
+        }
+
+
+        // =========================================================
+        // NORMALNE KOMENDY
+        // =========================================================
+
+        for (int i = 0; i < commands.Count; i++)
+        {
+            ShipUnit.VisualShipCommand command =
+                commands[i];
+
+
+            // =====================================================
+            // GUARD
+            // Jedna komenda -> wiele punktów.
+            // =====================================================
+
+            if (command.Type ==
+                    ShipUnit.ShipCommandType.Guard &&
+                guardPoints.Count > 0)
+            {
+
+                bool multiPointGuard =
+                guardPoints.Count > 1;
+
+                bool guardAlreadyStarted =
+                    multiPointGuard &&
+                    ship.CurrentState !=
+                        ShipUnit.ShipState.Passive;
+
+
+                for (int p = 0;
+                     p < guardPoints.Count;
+                     p++)
+                {
+                    Vector3 endPosition =
+                        guardPoints[p];
+
+                    endPosition.y =
+                        pathHeight;
+
+                    if (guardAlreadyStarted &&
+                        p == 0)
+                    {
+                        startPosition =
+                            endPosition;
+
+                        continue;
+                    }
+
+                    DrawSegment(
+                        segmentIndex++,
+                        startPosition,
+                        endPosition,
+                        ShipUnit.ShipCommandType.Guard);
+
+                    startPosition =
+                        endPosition;
+                }
+
+                continue;
+            }
+
+
+            // =====================================================
+            // MOVE / ATTACK / ATTACK MOVE / ...
+            // =====================================================
+
+            Vector3 normalEnd =
+                command.GetCurrentPosition();
+
+            normalEnd.y =
+                pathHeight;
+
+            DrawSegment(
+                segmentIndex++,
+                startPosition,
+                normalEnd,
+                command.Type);
+
+            startPosition =
+                normalEnd;
         }
     }
 
@@ -162,11 +313,30 @@ public class ShipCommandPathVisual : MonoBehaviour
             return;
         }
 
+        IReadOnlyList<ShipUnit.VisualShipCommand> commands =
+            ship.VisualCommands;
+
+        if (commands.Count == 0)
+        {
+            attackMoveProgressMarker.gameObject.SetActive(false);
+            return;
+        }
+
+        ShipUnit.ShipCommandType type =
+            commands[0].Type;
+
+        bool attackMove =
+            type ==
+            ShipUnit.ShipCommandType.AttackMove;
+
+        bool guardPatrol =
+            type ==
+                ShipUnit.ShipCommandType.Guard &&
+            ship.VisualGuardPoints.Count > 1;
+
         bool show =
-            ship.CurrentState ==
-                ShipUnit.ShipState.AttackMoving ||
-            ship.CurrentState ==
-                ShipUnit.ShipState.Attacking;
+            attackMove ||
+            guardPatrol;
 
         if (!show)
         {
@@ -184,5 +354,39 @@ public class ShipCommandPathVisual : MonoBehaviour
             position;
 
         attackMoveProgressMarker.gameObject.SetActive(true);
+    }
+
+    private void DrawSegment(
+    int segmentIndex,
+    Vector3 start,
+    Vector3 end,
+    ShipUnit.ShipCommandType type)
+    {
+        LineRenderer line =
+            segments[segmentIndex];
+
+        line.gameObject.SetActive(true);
+
+        line.positionCount = 2;
+
+        line.SetPosition(
+            0,
+            start);
+
+        line.SetPosition(
+            1,
+            end);
+
+        Color color =
+            ShipCommandVisualSettings.Instance != null
+                ? ShipCommandVisualSettings.Instance.GetColor(
+                    type)
+                : Color.white;
+
+        line.startColor =
+            color;
+
+        line.endColor =
+            color;
     }
 }
