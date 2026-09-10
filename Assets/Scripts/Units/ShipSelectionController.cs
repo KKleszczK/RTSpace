@@ -85,6 +85,10 @@ public class ShipSelectionController : MonoBehaviour
 
         TryFollow();
 
+        TryEscort();
+
+        TryBackToBase();
+
         TryStop();
 
         UpdateDockButton();
@@ -1593,7 +1597,9 @@ public class ShipSelectionController : MonoBehaviour
                 in selectedShip.VisualCommands)
             {
                 if (command.Type !=
-                    ShipUnit.ShipCommandType.Follow)
+                        ShipUnit.ShipCommandType.Follow &&
+                    command.Type !=
+                        ShipUnit.ShipCommandType.Escort)
                 {
                     continue;
                 }
@@ -1614,6 +1620,201 @@ public class ShipSelectionController : MonoBehaviour
                     true);
             }
         }
+    }
+
+    private void TryEscort()
+    {
+        if (GameInputManager.Instance == null)
+            return;
+
+        if (!GameInputManager.Instance.EscortPressed)
+            return;
+
+        if (EventSystem.current != null &&
+            EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
+
+        if (selectedShips.Count == 0)
+            return;
+
+        if (Camera.main == null)
+            return;
+
+
+        Ray ray =
+            Camera.main.ScreenPointToRay(
+                Mouse.current.position.ReadValue());
+
+        if (!Physics.Raycast(
+                ray,
+                out RaycastHit hit))
+        {
+            return;
+        }
+
+
+        ShipUnit targetShip =
+            hit.collider.GetComponentInParent<ShipUnit>();
+
+        if (targetShip == null)
+            return;
+
+        if (!targetShip.IsSpawned)
+            return;
+
+        if (targetShip.isDead.Value)
+            return;
+
+        if (!targetShip.IsMine())
+            return;
+
+
+        bool queueCommand =
+            GameInputManager.Instance.QueueCommandPressed;
+
+
+        foreach (ShipUnit ship in selectedShips)
+        {
+            if (ship == null)
+                continue;
+
+            if (!ship.IsMine())
+                continue;
+
+            if (!ship.IsSpawned)
+                continue;
+
+            if (ship.isDead.Value)
+                continue;
+
+            if (ship == targetShip)
+                continue;
+
+
+            // =====================================================
+            // VISUAL
+            // =====================================================
+
+            if (queueCommand)
+            {
+                ship.QueueVisualEscortCommand(
+                    targetShip);
+            }
+            else
+            {
+                ship.SetVisualEscortCommand(
+                    targetShip);
+            }
+
+
+            // =====================================================
+            // SERVER
+            // =====================================================
+
+            ship.EscortServerRpc(
+                new NetworkObjectReference(
+                    targetShip.NetworkObject),
+                queueCommand);
+        }
+    }
+
+    private void TryBackToBase()
+    {
+        if (GameInputManager.Instance == null)
+            return;
+
+        if (!GameInputManager.Instance.BackToBasePressed)
+            return;
+
+        if (selectedShips.Count == 0)
+            return;
+
+
+        bool queueCommand =
+            GameInputManager.Instance
+                .QueueCommandPressed;
+
+
+        BaseSafeZone ownSafeZone =
+            FindOwnSafeZoneLocal();
+
+        if (ownSafeZone == null)
+        {
+            Debug.LogWarning(
+                "[BACK TO BASE] Nie znaleziono w³asnej SafeZone.");
+
+            return;
+        }
+
+
+        foreach (ShipUnit ship in selectedShips)
+        {
+            if (ship == null)
+                continue;
+
+            if (!ship.IsMine())
+                continue;
+
+            if (!ship.IsSpawned)
+                continue;
+
+            if (ship.isDead.Value)
+                continue;
+
+
+            if (queueCommand)
+            {
+                ship.QueueVisualBackToBaseCommand(
+                    ownSafeZone);
+            }
+            else
+            {
+                ship.SetVisualBackToBaseCommand(
+                    ownSafeZone);
+            }
+
+
+            ship.BackToBaseServerRpc(
+                queueCommand);
+        }
+    }
+
+    private BaseSafeZone FindOwnSafeZoneLocal()
+    {
+        if (NetworkManager.Singleton == null)
+            return null;
+
+        ulong localClientId =
+            NetworkManager.Singleton.LocalClientId;
+
+        BaseSafeZone[] safeZones =
+            FindObjectsByType<BaseSafeZone>(
+                FindObjectsSortMode.None);
+
+        foreach (BaseSafeZone safeZone in safeZones)
+        {
+            if (safeZone == null)
+                continue;
+
+            if (!safeZone.IsSpawned)
+                continue;
+
+            UnitOwner owner =
+                safeZone.GetComponent<UnitOwner>();
+
+            if (owner == null)
+                continue;
+
+            if (owner.ownerId.Value ==
+                localClientId)
+            {
+                return safeZone;
+            }
+        }
+
+        return null;
     }
 
 }

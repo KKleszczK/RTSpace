@@ -629,6 +629,9 @@ public class ShipWeaponManager : NetworkBehaviour
             return false;
         }
 
+        RegisterAttackOnTarget(
+            target);
+
         target.TakeWeaponDamage(
             hullDamage,
             shieldDamage);
@@ -909,6 +912,9 @@ public class ShipWeaponManager : NetworkBehaviour
         float shieldDamage =
             GetFinalShieldDamage(
                 weapon);
+
+        RegisterAttackOnTarget(
+            target);
 
         target.TakeWeaponDamage(
             hullDamage,
@@ -1232,6 +1238,9 @@ public class ShipWeaponManager : NetworkBehaviour
 
         if (target.DamageTransform == null)
             return;
+
+        RegisterAttackOnTarget(
+            target);
 
         Vector3 spawnPosition =
             transform.position;
@@ -2257,6 +2266,25 @@ public class ShipWeaponManager : NetworkBehaviour
 
         return FindNearestEnemy(
             range);
+    }
+
+    private void RegisterAttackOnTarget(
+    IDamageable target)
+    {
+        if (!IsServer)
+            return;
+
+        if (ship == null)
+            return;
+
+        if (target == null)
+            return;
+
+        if (target is ShipUnit targetShip)
+        {
+            targetShip.RegisterAttackerServer(
+                ship);
+        }
     }
 
 

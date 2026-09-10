@@ -88,6 +88,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "BackToBase",
+                    "type": "Button",
+                    "id": "9b2f8ebe-4bfd-4bf1-829c-aac49af7e24d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "CameraUp",
                     "type": "Button",
                     "id": "0d4234de-5bb3-48f4-b2bb-166f26de9f41",
@@ -385,7 +394,7 @@
                 {
                     "name": "",
                     "id": "9a4eecb2-68c8-49bd-b81d-302433e007e0",
-                    "path": "<Keyboard>/b",
+                    "path": "<Keyboard>/c",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -445,6 +454,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Escort",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "191b1666-09bc-497c-b75e-f86c82aeae51",
+                    "path": "<Keyboard>/b",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "BackToBase",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

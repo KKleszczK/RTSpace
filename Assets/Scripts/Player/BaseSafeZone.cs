@@ -222,7 +222,7 @@ public class BaseSafeZone : NetworkBehaviour
         }
     }
 
-    private bool IsValidShipInSafeZone(
+    public bool IsValidShipInSafeZone(
         ShipUnit ship)
     {
         if (ship == null)

@@ -51,6 +51,14 @@ public class GameInputManager : MonoBehaviour
     inputActions != null &&
     inputActions.Gameplay.Follow.WasPressedThisFrame();
 
+    public bool EscortPressed =>
+    inputActions != null &&
+    inputActions.Gameplay.Escort.WasPressedThisFrame();
+
+    public bool BackToBasePressed =>
+    inputActions != null &&
+    inputActions.Gameplay.BackToBase.WasPressedThisFrame();
+
 
     // =========================================================
     // UNITY

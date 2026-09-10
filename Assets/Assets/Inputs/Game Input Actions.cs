@@ -174,6 +174,15 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""BackToBase"",
+                    ""type"": ""Button"",
+                    ""id"": ""9b2f8ebe-4bfd-4bf1-829c-aac49af7e24d"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""CameraUp"",
                     ""type"": ""Button"",
                     ""id"": ""0d4234de-5bb3-48f4-b2bb-166f26de9f41"",
@@ -471,7 +480,7 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""9a4eecb2-68c8-49bd-b81d-302433e007e0"",
-                    ""path"": ""<Keyboard>/b"",
+                    ""path"": ""<Keyboard>/c"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -533,6 +542,17 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Escort"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""191b1666-09bc-497c-b75e-f86c82aeae51"",
+                    ""path"": ""<Keyboard>/b"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""BackToBase"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -550,6 +570,7 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         m_Gameplay_Guard = m_Gameplay.FindAction("Guard", throwIfNotFound: true);
         m_Gameplay_Follow = m_Gameplay.FindAction("Follow", throwIfNotFound: true);
         m_Gameplay_Escort = m_Gameplay.FindAction("Escort", throwIfNotFound: true);
+        m_Gameplay_BackToBase = m_Gameplay.FindAction("BackToBase", throwIfNotFound: true);
         m_Gameplay_CameraUp = m_Gameplay.FindAction("CameraUp", throwIfNotFound: true);
         m_Gameplay_CameraDown = m_Gameplay.FindAction("CameraDown", throwIfNotFound: true);
         m_Gameplay_CameraLeft = m_Gameplay.FindAction("CameraLeft", throwIfNotFound: true);
@@ -652,6 +673,7 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Guard;
     private readonly InputAction m_Gameplay_Follow;
     private readonly InputAction m_Gameplay_Escort;
+    private readonly InputAction m_Gameplay_BackToBase;
     private readonly InputAction m_Gameplay_CameraUp;
     private readonly InputAction m_Gameplay_CameraDown;
     private readonly InputAction m_Gameplay_CameraLeft;
@@ -712,6 +734,10 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Gameplay/Escort".
         /// </summary>
         public InputAction @Escort => m_Wrapper.m_Gameplay_Escort;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/BackToBase".
+        /// </summary>
+        public InputAction @BackToBase => m_Wrapper.m_Gameplay_BackToBase;
         /// <summary>
         /// Provides access to the underlying input action "Gameplay/CameraUp".
         /// </summary>
@@ -817,6 +843,9 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
             @Escort.started += instance.OnEscort;
             @Escort.performed += instance.OnEscort;
             @Escort.canceled += instance.OnEscort;
+            @BackToBase.started += instance.OnBackToBase;
+            @BackToBase.performed += instance.OnBackToBase;
+            @BackToBase.canceled += instance.OnBackToBase;
             @CameraUp.started += instance.OnCameraUp;
             @CameraUp.performed += instance.OnCameraUp;
             @CameraUp.canceled += instance.OnCameraUp;
@@ -894,6 +923,9 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
             @Escort.started -= instance.OnEscort;
             @Escort.performed -= instance.OnEscort;
             @Escort.canceled -= instance.OnEscort;
+            @BackToBase.started -= instance.OnBackToBase;
+            @BackToBase.performed -= instance.OnBackToBase;
+            @BackToBase.canceled -= instance.OnBackToBase;
             @CameraUp.started -= instance.OnCameraUp;
             @CameraUp.performed -= instance.OnCameraUp;
             @CameraUp.canceled -= instance.OnCameraUp;
@@ -1036,6 +1068,13 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnEscort(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "BackToBase" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnBackToBase(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "CameraUp" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
