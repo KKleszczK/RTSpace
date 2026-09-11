@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class BaseHangar : NetworkBehaviour
 {
-    public const int MaxDockedShips = 6;
-    public const int MaxQueue = 2;
+    public const int MaxDockedShips = 5;
+    public const int MaxQueue = 5;
 
     private const int NormalSlot1 = 0;
     private const int NormalSlot2 = 1;
