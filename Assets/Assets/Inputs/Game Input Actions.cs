@@ -355,7 +355,7 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""a046fd9c-1fb5-4443-9a03-4ef5f7d5eb94"",
-                    ""path"": ""<Keyboard>/f"",
+                    ""path"": ""<Keyboard>/s"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -366,7 +366,7 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""9baba469-68b6-4af8-90b8-8de198cea369"",
-                    ""path"": ""<Keyboard>/s"",
+                    ""path"": ""<Keyboard>/f"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -487,7 +487,7 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""6ad36e67-1830-4b2d-ad15-37a137778108"",
-                    ""path"": ""<Keyboard>/d"",
+                    ""path"": ""<Keyboard>/r"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -564,7 +564,7 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""191b1666-09bc-497c-b75e-f86c82aeae51"",
-                    ""path"": ""<Keyboard>/b"",
+                    ""path"": ""<Keyboard>/d"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -575,7 +575,7 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""4e3eeba5-e155-40c8-a952-20283c2e13b1"",
-                    ""path"": ""<Keyboard>/h"",
+                    ""path"": ""<Keyboard>/backquote"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
