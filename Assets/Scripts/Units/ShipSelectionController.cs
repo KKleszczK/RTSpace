@@ -93,6 +93,8 @@ public class ShipSelectionController : MonoBehaviour
 
         TryStop();
 
+        TryAllArmy();
+
         UpdateDockButton();
 
         RefreshAttackTargetMarkers();
@@ -1891,6 +1893,69 @@ public class ShipSelectionController : MonoBehaviour
             return;
 
         IssueDockCommandForSelection();
+    }
+
+    private void TryAllArmy()
+    {
+        if (GameInputManager.Instance == null)
+            return;
+
+        if (!GameInputManager.Instance.AllArmyPressed)
+            return;
+
+        SelectAllArmy();
+    }
+
+    private void SelectAllArmy()
+    {
+        ClearSelection();
+
+        ShipUnit[] allShips =
+            FindObjectsByType<ShipUnit>(
+                FindObjectsSortMode.None);
+
+        foreach (ShipUnit ship in allShips)
+        {
+            if (ship == null)
+                continue;
+
+            if (!ship.IsSpawned)
+                continue;
+
+            if (ship.isDead.Value)
+                continue;
+
+            if (!ship.IsMine())
+                continue;
+
+            selectedShips.Add(
+                ship);
+
+            ship.SetSelectedLocal(
+                true);
+        }
+
+
+        // selectedShip u¿ywamy tylko,
+        // gdy zaznaczony jest dok³adnie jeden statek.
+        selectedShip =
+            selectedShips.Count == 1
+                ? selectedShips[0]
+                : null;
+
+
+        selectedBase =
+            null;
+
+        selectedObject =
+            null;
+
+
+        if (basePanel != null)
+            basePanel.SetActive(false);
+
+
+        UpdateDockButton();
     }
 
 }

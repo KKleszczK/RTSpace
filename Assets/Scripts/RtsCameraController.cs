@@ -1,6 +1,7 @@
+using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 public class RtsCameraController : MonoBehaviour
 {
@@ -23,6 +24,8 @@ public class RtsCameraController : MonoBehaviour
 
     private void Update()
     {
+        UpdateBaseCameraJump();
+
         UpdateMovement();
         UpdateZoom();
         ClampCameraPosition();
@@ -289,5 +292,66 @@ public class RtsCameraController : MonoBehaviour
         }
 
         return true;
+    }
+
+    private void UpdateBaseCameraJump()
+    {
+        if (GameInputManager.Instance == null)
+            return;
+
+        if (!GameInputManager.Instance.BaseCameraJumpPressed)
+            return;
+
+        Transform ownBase =
+            FindOwnBaseTransform();
+
+        if (ownBase == null)
+            return;
+
+        Vector3 target =
+            ownBase.position;
+
+        target.y = 0f;
+
+        MoveViewToWorldPosition(
+            target);
+    }
+
+    private Transform FindOwnBaseTransform()
+    {
+        if (NetworkManager.Singleton == null)
+            return null;
+
+        ulong localClientId =
+            NetworkManager.Singleton.LocalClientId;
+
+        BaseUnit[] bases =
+            FindObjectsByType<BaseUnit>(
+                FindObjectsSortMode.None);
+
+        foreach (BaseUnit baseUnit in bases)
+        {
+            if (baseUnit == null)
+                continue;
+
+            if (!baseUnit.IsSpawned)
+                continue;
+
+            UnitOwner owner =
+                baseUnit.GetComponent<UnitOwner>();
+
+            if (owner == null)
+                continue;
+
+            if (owner.ownerId.Value !=
+                localClientId)
+            {
+                continue;
+            }
+
+            return baseUnit.transform;
+        }
+
+        return null;
     }
 }

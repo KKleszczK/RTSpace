@@ -68,6 +68,8 @@ public class HangarPanelUI : MonoBehaviour
     {
         ValidateSelectedHangar();
 
+        UpdateHangarHotkeys();
+
         UpdateProgress();
         UpdateQueue();
         UpdateDocked();
@@ -178,6 +180,11 @@ public class HangarPanelUI : MonoBehaviour
 
     private void OnDeployButtonClicked()
     {
+        TryDeploySelectedShip();
+    }
+
+    private void TryDeploySelectedShip()
+    {
         if (!CanUseSelectedHangar())
             return;
 
@@ -192,11 +199,8 @@ public class HangarPanelUI : MonoBehaviour
             selectedDockIndex;
 
         Debug.Log(
-            $"[DEPLOY UI] Wysy³am ¿¹danie deployu. " +
+            $"[DEPLOY] Wysy³am ¿¹danie deployu. " +
             $"dockIndex={dockIndexToLaunch}");
-
-        ClearDockSelection();
-        HideAllShipPanels();
 
         selectedHangar.RequestLaunchShip(
             dockIndexToLaunch);
@@ -258,10 +262,20 @@ public class HangarPanelUI : MonoBehaviour
         selectedHangar = hangar;
         selectedCore = FindCoreForHangar(hangar);
 
-        selectedDockIndex = -1;
+        if (selectedHangar.dockedShips.Count > 0)
+        {
+            selectedDockIndex =
+                0;
+        }
+        else
+        {
+            selectedDockIndex =
+                -1;
+        }
 
-        ClearDockSelection();
-        HideAllShipPanels();
+        RefreshDockSelectors();
+        RefreshDeployButton();
+        RefreshSelectedShipPanel();
 
         if (inventoryPanel != null)
             inventoryPanel.Refresh();
@@ -814,9 +828,58 @@ public class HangarPanelUI : MonoBehaviour
                 }
             }
         }
+        AutoSelectFirstDockedShip();
 
         RefreshDockSelectors();
         RefreshDeployButton();
+    }
+
+    private void AutoSelectFirstDockedShip()
+    {
+        if (!CanUseSelectedHangar())
+        {
+            selectedDockIndex =
+                -1;
+
+            return;
+        }
+
+
+        int shipCount =
+            selectedHangar.dockedShips.Count;
+
+
+        // =========================================================
+        // HANGAR PUSTY
+        // =========================================================
+
+        if (shipCount == 0)
+        {
+            if (selectedDockIndex != -1)
+            {
+                selectedDockIndex =
+                    -1;
+
+                HideAllShipPanels();
+            }
+
+            return;
+        }
+
+
+        // =========================================================
+        // MAMY CO NAJMNIEJ 1 STATEK
+        //
+        // Je¿eli obecne zaznaczenie przesta³o byæ poprawne,
+        // automatycznie wybieramy pierwszy statek.
+        // =========================================================
+
+        if (selectedDockIndex < 0 ||
+            selectedDockIndex >= shipCount)
+        {
+            selectedDockIndex =
+                0;
+        }
     }
 
     private void SelectDockSlot(int index)
@@ -905,5 +968,87 @@ public class HangarPanelUI : MonoBehaviour
             selectedDockIndex,
             sourceSlotIndex,
             targetSlotIndex);
+    }
+
+    private void UpdateHangarHotkeys()
+    {
+        if (GameInputManager.Instance == null)
+            return;
+
+        if (!CanUseSelectedHangar())
+            return;
+
+
+        // =========================================================
+        // DEPLOY
+        // =========================================================
+
+        if (GameInputManager.Instance.DeployPressed)
+        {
+            TryDeploySelectedShip();
+        }
+
+
+        // =========================================================
+        // CRAFT
+        // =========================================================
+
+        if (GameInputManager.Instance.FighterCraftPressed)
+        {
+            TryCraftShipType(
+                ShipType.Fighter);
+        }
+
+        if (GameInputManager.Instance.UtilityCraftPressed)
+        {
+            TryCraftShipType(
+                ShipType.Utility);
+        }
+
+        if (GameInputManager.Instance.MinerCraftPressed)
+        {
+            TryCraftShipType(
+                ShipType.Miner);
+        }
+    }
+
+    private void TryCraftShipType(
+    ShipType shipType)
+    {
+        if (!CanUseSelectedHangar())
+            return;
+
+        ShipDefinition ship =
+            FindShipDefinitionByType(
+                shipType);
+
+        if (ship == null)
+        {
+            Debug.LogWarning(
+                $"[HANGAR CRAFT] Nie znaleziono statku typu {shipType}.");
+
+            return;
+        }
+
+        selectedHangar.RequestBuildShip(
+            ship);
+    }
+
+    private ShipDefinition FindShipDefinitionByType(
+    ShipType shipType)
+    {
+        foreach (ShipDefinition ship in ships)
+        {
+            if (ship == null)
+                continue;
+
+            if (ship.shipType ==
+                shipType)
+            {
+                return ship;
+            }
+        }
+
+        return null;
     }
 }

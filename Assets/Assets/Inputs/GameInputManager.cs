@@ -63,6 +63,30 @@ public class GameInputManager : MonoBehaviour
     inputActions != null &&
     inputActions.Gameplay.Dock.WasPressedThisFrame();
 
+    public bool AllArmyPressed =>
+    inputActions != null &&
+    inputActions.Gameplay.AllArmy.WasPressedThisFrame();
+
+    public bool BaseCameraJumpPressed =>
+    inputActions != null &&
+    inputActions.Gameplay.BaseCameraJump.WasPressedThisFrame();
+
+    public bool DeployPressed =>
+    inputActions != null &&
+    inputActions.Gameplay.Deploy.WasPressedThisFrame();
+
+    public bool MinerCraftPressed =>
+        inputActions != null &&
+        inputActions.Gameplay.MinerCraft.WasPressedThisFrame();
+
+    public bool FighterCraftPressed =>
+        inputActions != null &&
+        inputActions.Gameplay.FighterCraft.WasPressedThisFrame();
+
+    public bool UtilityCraftPressed =>
+        inputActions != null &&
+        inputActions.Gameplay.UtilityCraft.WasPressedThisFrame();
+
 
     // =========================================================
     // UNITY

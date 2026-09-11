@@ -183,6 +183,24 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""AllArmy"",
+                    ""type"": ""Button"",
+                    ""id"": ""6b93325c-31f6-4cb8-adc6-06f2006bc1e5"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Deploy"",
+                    ""type"": ""Button"",
+                    ""id"": ""6717ca67-22cb-4fed-8e83-d787d6c0fa59"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""CameraUp"",
                     ""type"": ""Button"",
                     ""id"": ""0d4234de-5bb3-48f4-b2bb-166f26de9f41"",
@@ -282,7 +300,7 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""FigherCraft"",
+                    ""name"": ""FighterCraft"",
                     ""type"": ""Button"",
                     ""id"": ""0f3ca5cb-a589-4f47-8442-2e3df80ed6db"",
                     ""expectedControlType"": """",
@@ -506,7 +524,7 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""FigherCraft"",
+                    ""action"": ""FighterCraft"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -553,6 +571,28 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""BackToBase"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4e3eeba5-e155-40c8-a952-20283c2e13b1"",
+                    ""path"": ""<Keyboard>/h"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""AllArmy"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ab6e87e3-46d1-40fe-ba3d-0ccedbab444e"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Deploy"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -571,6 +611,8 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         m_Gameplay_Follow = m_Gameplay.FindAction("Follow", throwIfNotFound: true);
         m_Gameplay_Escort = m_Gameplay.FindAction("Escort", throwIfNotFound: true);
         m_Gameplay_BackToBase = m_Gameplay.FindAction("BackToBase", throwIfNotFound: true);
+        m_Gameplay_AllArmy = m_Gameplay.FindAction("AllArmy", throwIfNotFound: true);
+        m_Gameplay_Deploy = m_Gameplay.FindAction("Deploy", throwIfNotFound: true);
         m_Gameplay_CameraUp = m_Gameplay.FindAction("CameraUp", throwIfNotFound: true);
         m_Gameplay_CameraDown = m_Gameplay.FindAction("CameraDown", throwIfNotFound: true);
         m_Gameplay_CameraLeft = m_Gameplay.FindAction("CameraLeft", throwIfNotFound: true);
@@ -582,7 +624,7 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         m_Gameplay_ControlGroup5 = m_Gameplay.FindAction("ControlGroup5", throwIfNotFound: true);
         m_Gameplay_BaseCameraJump = m_Gameplay.FindAction("BaseCameraJump", throwIfNotFound: true);
         m_Gameplay_MinerCraft = m_Gameplay.FindAction("MinerCraft", throwIfNotFound: true);
-        m_Gameplay_FigherCraft = m_Gameplay.FindAction("FigherCraft", throwIfNotFound: true);
+        m_Gameplay_FighterCraft = m_Gameplay.FindAction("FighterCraft", throwIfNotFound: true);
         m_Gameplay_UtilityCraft = m_Gameplay.FindAction("UtilityCraft", throwIfNotFound: true);
     }
 
@@ -674,6 +716,8 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Follow;
     private readonly InputAction m_Gameplay_Escort;
     private readonly InputAction m_Gameplay_BackToBase;
+    private readonly InputAction m_Gameplay_AllArmy;
+    private readonly InputAction m_Gameplay_Deploy;
     private readonly InputAction m_Gameplay_CameraUp;
     private readonly InputAction m_Gameplay_CameraDown;
     private readonly InputAction m_Gameplay_CameraLeft;
@@ -685,7 +729,7 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_ControlGroup5;
     private readonly InputAction m_Gameplay_BaseCameraJump;
     private readonly InputAction m_Gameplay_MinerCraft;
-    private readonly InputAction m_Gameplay_FigherCraft;
+    private readonly InputAction m_Gameplay_FighterCraft;
     private readonly InputAction m_Gameplay_UtilityCraft;
     /// <summary>
     /// Provides access to input actions defined in input action map "Gameplay".
@@ -739,6 +783,14 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @BackToBase => m_Wrapper.m_Gameplay_BackToBase;
         /// <summary>
+        /// Provides access to the underlying input action "Gameplay/AllArmy".
+        /// </summary>
+        public InputAction @AllArmy => m_Wrapper.m_Gameplay_AllArmy;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/Deploy".
+        /// </summary>
+        public InputAction @Deploy => m_Wrapper.m_Gameplay_Deploy;
+        /// <summary>
         /// Provides access to the underlying input action "Gameplay/CameraUp".
         /// </summary>
         public InputAction @CameraUp => m_Wrapper.m_Gameplay_CameraUp;
@@ -783,9 +835,9 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @MinerCraft => m_Wrapper.m_Gameplay_MinerCraft;
         /// <summary>
-        /// Provides access to the underlying input action "Gameplay/FigherCraft".
+        /// Provides access to the underlying input action "Gameplay/FighterCraft".
         /// </summary>
-        public InputAction @FigherCraft => m_Wrapper.m_Gameplay_FigherCraft;
+        public InputAction @FighterCraft => m_Wrapper.m_Gameplay_FighterCraft;
         /// <summary>
         /// Provides access to the underlying input action "Gameplay/UtilityCraft".
         /// </summary>
@@ -846,6 +898,12 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
             @BackToBase.started += instance.OnBackToBase;
             @BackToBase.performed += instance.OnBackToBase;
             @BackToBase.canceled += instance.OnBackToBase;
+            @AllArmy.started += instance.OnAllArmy;
+            @AllArmy.performed += instance.OnAllArmy;
+            @AllArmy.canceled += instance.OnAllArmy;
+            @Deploy.started += instance.OnDeploy;
+            @Deploy.performed += instance.OnDeploy;
+            @Deploy.canceled += instance.OnDeploy;
             @CameraUp.started += instance.OnCameraUp;
             @CameraUp.performed += instance.OnCameraUp;
             @CameraUp.canceled += instance.OnCameraUp;
@@ -879,9 +937,9 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
             @MinerCraft.started += instance.OnMinerCraft;
             @MinerCraft.performed += instance.OnMinerCraft;
             @MinerCraft.canceled += instance.OnMinerCraft;
-            @FigherCraft.started += instance.OnFigherCraft;
-            @FigherCraft.performed += instance.OnFigherCraft;
-            @FigherCraft.canceled += instance.OnFigherCraft;
+            @FighterCraft.started += instance.OnFighterCraft;
+            @FighterCraft.performed += instance.OnFighterCraft;
+            @FighterCraft.canceled += instance.OnFighterCraft;
             @UtilityCraft.started += instance.OnUtilityCraft;
             @UtilityCraft.performed += instance.OnUtilityCraft;
             @UtilityCraft.canceled += instance.OnUtilityCraft;
@@ -926,6 +984,12 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
             @BackToBase.started -= instance.OnBackToBase;
             @BackToBase.performed -= instance.OnBackToBase;
             @BackToBase.canceled -= instance.OnBackToBase;
+            @AllArmy.started -= instance.OnAllArmy;
+            @AllArmy.performed -= instance.OnAllArmy;
+            @AllArmy.canceled -= instance.OnAllArmy;
+            @Deploy.started -= instance.OnDeploy;
+            @Deploy.performed -= instance.OnDeploy;
+            @Deploy.canceled -= instance.OnDeploy;
             @CameraUp.started -= instance.OnCameraUp;
             @CameraUp.performed -= instance.OnCameraUp;
             @CameraUp.canceled -= instance.OnCameraUp;
@@ -959,9 +1023,9 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
             @MinerCraft.started -= instance.OnMinerCraft;
             @MinerCraft.performed -= instance.OnMinerCraft;
             @MinerCraft.canceled -= instance.OnMinerCraft;
-            @FigherCraft.started -= instance.OnFigherCraft;
-            @FigherCraft.performed -= instance.OnFigherCraft;
-            @FigherCraft.canceled -= instance.OnFigherCraft;
+            @FighterCraft.started -= instance.OnFighterCraft;
+            @FighterCraft.performed -= instance.OnFighterCraft;
+            @FighterCraft.canceled -= instance.OnFighterCraft;
             @UtilityCraft.started -= instance.OnUtilityCraft;
             @UtilityCraft.performed -= instance.OnUtilityCraft;
             @UtilityCraft.canceled -= instance.OnUtilityCraft;
@@ -1076,6 +1140,20 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnBackToBase(InputAction.CallbackContext context);
         /// <summary>
+        /// Method invoked when associated input action "AllArmy" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnAllArmy(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Deploy" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDeploy(InputAction.CallbackContext context);
+        /// <summary>
         /// Method invoked when associated input action "CameraUp" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
@@ -1153,12 +1231,12 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnMinerCraft(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "FigherCraft" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "FighterCraft" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnFigherCraft(InputAction.CallbackContext context);
+        void OnFighterCraft(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "UtilityCraft" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>

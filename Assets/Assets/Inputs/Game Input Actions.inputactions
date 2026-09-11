@@ -97,6 +97,24 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "AllArmy",
+                    "type": "Button",
+                    "id": "6b93325c-31f6-4cb8-adc6-06f2006bc1e5",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Deploy",
+                    "type": "Button",
+                    "id": "6717ca67-22cb-4fed-8e83-d787d6c0fa59",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "CameraUp",
                     "type": "Button",
                     "id": "0d4234de-5bb3-48f4-b2bb-166f26de9f41",
@@ -196,7 +214,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "FigherCraft",
+                    "name": "FighterCraft",
                     "type": "Button",
                     "id": "0f3ca5cb-a589-4f47-8442-2e3df80ed6db",
                     "expectedControlType": "",
@@ -420,7 +438,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "FigherCraft",
+                    "action": "FighterCraft",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -465,6 +483,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "BackToBase",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4e3eeba5-e155-40c8-a952-20283c2e13b1",
+                    "path": "<Keyboard>/h",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AllArmy",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ab6e87e3-46d1-40fe-ba3d-0ccedbab444e",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Deploy",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
