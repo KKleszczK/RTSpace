@@ -897,6 +897,15 @@ public class ShipUnit : NetworkBehaviour, IDamageable
                 ShipCommandType.BackToBase)
             {
                 UpdateBackToBaseCommandServer();
+
+                // BackToBase mog³o w³aœnie prze³¹czyæ
+                // aktywn¹ komendê na Dock.
+                if (hasActiveCommand &&
+                    activeCommand.Type ==
+                        ShipCommandType.Dock)
+                {
+                    return;
+                }
             }
         }
 
@@ -5855,6 +5864,7 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         if (!IsServer)
             return;
 
+
         if (!command.TargetObject.TryGet(
                 out NetworkObject targetObject))
         {
@@ -5862,12 +5872,14 @@ public class ShipUnit : NetworkBehaviour, IDamageable
             return;
         }
 
+
         if (targetObject == null ||
             !targetObject.IsSpawned)
         {
             CompleteCurrentCommand();
             return;
         }
+
 
         BaseHangar hangar =
             targetObject.GetComponent<BaseHangar>();
@@ -5877,6 +5889,7 @@ public class ShipUnit : NetworkBehaviour, IDamageable
             CompleteCurrentCommand();
             return;
         }
+
 
         BaseSafeZone safeZone =
             FindOwnSafeZoneServer();
@@ -5888,22 +5901,162 @@ public class ShipUnit : NetworkBehaviour, IDamageable
             return;
         }
 
-        // Dock mo¿e siê rozpocz¹æ tylko w SafeZone.
+
+        // Statek musi nadal znajdowaæ siê w SafeZone.
         if (!safeZone.IsValidShipInSafeZone(this))
         {
             CompleteCurrentCommand();
             return;
         }
 
+
+        // Hangar pe³ny.
+        // Statek po prostu zostaje pod baz¹.
         if (!hangar.HasFreeDockSlot())
         {
-            CompleteCurrentCommand();
+            hasActiveCommand =
+                false;
+
+            targetPosition.Value =
+                transform.position;
+
+            SetStateServer(
+                ShipState.Passive);
+
             return;
         }
+
 
         StartDockingServer(
             hangar,
             safeZone);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void DockOrderServerRpc(
+    ServerRpcParams rpcParams = default)
+    {
+        ulong senderClientId =
+            rpcParams.Receive.SenderClientId;
+
+        if (senderClientId != ownerId.Value)
+            return;
+
+        if (isDead.Value)
+            return;
+
+
+        BaseSafeZone safeZone =
+            FindOwnSafeZoneServer();
+
+        if (safeZone == null ||
+            !safeZone.IsSpawned)
+        {
+            return;
+        }
+
+
+        BaseHangar hangar =
+            FindOwnHangarServer();
+
+        if (hangar == null ||
+            !hangar.IsSpawned)
+        {
+            return;
+        }
+
+
+        // =========================================================
+        // NOWE POLECENIE DOCK ZASTÊPUJE POPRZEDNIE ROZKAZY
+        // =========================================================
+
+        ClearAttackPriorityTargetServer();
+
+        commandQueue.Clear();
+
+        guardPoints.Clear();
+        guardTarget = null;
+
+        escortTarget = null;
+        escortCombatTarget = null;
+
+        AttackMoveReturningToProgress.Value =
+            false;
+
+
+        // =========================================================
+        // STATEK JU¯ JEST W SAFE ZONE
+        // =========================================================
+
+        if (safeZone.IsValidShipInSafeZone(this))
+        {
+            // Jeœli hangar pe³ny:
+            // zostajemy pod baz¹ na Passive.
+            if (!hangar.HasFreeDockSlot())
+            {
+                hasActiveCommand =
+                    false;
+
+                targetPosition.Value =
+                    transform.position;
+
+                SetStateServer(
+                    ShipState.Passive);
+
+                return;
+            }
+
+
+            StartDockingServer(
+                hangar,
+                safeZone);
+
+            return;
+        }
+
+
+        // =========================================================
+        // STATEK JEST POZA SAFE ZONE
+        //
+        // ACTIVE:
+        // BackToBase
+        //
+        // QUEUE:
+        // Dock
+        // =========================================================
+
+        backToBaseTarget =
+            safeZone;
+
+        activeCommand =
+            new ShipCommand(
+                ShipCommandType.BackToBase,
+                safeZone.NetworkObject);
+
+        hasActiveCommand =
+            true;
+
+
+        ShipCommand dockCommand =
+            new ShipCommand(
+                ShipCommandType.Dock,
+                hangar.NetworkObject);
+
+        commandQueue.Add(
+            dockCommand);
+
+
+        targetPosition.Value =
+            safeZone.transform.position;
+
+        targetPosition.Value =
+            new Vector3(
+                targetPosition.Value.x,
+                transform.position.y,
+                targetPosition.Value.z);
+
+        SetStateServer(
+            ShipState.BackToBase);
     }
 
 }

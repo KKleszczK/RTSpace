@@ -1834,23 +1834,14 @@ public class ShipSelectionController : MonoBehaviour
         if (selectedShips.Count == 0)
             return;
 
-        bool queue =
-            GameInputManager.Instance != null &&
-            GameInputManager.Instance.QueueCommandPressed;
 
-        BaseHangar hangar =
-            FindOwnHangar();
+        BaseSafeZone safeZone =
+            FindOwnSafeZoneLocal();
 
-        if (hangar == null ||
-            !hangar.IsSpawned)
-        {
-            return;
-        }
-
-        if (!hangar.HasFreeDockSlot())
+        if (safeZone == null)
         {
             Debug.LogWarning(
-                "[DOCK] Hangar jest pe³ny.");
+                "[DOCK] Nie znaleziono w³asnej SafeZone.");
 
             return;
         }
@@ -1872,39 +1863,19 @@ public class ShipSelectionController : MonoBehaviour
 
 
             // =====================================================
-            // VISUAL BACK TO BASE
+            // VISUAL
             // =====================================================
 
-            BaseSafeZone safeZone =
-                FindOwnSafeZoneLocal();
-
-            if (safeZone == null)
-                continue;
-
-
-            if (queue)
-            {
-                ship.QueueVisualBackToBaseCommand(
-                    safeZone);
-
-                ship.BackToBaseServerRpc(
-                    true);
-            }
-            else
-            {
-                ship.SetVisualBackToBaseCommand(
-                    safeZone);
-
-                ship.BackToBaseServerRpc(
-                    false);
-            }
+            ship.SetVisualBackToBaseCommand(
+                safeZone);
 
 
             // =====================================================
-            // DOCK ZAWSZE ZA BACK TO BASE
+            // CA£Y ROZKAZ:
+            // BACK TO BASE -> DOCK
             // =====================================================
 
-            ship.QueueDockServerRpc();
+            ship.DockOrderServerRpc();
         }
     }
 
