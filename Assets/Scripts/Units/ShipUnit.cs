@@ -518,10 +518,12 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         SetAttackTargetMarkerLocal(false);
         SetFollowTargetMarkerLocal(false);
         SetDockingGlowLocal(false);
+        SetPreselectedLocal(false);
         ApplyColor();
         UpdateHpBar();
         UpdateShieldBar();
         UpdateStateDebugText();
+
     }
 
     public override void OnNetworkDespawn()
@@ -6057,6 +6059,16 @@ public class ShipUnit : NetworkBehaviour, IDamageable
 
         SetStateServer(
             ShipState.BackToBase);
+    }
+
+    public void SetPreselectedLocal(
+    bool visible)
+    {
+        if (boxSelectionMarker == null)
+            return;
+
+        boxSelectionMarker.SetActive(
+            visible);
     }
 
 }

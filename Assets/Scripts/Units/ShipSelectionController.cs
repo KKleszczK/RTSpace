@@ -54,6 +54,8 @@ public class ShipSelectionController : MonoBehaviour
     [SerializeField]
     private float moveCommandMarkerHeight = 0.05f;
 
+    private ShipUnit preselectedShip;
+
 
     private void Start()
     {
@@ -99,6 +101,8 @@ public class ShipSelectionController : MonoBehaviour
 
         RefreshAttackTargetMarkers();
         RefreshFollowTargetMarkers();
+
+        UpdateShipPreselection();
     }
 
     private void TrySelect()
@@ -712,6 +716,14 @@ public class ShipSelectionController : MonoBehaviour
             EventSystem.current.IsPointerOverGameObject())
         {
             return;
+        }
+
+        if (preselectedShip != null)
+        {
+            preselectedShip.SetPreselectedLocal(false);
+
+            preselectedShip =
+                null;
         }
 
         boxStartPosition =
@@ -1956,6 +1968,77 @@ public class ShipSelectionController : MonoBehaviour
 
 
         UpdateDockButton();
+    }
+
+    private void UpdateShipPreselection()
+    {
+        if (preselectedShip != null)
+        {
+            preselectedShip.SetPreselectedLocal(false);
+            preselectedShip = null;
+        }
+
+        if (isBoxSelecting)
+            return;
+
+        if (Mouse.current == null)
+            return;
+
+        if (Camera.main == null)
+            return;
+
+        if (EventSystem.current != null &&
+            EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
+
+        bool shiftPressed =
+            IsShiftPressed();
+
+        bool nothingSelected =
+            selectedShips.Count == 0;
+
+        if (!nothingSelected &&
+            !shiftPressed)
+        {
+            return;
+        }
+
+        Ray ray =
+            Camera.main.ScreenPointToRay(
+                Mouse.current.position.ReadValue());
+
+        if (!Physics.Raycast(
+                ray,
+                out RaycastHit hit))
+        {
+            return;
+        }
+
+        ShipUnit ship =
+            hit.collider.GetComponentInParent<ShipUnit>();
+
+        if (ship == null)
+            return;
+
+        if (!ship.IsMine())
+            return;
+
+        if (!ship.IsSpawned)
+            return;
+
+        if (ship.isDead.Value)
+            return;
+
+        if (selectedShips.Contains(ship))
+            return;
+
+        preselectedShip =
+            ship;
+
+        preselectedShip.SetPreselectedLocal(
+            true);
     }
 
 }

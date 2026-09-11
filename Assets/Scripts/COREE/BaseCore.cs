@@ -35,6 +35,21 @@ public class BaseCore : NetworkBehaviour
     private PlayerResources resources;
     private float currentUpgradeTime;
 
+
+    [Header("Tier Visuals")]
+    [SerializeField]
+    private GameObject tier1Visual;
+
+    [SerializeField]
+    private GameObject tier2Visual;
+
+    [SerializeField]
+    private GameObject tier3Visual;
+
+
+
+
+
     private void Update()
     {
         if (!IsServer)
@@ -250,5 +265,57 @@ public class BaseCore : NetworkBehaviour
 
         notificationManager.ShowCoreUpgrade(
             newTier);
+    }
+
+    private void RefreshTierVisual()
+    {
+        int currentTier =
+            Mathf.Clamp(
+                tier.Value,
+                1,
+                3);
+
+        if (tier1Visual != null)
+        {
+            tier1Visual.SetActive(
+                currentTier == 1);
+        }
+
+        if (tier2Visual != null)
+        {
+            tier2Visual.SetActive(
+                currentTier == 2);
+        }
+
+        if (tier3Visual != null)
+        {
+            tier3Visual.SetActive(
+                currentTier == 3);
+        }
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        tier.OnValueChanged +=
+            OnTierChanged;
+
+        RefreshTierVisual();
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        tier.OnValueChanged -=
+            OnTierChanged;
+
+        base.OnNetworkDespawn();
+    }
+
+    private void OnTierChanged(
+    int oldTier,
+    int newTier)
+    {
+        RefreshTierVisual();
     }
 }

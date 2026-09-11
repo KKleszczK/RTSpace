@@ -9,8 +9,7 @@ public class UnitOwner : NetworkBehaviour
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Server);
 
-    [SerializeField]
-    private Renderer unitRenderer;
+    [SerializeField] private Renderer[] unitRenderers;
 
     // =========================================================
     // NETWORK
@@ -80,17 +79,17 @@ public class UnitOwner : NetworkBehaviour
 
     private void ApplyColor()
     {
-        if (unitRenderer == null)
-        {
-            unitRenderer =
-                GetComponent<Renderer>();
-        }
-
-        if (unitRenderer == null)
-            return;
-
-        unitRenderer.material.color =
+        Color playerColor =
             PlayerColorHelper.GetColor(
                 ownerId.Value);
+
+        foreach (Renderer unitRenderer in unitRenderers)
+        {
+            if (unitRenderer == null)
+                continue;
+
+            unitRenderer.material.color =
+                playerColor;
+        }
     }
 }
