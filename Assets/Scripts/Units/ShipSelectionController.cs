@@ -89,6 +89,8 @@ public class ShipSelectionController : MonoBehaviour
 
         TryBackToBase();
 
+        TryDock();
+
         TryStop();
 
         UpdateDockButton();
@@ -301,19 +303,51 @@ public class ShipSelectionController : MonoBehaviour
         if (dockShipButton == null)
             return;
 
-        bool shipSelected =
-            selectedShip != null &&
-            selectedShip.IsSpawned &&
-            !selectedShip.isDead.Value;
+
+        // =========================================================
+        // CZY MAMY JAKIEKOLWIEK POPRAWNIE ZAZNACZONE STATKI?
+        // =========================================================
+
+        bool anyValidShip =
+            false;
+
+        foreach (ShipUnit ship in selectedShips)
+        {
+            if (ship == null)
+                continue;
+
+            if (!ship.IsMine())
+                continue;
+
+            if (!ship.IsSpawned)
+                continue;
+
+            if (ship.isDead.Value)
+                continue;
+
+            anyValidShip =
+                true;
+
+            break;
+        }
+
 
         dockShipButton.gameObject.SetActive(
-            shipSelected);
+            anyValidShip);
 
-        if (!shipSelected)
+
+        if (!anyValidShip)
         {
-            dockShipButton.interactable = false;
+            dockShipButton.interactable =
+                false;
+
             return;
         }
+
+
+        // =========================================================
+        // HANGAR
+        // =========================================================
 
         if (selectedShipHangar == null ||
             !selectedShipHangar.IsSpawned)
@@ -322,10 +356,11 @@ public class ShipSelectionController : MonoBehaviour
                 FindOwnHangar();
         }
 
+
         dockShipButton.interactable =
             selectedShipHangar != null &&
-            selectedShipHangar
-                .IsShipInDockingRange(selectedShip);
+            selectedShipHangar.IsSpawned &&
+            selectedShipHangar.HasFreeDockSlot();
     }
 
     private BaseHangar FindOwnHangar()
@@ -604,36 +639,13 @@ public class ShipSelectionController : MonoBehaviour
     }
     public void OnDockShipClicked()
     {
-        if (selectedShip == null)
-            return;
-
-        if (selectedShipHangar == null)
-            return;
-
-        if (!selectedShipHangar.HasFreeDockSlot())
-        {
-            Debug.LogWarning(
-                "[SHIP DOCK UI] Brak wolnego miejsca w hangarze.");
-
-            return;
-        }
-
-        if (!selectedShipHangar.IsShipInDockingRange(
-                selectedShip))
-        {
-            return;
-        }
-
-        selectedShipHangar.RequestDockShip(
-            selectedShip);
-
-        ClearSelection();
+        IssueDockCommandForSelection();
     }
 
     ///////////////////////////////////////////////
     ///     NEW SELECTION SYSTEM 
     ///////////////////////////////////////////////
-    
+
 
     private void SelectSingleShip(
     ShipUnit ship)
@@ -1815,6 +1827,99 @@ public class ShipSelectionController : MonoBehaviour
         }
 
         return null;
+    }
+
+    private void IssueDockCommandForSelection()
+    {
+        if (selectedShips.Count == 0)
+            return;
+
+        bool queue =
+            GameInputManager.Instance != null &&
+            GameInputManager.Instance.QueueCommandPressed;
+
+        BaseHangar hangar =
+            FindOwnHangar();
+
+        if (hangar == null ||
+            !hangar.IsSpawned)
+        {
+            return;
+        }
+
+        if (!hangar.HasFreeDockSlot())
+        {
+            Debug.LogWarning(
+                "[DOCK] Hangar jest pe³ny.");
+
+            return;
+        }
+
+
+        foreach (ShipUnit ship in selectedShips)
+        {
+            if (ship == null)
+                continue;
+
+            if (!ship.IsMine())
+                continue;
+
+            if (!ship.IsSpawned)
+                continue;
+
+            if (ship.isDead.Value)
+                continue;
+
+
+            // =====================================================
+            // VISUAL BACK TO BASE
+            // =====================================================
+
+            BaseSafeZone safeZone =
+                FindOwnSafeZoneLocal();
+
+            if (safeZone == null)
+                continue;
+
+
+            if (queue)
+            {
+                ship.QueueVisualBackToBaseCommand(
+                    safeZone);
+
+                ship.BackToBaseServerRpc(
+                    true);
+            }
+            else
+            {
+                ship.SetVisualBackToBaseCommand(
+                    safeZone);
+
+                ship.BackToBaseServerRpc(
+                    false);
+            }
+
+
+            // =====================================================
+            // DOCK ZAWSZE ZA BACK TO BASE
+            // =====================================================
+
+            ship.QueueDockServerRpc();
+        }
+    }
+
+    private void TryDock()
+    {
+        if (GameInputManager.Instance == null)
+            return;
+
+        if (!GameInputManager.Instance.DockPressed)
+            return;
+
+        if (selectedShips.Count == 0)
+            return;
+
+        IssueDockCommandForSelection();
     }
 
 }

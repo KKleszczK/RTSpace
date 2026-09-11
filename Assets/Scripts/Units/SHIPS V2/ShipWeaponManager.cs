@@ -85,8 +85,10 @@ public class ShipWeaponManager : NetworkBehaviour
         // =========================================================
 
         if (ship != null &&
-            ship.CurrentState ==
-                ShipUnit.ShipState.Moving)
+            (ship.CurrentState ==
+                ShipUnit.ShipState.Moving ||
+             ship.CurrentState ==
+                ShipUnit.ShipState.Docking))
         {
             ClearAllWeaponTargetsServer();
             return;

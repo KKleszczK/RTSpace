@@ -59,6 +59,10 @@ public class GameInputManager : MonoBehaviour
     inputActions != null &&
     inputActions.Gameplay.BackToBase.WasPressedThisFrame();
 
+    public bool DockPressed =>
+    inputActions != null &&
+    inputActions.Gameplay.Dock.WasPressedThisFrame();
+
 
     // =========================================================
     // UNITY

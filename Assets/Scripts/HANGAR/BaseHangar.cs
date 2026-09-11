@@ -1473,4 +1473,56 @@ public class BaseHangar : NetworkBehaviour
 
         return null;
     }
+
+    public bool CompleteDockShipServer(
+    ShipUnit ship)
+    {
+        if (!IsServer)
+            return false;
+
+        if (ship == null ||
+            !ship.IsSpawned ||
+            ship.isDead.Value)
+        {
+            return false;
+        }
+
+        if (!HasFreeDockSlot())
+            return false;
+
+        if (ship.ownerId.Value !=
+            OwnerClientId)
+        {
+            return false;
+        }
+
+        if (ship.instanceId.Value.IsEmpty ||
+            ship.shipId.Value.IsEmpty)
+        {
+            return false;
+        }
+
+        DockedShipData data =
+            ship.CreateDockedShipData();
+
+        if (ContainsDockedShipInstance(
+                data.instanceId))
+        {
+            return false;
+        }
+
+        dockedShips.Add(
+            data);
+
+        NetworkObject shipNetworkObject =
+            ship.NetworkObject;
+
+        if (shipNetworkObject != null &&
+            shipNetworkObject.IsSpawned)
+        {
+            shipNetworkObject.Despawn(true);
+        }
+
+        return true;
+    }
 }

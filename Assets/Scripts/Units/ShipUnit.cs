@@ -211,6 +211,18 @@ public class ShipUnit : NetworkBehaviour, IDamageable
 
     private BaseSafeZone backToBaseTarget;
 
+    [Header("Docking")]
+    [SerializeField]
+    private float dockingDuration = 2f;
+
+    [SerializeField]
+    private GameObject dockingGlow;
+
+    private float dockingEndTime;
+
+    private BaseHangar dockingHangar;
+    private BaseSafeZone dockingSafeZone;
+
 
 
     private IDamageable attackMoveTarget;
@@ -505,6 +517,7 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         SetSelectedLocal(false);
         SetAttackTargetMarkerLocal(false);
         SetFollowTargetMarkerLocal(false);
+        SetDockingGlowLocal(false);
         ApplyColor();
         UpdateHpBar();
         UpdateShieldBar();
@@ -837,6 +850,14 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         if (isDead.Value)
             return;
 
+        if (hasActiveCommand &&
+                activeCommand.Type ==
+                ShipCommandType.Dock)
+            {
+                UpdateDockingServer();
+                return;
+            }
+
 
         UpdateAttackMoveProgressServer();
 
@@ -990,6 +1011,16 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         if (currentState.Value == newState)
             return;
 
+        if (currentState.Value ==
+                ShipState.Docking &&
+            newState !=
+                ShipState.Docking)
+        {
+            dockingHangar = null;
+            dockingSafeZone = null;
+            dockingEndTime = 0f;
+        }
+
         currentState.Value =
             newState;
     }
@@ -1120,6 +1151,12 @@ public class ShipUnit : NetworkBehaviour, IDamageable
             shield.Value -=
                 actualShieldDamage;
 
+            if (currentState.Value ==
+                ShipState.Docking)
+            {
+                CancelDockingServer();
+            }
+
             ShowShieldDamageClientRpc(
                 actualShieldDamage);
 
@@ -1185,6 +1222,12 @@ public class ShipUnit : NetworkBehaviour, IDamageable
 
         hp.Value -=
             actualDamage;
+
+        if (currentState.Value ==
+                ShipState.Docking)
+        {
+            CancelDockingServer();
+        }
 
         ShowHullDamageClientRpc(
             actualDamage);
@@ -2318,6 +2361,13 @@ public class ShipUnit : NetworkBehaviour, IDamageable
                         activeCommand);
 
                     return;
+
+                case ShipCommandType.Dock:
+
+                    InitializeDockServer(
+                        activeCommand);
+
+                    return;
             }
         }
 
@@ -2559,6 +2609,9 @@ public class ShipUnit : NetworkBehaviour, IDamageable
     ShipState newState)
     {
         UpdateStateDebugText();
+
+        SetDockingGlowLocal(
+            newState == ShipState.Docking);
     }
 
     public void StopCommandServer()
@@ -3019,6 +3072,35 @@ public class ShipUnit : NetworkBehaviour, IDamageable
 
                     return zoneOwner.ownerId.Value ==
                            ownerId.Value;
+                }
+
+            case ShipCommandType.Dock:
+                {
+                    if (!command.TargetObject.TryGet(
+                            out NetworkObject targetObject))
+                    {
+                        return false;
+                    }
+
+                    if (targetObject == null ||
+                        !targetObject.IsSpawned)
+                    {
+                        return false;
+                    }
+
+                    BaseHangar hangar =
+                        targetObject.GetComponent<BaseHangar>();
+
+                    if (hangar == null)
+                        return false;
+
+                    if (hangar.OwnerClientId !=
+                        ownerId.Value)
+                    {
+                        return false;
+                    }
+
+                    return true;
                 }
 
 
@@ -4189,6 +4271,13 @@ public class ShipUnit : NetworkBehaviour, IDamageable
                     command);
 
                 break;
+
+            case ShipCommandType.Dock:
+
+                InitializeDockServer(
+                    command);
+
+                break;
         }
     }
 
@@ -4698,6 +4787,16 @@ public class ShipUnit : NetworkBehaviour, IDamageable
             return;
 
         followTargetMarker.SetActive(
+            visible);
+    }
+
+    private void SetDockingGlowLocal(
+    bool visible)
+    {
+        if (dockingGlow == null)
+            return;
+
+        dockingGlow.SetActive(
             visible);
     }
 
@@ -5523,6 +5622,288 @@ public class ShipUnit : NetworkBehaviour, IDamageable
             new VisualShipCommand(
                 ShipCommandType.BackToBase,
                 safeZone.transform.position));
+    }
+
+    private BaseHangar FindOwnHangarServer()
+    {
+        if (!IsServer)
+            return null;
+
+        BaseHangar[] hangars =
+            FindObjectsByType<BaseHangar>(
+                FindObjectsSortMode.None);
+
+        foreach (BaseHangar hangar in hangars)
+        {
+            if (hangar == null)
+                continue;
+
+            if (!hangar.IsSpawned)
+                continue;
+
+            if (hangar.OwnerClientId ==
+                ownerId.Value)
+            {
+                return hangar;
+            }
+        }
+
+        return null;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void DockServerRpc(
+    ServerRpcParams rpcParams = default)
+    {
+        ulong senderClientId =
+            rpcParams.Receive.SenderClientId;
+
+        if (senderClientId != ownerId.Value)
+            return;
+
+        if (isDead.Value)
+            return;
+
+        BaseSafeZone safeZone =
+            FindOwnSafeZoneServer();
+
+        if (safeZone == null)
+            return;
+
+        if (!safeZone.IsValidShipInSafeZone(this))
+            return;
+
+        BaseHangar hangar =
+            FindOwnHangarServer();
+
+        if (hangar == null)
+            return;
+
+        if (!hangar.HasFreeDockSlot())
+            return;
+
+        StartDockingServer(
+            hangar,
+            safeZone);
+    }
+
+    private void StartDockingServer(
+    BaseHangar hangar,
+    BaseSafeZone safeZone)
+    {
+        if (!IsServer)
+            return;
+
+        ClearAttackPriorityTargetServer();
+
+        commandQueue.Clear();
+
+        dockingHangar =
+            hangar;
+
+        dockingSafeZone =
+            safeZone;
+
+        dockingEndTime =
+            Time.time +
+            Mathf.Max(0.01f, dockingDuration);
+
+        activeCommand =
+            new ShipCommand(
+                ShipCommandType.Dock,
+                hangar.NetworkObject);
+
+        hasActiveCommand =
+            true;
+
+        targetPosition.Value =
+            transform.position;
+
+        SetStateServer(
+            ShipState.Docking);
+    }
+
+    private void UpdateDockingServer()
+    {
+        if (!IsServer)
+            return;
+
+        if (!hasActiveCommand ||
+            activeCommand.Type !=
+                ShipCommandType.Dock)
+        {
+            return;
+        }
+
+        if (currentState.Value !=
+            ShipState.Docking)
+        {
+            return;
+        }
+
+
+        // SafeZone zniknê³a / opuœciliœmy j¹.
+        if (dockingSafeZone == null ||
+            !dockingSafeZone.IsSpawned ||
+            !dockingSafeZone
+                .IsValidShipInSafeZone(this))
+        {
+            CancelDockingServer();
+            return;
+        }
+
+
+        // Hangar znikn¹³ albo jest pe³ny.
+        if (dockingHangar == null ||
+            !dockingHangar.IsSpawned ||
+            !dockingHangar.HasFreeDockSlot())
+        {
+            CancelDockingServer();
+            return;
+        }
+
+
+        targetPosition.Value =
+            transform.position;
+
+
+        // Jeszcze trwa dockowanie.
+        if (Time.time < dockingEndTime)
+            return;
+
+
+        // Sukces.
+        BaseHangar hangar =
+            dockingHangar;
+
+        dockingHangar =
+            null;
+
+        dockingSafeZone =
+            null;
+
+        hangar.CompleteDockShipServer(
+            this);
+    }
+
+    private void CancelDockingServer()
+    {
+        if (!IsServer)
+            return;
+
+        if (currentState.Value !=
+            ShipState.Docking)
+        {
+            return;
+        }
+
+        dockingHangar =
+            null;
+
+        dockingSafeZone =
+            null;
+
+        dockingEndTime =
+            0f;
+
+        hasActiveCommand =
+            false;
+
+        commandQueue.Clear();
+
+        targetPosition.Value =
+            transform.position;
+
+        SetStateServer(
+            ShipState.Passive);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void QueueDockServerRpc(
+    ServerRpcParams rpcParams = default)
+    {
+        ulong senderClientId =
+            rpcParams.Receive.SenderClientId;
+
+        if (senderClientId != ownerId.Value)
+            return;
+
+        if (isDead.Value)
+            return;
+
+        BaseHangar hangar =
+            FindOwnHangarServer();
+
+        if (hangar == null ||
+            !hangar.IsSpawned)
+        {
+            return;
+        }
+
+        ShipCommand command =
+            new ShipCommand(
+                ShipCommandType.Dock,
+                hangar.NetworkObject);
+
+        AddCommandToQueueServer(
+            command);
+    }
+
+    private void InitializeDockServer(
+    ShipCommand command)
+    {
+        if (!IsServer)
+            return;
+
+        if (!command.TargetObject.TryGet(
+                out NetworkObject targetObject))
+        {
+            CompleteCurrentCommand();
+            return;
+        }
+
+        if (targetObject == null ||
+            !targetObject.IsSpawned)
+        {
+            CompleteCurrentCommand();
+            return;
+        }
+
+        BaseHangar hangar =
+            targetObject.GetComponent<BaseHangar>();
+
+        if (hangar == null)
+        {
+            CompleteCurrentCommand();
+            return;
+        }
+
+        BaseSafeZone safeZone =
+            FindOwnSafeZoneServer();
+
+        if (safeZone == null ||
+            !safeZone.IsSpawned)
+        {
+            CompleteCurrentCommand();
+            return;
+        }
+
+        // Dock mo¿e siê rozpocz¹æ tylko w SafeZone.
+        if (!safeZone.IsValidShipInSafeZone(this))
+        {
+            CompleteCurrentCommand();
+            return;
+        }
+
+        if (!hangar.HasFreeDockSlot())
+        {
+            CompleteCurrentCommand();
+            return;
+        }
+
+        StartDockingServer(
+            hangar,
+            safeZone);
     }
 
 }
