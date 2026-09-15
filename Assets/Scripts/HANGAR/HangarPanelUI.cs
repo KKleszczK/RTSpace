@@ -12,10 +12,9 @@ public class HangarPanelUI : MonoBehaviour
     [SerializeField] private Button[] shipButtons;
     [SerializeField] private Image[] shipButtonIcons;
 
-    [Header("Info")]
-    [SerializeField] private TMP_Text metalText;
-    [SerializeField] private TMP_Text energyText;
-    [SerializeField] private TMP_Text timeText;
+    [Header("Tooltip")]
+    [SerializeField]
+    private ActionTooltipUI actionTooltip;
 
     [Header("Progress")]
     [SerializeField] private RectTransform progressBar;
@@ -394,7 +393,7 @@ public class HangarPanelUI : MonoBehaviour
             });
 
             EventTrigger trigger =
-                shipButtons[i].GetComponent<EventTrigger>();
+    shipButtons[i].GetComponent<EventTrigger>();
 
             if (trigger == null)
             {
@@ -409,6 +408,11 @@ public class HangarPanelUI : MonoBehaviour
                     new List<EventTrigger.Entry>();
             }
 
+
+            // =========================================================
+            // POINTER ENTER
+            // =========================================================
+
             EventTrigger.Entry enter =
                 new EventTrigger.Entry
                 {
@@ -417,9 +421,31 @@ public class HangarPanelUI : MonoBehaviour
                 };
 
             enter.callback.AddListener(
-                _ => ShowShipCost(index));
+                _ => ShowShipCost(
+                    index,
+                    shipButtons[index]
+                        .GetComponent<RectTransform>()));
 
-            trigger.triggers.Add(enter);
+            trigger.triggers.Add(
+                enter);
+
+
+            // =========================================================
+            // POINTER EXIT
+            // =========================================================
+
+            EventTrigger.Entry exit =
+                new EventTrigger.Entry
+                {
+                    eventID =
+                        EventTriggerType.PointerExit
+                };
+
+            exit.callback.AddListener(
+                _ => HideActionTooltip());
+
+            trigger.triggers.Add(
+                exit);
 
             if (index < ships.Count &&
                 index < shipButtonIcons.Length &&
@@ -665,10 +691,18 @@ public class HangarPanelUI : MonoBehaviour
     // SHIP BUILD UI
     // =========================================================
 
-    private void ShowShipCost(int index)
+    private void ShowShipCost(
+    int index,
+    RectTransform sourceButton)
     {
-        if (index < 0 || index >= ships.Count)
+        if (actionTooltip == null)
             return;
+
+        if (index < 0 ||
+            index >= ships.Count)
+        {
+            return;
+        }
 
         ShipDefinition ship =
             ships[index];
@@ -676,20 +710,11 @@ public class HangarPanelUI : MonoBehaviour
         if (ship == null)
             return;
 
-        if (metalText != null)
-            metalText.text =
-                "" + ship.metalCost;
-
-        if (energyText != null)
-            energyText.text =
-                "" + ship.energyCost;
-
-        if (timeText != null)
-        {
-            timeText.text =
-                "" +
-                Mathf.RoundToInt(ship.buildTime);
-        }
+        actionTooltip.Show(
+            ship.metalCost,
+            ship.energyCost,
+            ship.buildTime,
+            sourceButton);
     }
 
     private void UpdateProgress()
@@ -1050,5 +1075,13 @@ public class HangarPanelUI : MonoBehaviour
         }
 
         return null;
+    }
+
+    private void HideActionTooltip()
+    {
+        if (actionTooltip == null)
+            return;
+
+        actionTooltip.Hide();
     }
 }
