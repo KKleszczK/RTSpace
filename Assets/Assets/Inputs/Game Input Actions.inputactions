@@ -169,7 +169,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "FigherCraft",
+                    "name": "FighterCraft",
                     "type": "Button",
                     "id": "0f3ca5cb-a589-4f47-8442-2e3df80ed6db",
                     "expectedControlType": "",
@@ -181,6 +181,60 @@
                     "name": "UtilityCraft",
                     "type": "Button",
                     "id": "27871428-5509-4ff5-ab7d-4acaa7af20cd",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Guard",
+                    "type": "Button",
+                    "id": "22d408a6-1677-4f4f-986b-4960a0a3a5a2",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Follow",
+                    "type": "Button",
+                    "id": "b5faa4f0-e49b-4b85-8063-cf7f65eede68",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Escort",
+                    "type": "Button",
+                    "id": "0c08ae40-2d2a-40c7-b5f0-2c9276b9bf45",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "BackToBase",
+                    "type": "Button",
+                    "id": "2e400484-54d3-4061-8021-33e05460f3eb",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "AllArmy",
+                    "type": "Button",
+                    "id": "67142dce-6ecd-41da-8e8d-2cf9866eb311",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Deploy",
+                    "type": "Button",
+                    "id": "c91b56d5-8971-4341-b4e1-6aeb51278270",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -404,7 +458,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "FigherCraft",
+                    "action": "FighterCraft",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -416,6 +470,72 @@
                     "processors": "",
                     "groups": "",
                     "action": "UtilityCraft",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "01f1288e-e588-4567-908f-c6c4506a3193",
+                    "path": "<Keyboard>/g",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Guard",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b80d1c21-5455-4378-9d97-7d0f90f1a1eb",
+                    "path": "<Keyboard>/o",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Follow",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "274f6960-52ef-4005-be5a-3c6d264540dc",
+                    "path": "<Keyboard>/i",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Escort",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "28bcf1c0-f041-4ccd-a3c5-bf392fd4a68d",
+                    "path": "<Keyboard>/u",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "BackToBase",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "236bd509-2e2e-4186-abef-62ae57d81f3b",
+                    "path": "<Keyboard>/y",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AllArmy",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "07352ff8-7eb3-43df-a0e6-ff6201e15c11",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Deploy",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -255,7 +255,7 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""FigherCraft"",
+                    ""name"": ""FighterCraft"",
                     ""type"": ""Button"",
                     ""id"": ""0f3ca5cb-a589-4f47-8442-2e3df80ed6db"",
                     ""expectedControlType"": """",
@@ -267,6 +267,60 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                     ""name"": ""UtilityCraft"",
                     ""type"": ""Button"",
                     ""id"": ""27871428-5509-4ff5-ab7d-4acaa7af20cd"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Guard"",
+                    ""type"": ""Button"",
+                    ""id"": ""22d408a6-1677-4f4f-986b-4960a0a3a5a2"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Follow"",
+                    ""type"": ""Button"",
+                    ""id"": ""b5faa4f0-e49b-4b85-8063-cf7f65eede68"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Escort"",
+                    ""type"": ""Button"",
+                    ""id"": ""0c08ae40-2d2a-40c7-b5f0-2c9276b9bf45"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""BackToBase"",
+                    ""type"": ""Button"",
+                    ""id"": ""2e400484-54d3-4061-8021-33e05460f3eb"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""AllArmy"",
+                    ""type"": ""Button"",
+                    ""id"": ""67142dce-6ecd-41da-8e8d-2cf9866eb311"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Deploy"",
+                    ""type"": ""Button"",
+                    ""id"": ""c91b56d5-8971-4341-b4e1-6aeb51278270"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -490,7 +544,7 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""FigherCraft"",
+                    ""action"": ""FighterCraft"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -502,6 +556,72 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""UtilityCraft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""01f1288e-e588-4567-908f-c6c4506a3193"",
+                    ""path"": ""<Keyboard>/g"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Guard"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b80d1c21-5455-4378-9d97-7d0f90f1a1eb"",
+                    ""path"": ""<Keyboard>/o"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Follow"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""274f6960-52ef-4005-be5a-3c6d264540dc"",
+                    ""path"": ""<Keyboard>/i"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Escort"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""28bcf1c0-f041-4ccd-a3c5-bf392fd4a68d"",
+                    ""path"": ""<Keyboard>/u"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""BackToBase"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""236bd509-2e2e-4186-abef-62ae57d81f3b"",
+                    ""path"": ""<Keyboard>/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""AllArmy"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""07352ff8-7eb3-43df-a0e6-ff6201e15c11"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Deploy"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -530,8 +650,14 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         m_Gameplay_ControlGroup5 = m_Gameplay.FindAction("ControlGroup5", throwIfNotFound: true);
         m_Gameplay_BaseCameraJump = m_Gameplay.FindAction("BaseCameraJump", throwIfNotFound: true);
         m_Gameplay_MinerCraft = m_Gameplay.FindAction("MinerCraft", throwIfNotFound: true);
-        m_Gameplay_FigherCraft = m_Gameplay.FindAction("FigherCraft", throwIfNotFound: true);
+        m_Gameplay_FighterCraft = m_Gameplay.FindAction("FighterCraft", throwIfNotFound: true);
         m_Gameplay_UtilityCraft = m_Gameplay.FindAction("UtilityCraft", throwIfNotFound: true);
+        m_Gameplay_Guard = m_Gameplay.FindAction("Guard", throwIfNotFound: true);
+        m_Gameplay_Follow = m_Gameplay.FindAction("Follow", throwIfNotFound: true);
+        m_Gameplay_Escort = m_Gameplay.FindAction("Escort", throwIfNotFound: true);
+        m_Gameplay_BackToBase = m_Gameplay.FindAction("BackToBase", throwIfNotFound: true);
+        m_Gameplay_AllArmy = m_Gameplay.FindAction("AllArmy", throwIfNotFound: true);
+        m_Gameplay_Deploy = m_Gameplay.FindAction("Deploy", throwIfNotFound: true);
     }
 
     ~@GameInputActions()
@@ -630,8 +756,14 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_ControlGroup5;
     private readonly InputAction m_Gameplay_BaseCameraJump;
     private readonly InputAction m_Gameplay_MinerCraft;
-    private readonly InputAction m_Gameplay_FigherCraft;
+    private readonly InputAction m_Gameplay_FighterCraft;
     private readonly InputAction m_Gameplay_UtilityCraft;
+    private readonly InputAction m_Gameplay_Guard;
+    private readonly InputAction m_Gameplay_Follow;
+    private readonly InputAction m_Gameplay_Escort;
+    private readonly InputAction m_Gameplay_BackToBase;
+    private readonly InputAction m_Gameplay_AllArmy;
+    private readonly InputAction m_Gameplay_Deploy;
     /// <summary>
     /// Provides access to input actions defined in input action map "Gameplay".
     /// </summary>
@@ -716,13 +848,37 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @MinerCraft => m_Wrapper.m_Gameplay_MinerCraft;
         /// <summary>
-        /// Provides access to the underlying input action "Gameplay/FigherCraft".
+        /// Provides access to the underlying input action "Gameplay/FighterCraft".
         /// </summary>
-        public InputAction @FigherCraft => m_Wrapper.m_Gameplay_FigherCraft;
+        public InputAction @FighterCraft => m_Wrapper.m_Gameplay_FighterCraft;
         /// <summary>
         /// Provides access to the underlying input action "Gameplay/UtilityCraft".
         /// </summary>
         public InputAction @UtilityCraft => m_Wrapper.m_Gameplay_UtilityCraft;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/Guard".
+        /// </summary>
+        public InputAction @Guard => m_Wrapper.m_Gameplay_Guard;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/Follow".
+        /// </summary>
+        public InputAction @Follow => m_Wrapper.m_Gameplay_Follow;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/Escort".
+        /// </summary>
+        public InputAction @Escort => m_Wrapper.m_Gameplay_Escort;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/BackToBase".
+        /// </summary>
+        public InputAction @BackToBase => m_Wrapper.m_Gameplay_BackToBase;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/AllArmy".
+        /// </summary>
+        public InputAction @AllArmy => m_Wrapper.m_Gameplay_AllArmy;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/Deploy".
+        /// </summary>
+        public InputAction @Deploy => m_Wrapper.m_Gameplay_Deploy;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -803,12 +959,30 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
             @MinerCraft.started += instance.OnMinerCraft;
             @MinerCraft.performed += instance.OnMinerCraft;
             @MinerCraft.canceled += instance.OnMinerCraft;
-            @FigherCraft.started += instance.OnFigherCraft;
-            @FigherCraft.performed += instance.OnFigherCraft;
-            @FigherCraft.canceled += instance.OnFigherCraft;
+            @FighterCraft.started += instance.OnFighterCraft;
+            @FighterCraft.performed += instance.OnFighterCraft;
+            @FighterCraft.canceled += instance.OnFighterCraft;
             @UtilityCraft.started += instance.OnUtilityCraft;
             @UtilityCraft.performed += instance.OnUtilityCraft;
             @UtilityCraft.canceled += instance.OnUtilityCraft;
+            @Guard.started += instance.OnGuard;
+            @Guard.performed += instance.OnGuard;
+            @Guard.canceled += instance.OnGuard;
+            @Follow.started += instance.OnFollow;
+            @Follow.performed += instance.OnFollow;
+            @Follow.canceled += instance.OnFollow;
+            @Escort.started += instance.OnEscort;
+            @Escort.performed += instance.OnEscort;
+            @Escort.canceled += instance.OnEscort;
+            @BackToBase.started += instance.OnBackToBase;
+            @BackToBase.performed += instance.OnBackToBase;
+            @BackToBase.canceled += instance.OnBackToBase;
+            @AllArmy.started += instance.OnAllArmy;
+            @AllArmy.performed += instance.OnAllArmy;
+            @AllArmy.canceled += instance.OnAllArmy;
+            @Deploy.started += instance.OnDeploy;
+            @Deploy.performed += instance.OnDeploy;
+            @Deploy.canceled += instance.OnDeploy;
         }
 
         /// <summary>
@@ -874,12 +1048,30 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
             @MinerCraft.started -= instance.OnMinerCraft;
             @MinerCraft.performed -= instance.OnMinerCraft;
             @MinerCraft.canceled -= instance.OnMinerCraft;
-            @FigherCraft.started -= instance.OnFigherCraft;
-            @FigherCraft.performed -= instance.OnFigherCraft;
-            @FigherCraft.canceled -= instance.OnFigherCraft;
+            @FighterCraft.started -= instance.OnFighterCraft;
+            @FighterCraft.performed -= instance.OnFighterCraft;
+            @FighterCraft.canceled -= instance.OnFighterCraft;
             @UtilityCraft.started -= instance.OnUtilityCraft;
             @UtilityCraft.performed -= instance.OnUtilityCraft;
             @UtilityCraft.canceled -= instance.OnUtilityCraft;
+            @Guard.started -= instance.OnGuard;
+            @Guard.performed -= instance.OnGuard;
+            @Guard.canceled -= instance.OnGuard;
+            @Follow.started -= instance.OnFollow;
+            @Follow.performed -= instance.OnFollow;
+            @Follow.canceled -= instance.OnFollow;
+            @Escort.started -= instance.OnEscort;
+            @Escort.performed -= instance.OnEscort;
+            @Escort.canceled -= instance.OnEscort;
+            @BackToBase.started -= instance.OnBackToBase;
+            @BackToBase.performed -= instance.OnBackToBase;
+            @BackToBase.canceled -= instance.OnBackToBase;
+            @AllArmy.started -= instance.OnAllArmy;
+            @AllArmy.performed -= instance.OnAllArmy;
+            @AllArmy.canceled -= instance.OnAllArmy;
+            @Deploy.started -= instance.OnDeploy;
+            @Deploy.performed -= instance.OnDeploy;
+            @Deploy.canceled -= instance.OnDeploy;
         }
 
         /// <summary>
@@ -1047,12 +1239,12 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnMinerCraft(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "FigherCraft" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "FighterCraft" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnFigherCraft(InputAction.CallbackContext context);
+        void OnFighterCraft(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "UtilityCraft" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
@@ -1060,5 +1252,47 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnUtilityCraft(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Guard" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnGuard(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Follow" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnFollow(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Escort" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnEscort(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "BackToBase" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnBackToBase(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "AllArmy" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnAllArmy(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Deploy" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDeploy(InputAction.CallbackContext context);
     }
 }
