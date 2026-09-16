@@ -13,6 +13,9 @@ public class ResearchButtonUI :
     [SerializeField]
     private Button button;
 
+    [SerializeField]
+    private Image researchedOverlay;
+
     private ResearchDefinition definition;
     private LabPanelUI labPanel;
 
@@ -77,15 +80,14 @@ public class ResearchButtonUI :
 
 
         // =========================================================
-        // COST TOOLTIP
+        // SMART TOOLTIP
         // =========================================================
 
         if (actionTooltip != null)
         {
-            actionTooltip.Show(
-                definition.baseMetalCost,
-                definition.baseEnergyCost,
-                definition.baseResearchTime,
+            actionTooltip.ShowResearch(
+                definition,
+                labPanel.GetCurrentCoreTier(),
                 rectTransform);
         }
     }
@@ -102,34 +104,58 @@ public class ResearchButtonUI :
             return;
         }
 
+
+        // =========================================================
+        // STATE
+        // =========================================================
+
         bool completed =
             labPanel.IsResearchCompleted(
                 definition.researchId);
 
-        // -----------------------------------------
+        bool available =
+            labPanel.IsResearchAvailable(
+                definition);
+
+        bool locked =
+            !completed &&
+            !available;
+
+
+        // =========================================================
         // SPRITE
-        // -----------------------------------------
+        // =========================================================
 
-        iconImage.sprite =
-            completed &&
-            definition.researchedIcon != null
-                ? definition.researchedIcon
-                : definition.icon;
+        iconImage.sprite = definition.icon;
 
-        // -----------------------------------------
-        // TIER COLOR
-        // -----------------------------------------
+        // =========================================================
+        // COMPLETED OVERLAY
+        // =========================================================
+
+        if (researchedOverlay != null)
+        {
+            researchedOverlay.gameObject.SetActive(
+                completed);
+        }
+
+
+
+        // =========================================================
+        // COLOR
+        // =========================================================
 
         iconImage.color =
             ResearchTierColorHelper.GetColor(
-            definition.tier);
+                definition.tier,
+                locked);
 
-        // -----------------------------------------
+
+        // =========================================================
         // BUTTON
-        // -----------------------------------------
+        // =========================================================
 
         button.interactable =
-            !completed;
+            true;
     }
 
     public void OnPointerExit(

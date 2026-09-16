@@ -310,22 +310,16 @@ public class LabPanelUI : MonoBehaviour
                 return a.tier.CompareTo(b.tier);
             });
 
-        int coreTier =
-            localCore.tier.Value;
+
 
         // =====================================================
         // TWORZENIE DOSTÊPNYCH RESEARCHY
         // =====================================================
 
         foreach (ResearchDefinition research
-                 in sortedResearches)
+         in sortedResearches)
         {
             if (research == null)
-                continue;
-
-            // Research wy¿szego tieru ni¿ Core
-            // nie jest jeszcze widoczny.
-            if ((int)research.tier > coreTier)
                 continue;
 
             ResearchButtonUI button =
@@ -342,15 +336,29 @@ public class LabPanelUI : MonoBehaviour
         }
     }
 
-    public void SelectResearch(ResearchDefinition research)
+    public void SelectResearch(
+    ResearchDefinition research)
     {
-        selectedResearch = research;
+        if (research == null)
+            return;
+
+        if (!IsResearchAvailable(
+                research))
+        {
+            return;
+        }
+
+        selectedResearch =
+            research;
 
         if (playerResearch == null)
             FindLocalPlayerResearch();
 
         if (playerResearch != null)
-            playerResearch.RequestResearch(selectedResearch);
+        {
+            playerResearch.RequestResearch(
+                selectedResearch);
+        }
     }
 
     private void OnDestroy()
@@ -453,5 +461,32 @@ public class LabPanelUI : MonoBehaviour
             return false;
 
         return playerResearch.IsCompleted(researchId);
+    }
+
+    public bool IsResearchAvailable(
+    ResearchDefinition research)
+    {
+        if (research == null)
+            return false;
+
+        if (localCore == null)
+            return false;
+
+        if (IsResearchCompleted(
+                research.researchId))
+        {
+            return false;
+        }
+
+        return localCore.tier.Value >=
+               (int)research.tier;
+    }
+
+    public int GetCurrentCoreTier()
+    {
+        if (localCore == null)
+            return 0;
+
+        return localCore.tier.Value;
     }
 }

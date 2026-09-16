@@ -3,48 +3,47 @@ using UnityEngine.UI;
 
 public static class ResearchTierColorHelper
 {
+    // =========================================================
+    // GET COLOR
+    // =========================================================
+
     public static Color GetColor(
-        ResearchTier tier)
+        ResearchTier tier,
+        bool locked = false)
     {
-        switch (tier)
+        if (ResearchTierColors.Instance == null)
         {
-            case ResearchTier.Tier1:
-                return new Color(
-                    36f / 255f,
-                    149f / 255f,
-                    40f / 255f,
-                    1f);
-
-            case ResearchTier.Tier2:
-                return new Color(
-                    0f / 255f,
-                    115f / 255f,
-                    223f / 255f,
-                    1f);
-
-            case ResearchTier.Tier3:
-                return new Color(
-                    223f / 255f,
-                    22f / 255f,
-                    46f / 255f,
-                    1f);
-
-            default:
-                return Color.white;
+            return locked
+                ? Color.gray
+                : Color.white;
         }
+
+        return ResearchTierColors.Instance.GetColor(
+            tier,
+            locked);
     }
+
+
+    // =========================================================
+    // APPLY
+    // =========================================================
 
     public static void ApplyToImage(
         Image image,
-        ResearchDefinition research)
+        ResearchDefinition research,
+        bool locked = false)
     {
         if (image == null)
             return;
 
         if (research == null)
         {
-            image.sprite = null;
-            image.color = Color.white;
+            image.sprite =
+                null;
+
+            image.color =
+                Color.white;
+
             return;
         }
 
@@ -53,6 +52,7 @@ public static class ResearchTierColorHelper
 
         image.color =
             GetColor(
-                research.tier);
+                research.tier,
+                locked);
     }
 }
