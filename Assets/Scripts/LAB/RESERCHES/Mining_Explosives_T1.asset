@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ResearchDefinition
   researchId: mining_explosives_research_t1
   displayName: Mining Explosives Research
-  description: Enables Mining Explosives module production
+  description: 
   icon: {fileID: 21300000, guid: 3fefc7424bb15c24b8961c3d3bea643a, type: 3}
   researchedIcon: {fileID: 21300000, guid: a07558ec9f385cb4ab1a09cf795e4d0e, type: 3}
   tier: 1

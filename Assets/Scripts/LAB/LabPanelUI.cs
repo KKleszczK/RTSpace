@@ -30,6 +30,8 @@ public class LabPanelUI : MonoBehaviour
     private PlayerUpgradeStats localUpgradeStats;
     private BaseCore localCore;
 
+    private PlayerResources localPlayerResources;
+
 
     private List<ResearchButtonUI> createdButtons = new();
 
@@ -38,6 +40,7 @@ public class LabPanelUI : MonoBehaviour
         FindLocalPlayerResearch();
         FindLocalResearchBonuses();
         TryFindLocalCore();
+        TryFindLocalPlayerResources();
 
         for (int i = 0; i < queueSlotButtons.Length; i++)
         {
@@ -55,6 +58,9 @@ public class LabPanelUI : MonoBehaviour
 
         if (playerResearch == null)
             FindLocalPlayerResearch();
+
+        if (localPlayerResources == null)
+            TryFindLocalPlayerResources();
 
         if (localSafeZone == null ||
             localUpgradeStats == null)
@@ -488,5 +494,46 @@ public class LabPanelUI : MonoBehaviour
             return 0;
 
         return localCore.tier.Value;
+    }
+
+    private void TryFindLocalPlayerResources()
+    {
+        if (localPlayerResources != null)
+            return;
+
+        if (Unity.Netcode.NetworkManager.Singleton == null)
+            return;
+
+        PlayerResources[] all =
+            FindObjectsByType<PlayerResources>(
+                FindObjectsSortMode.None);
+
+        foreach (PlayerResources resources in all)
+        {
+            if (resources == null)
+                continue;
+
+            if (!resources.IsSpawned)
+                continue;
+
+            if (resources.OwnerClientId !=
+                Unity.Netcode.NetworkManager.Singleton.LocalClientId)
+            {
+                continue;
+            }
+
+            localPlayerResources =
+                resources;
+
+            return;
+        }
+    }
+
+    public PlayerResources GetLocalPlayerResources()
+    {
+        if (localPlayerResources == null)
+            TryFindLocalPlayerResources();
+
+        return localPlayerResources;
     }
 }

@@ -93,7 +93,36 @@ public class ActionTooltipUI : MonoBehaviour
     [SerializeField]
     private TMP_Text variant3DescriptionText;
 
+    [Header("Type Icons")]
 
+    [SerializeField] private Sprite minerTypeIcon;
+    [SerializeField] private Sprite fighterTypeIcon;
+    [SerializeField] private Sprite utilityTypeIcon;
+
+    [SerializeField] private Sprite researchTypeIcon;
+
+    [SerializeField] private Sprite baseTier2TypeIcon;
+    [SerializeField] private Sprite baseTier3TypeIcon;
+
+
+    [Header("Screen Margin")]
+    [SerializeField]
+    private float screenMargin =
+    10f;
+
+    [Header("Cost Colors")]
+
+    [SerializeField]
+    private Color normalCostColor =
+    Color.white;
+
+    [SerializeField]
+    private Color insufficientCostColor =
+        Color.red;
+
+    private PlayerResources currentPlayerResources;
+    private ResearchDefinition currentResearch;
+    private ShipDefinition currentShip;
 
     public enum TooltipVariant
     {
@@ -290,6 +319,80 @@ public class ActionTooltipUI : MonoBehaviour
 
         rectTransform.anchoredPosition =
             canvasPosition + offset;
+
+
+        // =========================================================
+        // KEEP TOOLTIP INSIDE CANVAS
+        // =========================================================
+
+        Canvas.ForceUpdateCanvases();
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(
+            rectTransform);
+
+        Canvas.ForceUpdateCanvases();
+
+        Vector3[] tooltipCorners =
+            new Vector3[4];
+
+        rectTransform.GetWorldCorners(
+            tooltipCorners);
+
+        Vector3[] canvasCorners =
+            new Vector3[4];
+
+        canvasRect.GetWorldCorners(
+            canvasCorners);
+
+
+        Vector3 correction =
+            Vector3.zero;
+
+
+        // LEFT
+        if (tooltipCorners[0].x <
+            canvasCorners[0].x + screenMargin)
+        {
+            correction.x +=
+                canvasCorners[0].x +
+                screenMargin -
+                tooltipCorners[0].x;
+        }
+
+
+        // RIGHT
+        if (tooltipCorners[2].x >
+            canvasCorners[2].x - screenMargin)
+        {
+            correction.x -=
+                tooltipCorners[2].x -
+                (canvasCorners[2].x - screenMargin);
+        }
+
+
+        // BOTTOM
+        if (tooltipCorners[0].y <
+            canvasCorners[0].y + screenMargin)
+        {
+            correction.y +=
+                canvasCorners[0].y +
+                screenMargin -
+                tooltipCorners[0].y;
+        }
+
+
+        // TOP
+        if (tooltipCorners[2].y >
+            canvasCorners[2].y - screenMargin)
+        {
+            correction.y -=
+                tooltipCorners[2].y -
+                (canvasCorners[2].y - screenMargin);
+        }
+
+
+        rectTransform.position +=
+            correction;
     }
 
 
@@ -299,12 +402,19 @@ public class ActionTooltipUI : MonoBehaviour
 
     public void Hide()
     {
+        UnsubscribeResources();
+
+        currentPlayerResources = null;
+        currentResearch = null;
+        currentShip = null;
+
         gameObject.SetActive(false);
     }
 
     public void ShowResearch(
     ResearchDefinition definition,
     int currentCoreTier,
+    PlayerResources playerResources,
     RectTransform sourceButton)
     {
         if (definition == null ||
@@ -312,6 +422,18 @@ public class ActionTooltipUI : MonoBehaviour
         {
             return;
         }
+
+        UnsubscribeResources();
+
+        currentResearch =
+            definition;
+
+        currentPlayerResources =
+            playerResources;
+
+        SubscribeResources();
+
+
 
 
         // =========================================================
@@ -332,7 +454,10 @@ public class ActionTooltipUI : MonoBehaviour
 
         bool hasUnlocks =
             definition.unlockedModuleIds != null &&
-            definition.unlockedModuleIds.Count > 0;
+            definition.unlockedModuleIds.Exists(
+                id => !string.IsNullOrWhiteSpace(id));
+
+
 
 
         // =========================================================
@@ -370,7 +495,7 @@ public class ActionTooltipUI : MonoBehaviour
         {
             requirementsText +=
                 GetRequirementText(
-                    $"Requires: Base Core Tier {(int)definition.tier}",
+                    $"Base Core Tier {(int)definition.tier}",
                     requirementMet);
         }
 
@@ -380,16 +505,23 @@ public class ActionTooltipUI : MonoBehaviour
             foreach (string moduleId
                      in definition.unlockedModuleIds)
             {
+                if (string.IsNullOrWhiteSpace(moduleId))
+                    continue;
+
+                ModuleDefinition module =
+                    ModuleDatabase.Instance.GetModule(moduleId);
+
+                if (module == null)
+                    continue;
+
                 if (!string.IsNullOrEmpty(
                         requirementsText))
                 {
-                    requirementsText +=
-                        "\n";
+                    requirementsText += "\n";
                 }
 
                 requirementsText +=
-                    GetUnlockText(
-                        $"Unlocks: {moduleId}");
+                    GetUnlockText(module.displayName);
             }
         }
 
@@ -431,6 +563,8 @@ public class ActionTooltipUI : MonoBehaviour
         // SHOW + POSITION
         // =========================================================
 
+        RefreshCostColors();
+
         gameObject.SetActive(true);
 
         SetPosition(
@@ -442,7 +576,7 @@ public class ActionTooltipUI : MonoBehaviour
     string requirements)
     {
         variant1TypeIcon.sprite =
-            definition.icon;
+            researchTypeIcon;
 
         variant1NameText.text =
             definition.displayName;
@@ -464,7 +598,7 @@ public class ActionTooltipUI : MonoBehaviour
     ResearchDefinition definition)
     {
         variant2TypeIcon.sprite =
-            definition.icon;
+            researchTypeIcon;
 
         variant2NameText.text =
             definition.displayName;
@@ -487,7 +621,7 @@ public class ActionTooltipUI : MonoBehaviour
     string requirements)
     {
         variant3TypeIcon.sprite =
-            definition.icon;
+            researchTypeIcon;
 
         variant3NameText.text =
             definition.displayName;
@@ -537,4 +671,168 @@ public class ActionTooltipUI : MonoBehaviour
             $"{text}" +
             "</color>";
     }
+
+
+    private void SubscribeResources()
+    {
+        if (currentPlayerResources == null)
+            return;
+
+        currentPlayerResources.metal.OnValueChanged +=
+            OnResourcesChanged;
+
+        currentPlayerResources.energy.OnValueChanged +=
+            OnResourcesChanged;
+    }
+
+
+    private void UnsubscribeResources()
+    {
+        if (currentPlayerResources == null)
+            return;
+
+        currentPlayerResources.metal.OnValueChanged -=
+            OnResourcesChanged;
+
+        currentPlayerResources.energy.OnValueChanged -=
+            OnResourcesChanged;
+    }
+
+
+    private void OnResourcesChanged(
+        int previousValue,
+        int newValue)
+    {
+        RefreshCostColors();
+    }
+
+    private void RefreshCostColors()
+    {
+        if (currentPlayerResources == null)
+            return;
+
+        int metalCost;
+        int energyCost;
+
+        if (currentResearch != null)
+        {
+            metalCost =
+                currentResearch.baseMetalCost;
+
+            energyCost =
+                currentResearch.baseEnergyCost;
+        }
+        else if (currentShip != null)
+        {
+            metalCost =
+                currentShip.metalCost;
+
+            energyCost =
+                currentShip.energyCost;
+        }
+        else
+        {
+            return;
+        }
+
+        bool enoughMetal =
+            currentPlayerResources.metal.Value >=
+            metalCost;
+
+        bool enoughEnergy =
+            currentPlayerResources.energy.Value >=
+            energyCost;
+
+        Color metalColor =
+            enoughMetal
+                ? normalCostColor
+                : insufficientCostColor;
+
+        Color energyColor =
+            enoughEnergy
+                ? normalCostColor
+                : insufficientCostColor;
+
+        if (variant1MetalText != null)
+            variant1MetalText.color = metalColor;
+
+        if (variant1EnergyText != null)
+            variant1EnergyText.color = energyColor;
+
+        if (variant2MetalText != null)
+            variant2MetalText.color = metalColor;
+
+        if (variant2EnergyText != null)
+            variant2EnergyText.color = energyColor;
+
+        if (variant3MetalText != null)
+            variant3MetalText.color = metalColor;
+
+        if (variant3EnergyText != null)
+            variant3EnergyText.color = energyColor;
+    }
+
+
+    public void ShowShip(
+    ShipDefinition definition,
+    PlayerResources playerResources,
+    RectTransform sourceButton)
+    {
+        if (definition == null ||
+            sourceButton == null)
+        {
+            return;
+        }
+
+        UnsubscribeResources();
+
+        currentResearch = null;
+        currentShip = definition;
+        currentPlayerResources = playerResources;
+        SubscribeResources();
+        RefreshCostColors();
+
+        ShowVariant(
+            TooltipVariant.Details);
+
+        switch (definition.shipType)
+        {
+            case ShipType.Miner:
+                variant2TypeIcon.sprite =
+                    minerTypeIcon;
+                break;
+
+            case ShipType.Fighter:
+                variant2TypeIcon.sprite =
+                    fighterTypeIcon;
+                break;
+
+            case ShipType.Utility:
+                variant2TypeIcon.sprite =
+                    utilityTypeIcon;
+                break;
+        }
+
+        variant2NameText.text =
+            definition.displayName;
+
+        variant2MetalText.text =
+            definition.metalCost.ToString();
+
+        variant2EnergyText.text =
+            definition.energyCost.ToString();
+
+        variant2TimeText.text =
+            $"{definition.buildTime:0.#} s";
+
+        variant2DescriptionText.text =
+            definition.description;
+
+        gameObject.SetActive(true);
+
+        SetPosition(
+            sourceButton);
+    }
+
+
 }

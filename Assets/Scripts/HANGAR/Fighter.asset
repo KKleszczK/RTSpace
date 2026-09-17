@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShipDefinition
   shipId: fighter
   displayName: Fighter
+  description: Fighter
   icon: {fileID: 21300000, guid: ff9825407c58c1044aca2a63bf0cc71d, type: 3}
   shipType: 0
   shipPrefab: {fileID: 5813241367069302835, guid: 5648694b70701354c93576adc54706f7, type: 3}

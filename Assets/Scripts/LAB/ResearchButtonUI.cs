@@ -88,6 +88,7 @@ public class ResearchButtonUI :
             actionTooltip.ShowResearch(
                 definition,
                 labPanel.GetCurrentCoreTier(),
+                labPanel.GetLocalPlayerResources(),
                 rectTransform);
         }
     }
@@ -166,4 +167,6 @@ public class ResearchButtonUI :
             actionTooltip.Hide();
         }
     }
+
+    
 }

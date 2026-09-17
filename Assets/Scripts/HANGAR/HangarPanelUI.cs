@@ -44,6 +44,8 @@ public class HangarPanelUI : MonoBehaviour
     private BaseHangar selectedHangar;
     private BaseCore selectedCore;
 
+    private PlayerResources localPlayerResources;
+
     private int selectedDockIndex = -1;
 
     private float nextHangarSearchTime;
@@ -61,11 +63,15 @@ public class HangarPanelUI : MonoBehaviour
 
         TryAssignLocalHangar();
         SetupDeployButton();
+        TryFindLocalPlayerResources();
     }
 
     private void Update()
     {
         ValidateSelectedHangar();
+
+        if (localPlayerResources == null)
+            TryFindLocalPlayerResources();
 
         UpdateHangarHotkeys();
 
@@ -710,10 +716,9 @@ public class HangarPanelUI : MonoBehaviour
         if (ship == null)
             return;
 
-        actionTooltip.Show(
-            ship.metalCost,
-            ship.energyCost,
-            ship.buildTime,
+        actionTooltip.ShowShip(
+            ship,
+            localPlayerResources,
             sourceButton);
     }
 
@@ -1083,5 +1088,36 @@ public class HangarPanelUI : MonoBehaviour
             return;
 
         actionTooltip.Hide();
+    }
+
+    private void TryFindLocalPlayerResources()
+    {
+        if (localPlayerResources != null)
+            return;
+
+        if (NetworkManager.Singleton == null)
+            return;
+
+        PlayerResources[] all =
+            FindObjectsByType<PlayerResources>(
+                FindObjectsSortMode.None);
+
+        foreach (PlayerResources resources in all)
+        {
+            if (resources == null)
+                continue;
+
+            if (!resources.IsSpawned)
+                continue;
+
+            if (resources.OwnerClientId !=
+                NetworkManager.Singleton.LocalClientId)
+            {
+                continue;
+            }
+
+            localPlayerResources = resources;
+            return;
+        }
     }
 }

@@ -14,6 +14,9 @@ public class ShipDefinition : ScriptableObject
     public string shipId;
     public string displayName;
 
+    [TextArea(3, 6)]
+    public string description;
+
     public Sprite icon;
 
     public ShipType shipType;
@@ -30,8 +33,10 @@ public class ShipDefinition : ScriptableObject
     public int maxHp = 100;
     public int maxShield = 0;
     public float moveSpeed = 5;
-    
+
     
 
-  
+
+
+
 }
