@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -123,6 +124,13 @@ public class ActionTooltipUI : MonoBehaviour
     private PlayerResources currentPlayerResources;
     private ResearchDefinition currentResearch;
     private ShipDefinition currentShip;
+    private ModuleDefinition currentModule;
+
+    private int currentBaseMetalCost;
+    private int currentBaseEnergyCost;
+    private bool showingBaseUpgrade;
+
+
 
     public enum TooltipVariant
     {
@@ -404,9 +412,13 @@ public class ActionTooltipUI : MonoBehaviour
     {
         UnsubscribeResources();
 
-        currentPlayerResources = null;
         currentResearch = null;
         currentShip = null;
+        showingBaseUpgrade = false;
+        currentModule = null;
+
+        currentBaseMetalCost = 0;
+        currentBaseEnergyCost = 0;
 
         gameObject.SetActive(false);
     }
@@ -722,13 +734,20 @@ public class ActionTooltipUI : MonoBehaviour
             energyCost =
                 currentResearch.baseEnergyCost;
         }
+        else if (currentModule != null)
+        {
+            metalCost = currentModule.metalCost;
+            energyCost = currentModule.energyCost;
+        }
         else if (currentShip != null)
         {
-            metalCost =
-                currentShip.metalCost;
-
-            energyCost =
-                currentShip.energyCost;
+            metalCost = currentShip.metalCost;
+            energyCost = currentShip.energyCost;
+        }
+        else if (showingBaseUpgrade)
+        {
+            metalCost = currentBaseMetalCost;
+            energyCost = currentBaseEnergyCost;
         }
         else
         {
@@ -834,5 +853,205 @@ public class ActionTooltipUI : MonoBehaviour
             sourceButton);
     }
 
+
+    public void ShowBaseUpgrade(
+    int targetTier,
+    string displayName,
+    string description,
+    int metalCost,
+    int energyCost,
+    float upgradeTime,
+    List<string> unlocks,
+    PlayerResources playerResources,
+    RectTransform sourceButton)
+    {
+        if (sourceButton == null)
+            return;
+
+        UnsubscribeResources();
+
+        currentResearch = null;
+        currentShip = null;
+
+        showingBaseUpgrade = true;
+        currentBaseMetalCost = metalCost;
+        currentBaseEnergyCost = energyCost;
+
+        currentPlayerResources = playerResources;
+
+        SubscribeResources();
+
+        ShowVariant(
+            TooltipVariant.RequirementsAndDetails);
+
+        variant3TypeIcon.sprite =
+            targetTier == 2
+                ? baseTier2TypeIcon
+                : baseTier3TypeIcon;
+
+        variant3NameText.text =
+            displayName;
+
+        variant3MetalText.text =
+            metalCost.ToString();
+
+        variant3EnergyText.text =
+            energyCost.ToString();
+
+        variant3TimeText.text =
+            $"{upgradeTime:0.#} s";
+
+        string unlockText = "";
+
+        if (unlocks != null)
+        {
+            foreach (string unlock in unlocks)
+            {
+                if (string.IsNullOrWhiteSpace(unlock))
+                    continue;
+
+                if (!string.IsNullOrEmpty(unlockText))
+                    unlockText += "\n";
+
+                unlockText +=
+                    GetUnlockText(unlock);
+            }
+        }
+
+        variant3RequirementsText.text =
+            unlockText;
+
+        variant3DescriptionText.text =
+            description;
+
+        RefreshCostColors();
+
+        gameObject.SetActive(true);
+
+        SetPosition(sourceButton);
+    }
+
+    public void ShowModule(
+    ModuleDefinition module,
+    ResearchDefinition requiredResearch,
+    bool requiredResearchCompleted,
+    int currentCoreTier,
+    PlayerResources playerResources,
+    RectTransform sourceButton)
+    {
+        if (module == null || sourceButton == null)
+            return;
+
+        UnsubscribeResources();
+
+        currentResearch = null;
+        currentShip = null;
+        currentModule = module;
+        showingBaseUpgrade = false;
+
+        currentPlayerResources = playerResources;
+
+        bool requiresCoreTier =
+            (int)module.tier > 1;
+
+        bool hasResearch =
+            requiredResearch != null;
+
+        bool hasRequirements =
+            requiresCoreTier || hasResearch;
+
+        TooltipVariant variant =
+            hasRequirements
+                ? TooltipVariant.RequirementsAndDetails
+                : TooltipVariant.Details;
+
+        ShowVariant(variant);
+
+        Image typeIcon;
+        TMP_Text nameText;
+        TMP_Text metalText;
+        TMP_Text energyText;
+        TMP_Text timeText;
+        TMP_Text descriptionText;
+
+        if (variant == TooltipVariant.RequirementsAndDetails)
+        {
+            typeIcon = variant3TypeIcon;
+            nameText = variant3NameText;
+            metalText = variant3MetalText;
+            energyText = variant3EnergyText;
+            timeText = variant3TimeText;
+            descriptionText = variant3DescriptionText;
+        }
+        else
+        {
+            typeIcon = variant2TypeIcon;
+            nameText = variant2NameText;
+            metalText = variant2MetalText;
+            energyText = variant2EnergyText;
+            timeText = variant2TimeText;
+            descriptionText = variant2DescriptionText;
+        }
+
+        typeIcon.sprite = GetModuleTypeIcon(module.type);
+
+        nameText.text = module.displayName;
+        metalText.text = module.metalCost.ToString();
+        energyText.text = module.energyCost.ToString();
+        timeText.text = $"{module.craftTime:0.#} s";
+        descriptionText.text = module.description;
+
+        if (hasRequirements)
+        {
+            string requirements = "";
+
+            if (requiresCoreTier)
+            {
+                bool coreMet =
+                    currentCoreTier >= (int)module.tier;
+
+                requirements += GetRequirementText(
+                    $"Base Core Tier {(int)module.tier}",
+                    coreMet);
+            }
+
+            if (hasResearch)
+            {
+                if (!string.IsNullOrEmpty(requirements))
+                    requirements += "\n";
+
+                requirements += GetRequirementText(
+                    requiredResearch.displayName,
+                    requiredResearchCompleted);
+            }
+
+            variant3RequirementsText.text =
+                requirements;
+        }
+
+        SubscribeResources();
+        RefreshCostColors();
+
+        gameObject.SetActive(true);
+        SetPosition(sourceButton);
+    }
+
+    private Sprite GetModuleTypeIcon(
+    ModuleType type)
+    {
+        return type switch
+        {
+            ModuleType.Miner =>
+                minerTypeIcon,
+
+            ModuleType.Fighter =>
+                fighterTypeIcon,
+
+            ModuleType.Utility =>
+                utilityTypeIcon,
+
+            _ => null
+        };
+    }
 
 }

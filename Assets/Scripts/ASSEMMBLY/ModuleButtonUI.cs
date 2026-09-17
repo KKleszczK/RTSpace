@@ -58,9 +58,13 @@ public class ModuleButtonUI : MonoBehaviour,
         }
         else
         {
+            bool available =
+                panel.IsModuleAvailable(module);
+
             ModuleTierColorHelper.ApplyToImage(
                 iconImage,
-                module);
+                module,
+                !available);
         }
 
         if (button != null)
@@ -100,14 +104,20 @@ public class ModuleButtonUI : MonoBehaviour,
     }
 
     public void OnPointerEnter(
-        PointerEventData eventData)
+    PointerEventData eventData)
     {
-        if (module != null && panel != null)
-            panel.ShowModuleInfo(module);
+        if (module == null || panel == null)
+            return;
+
+        panel.ShowModuleTooltip(
+            module,
+            GetComponent<RectTransform>());
     }
 
     public void OnPointerExit(
         PointerEventData eventData)
     {
+        if (panel != null)
+            panel.HideModuleTooltip();
     }
 }

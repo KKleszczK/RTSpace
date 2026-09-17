@@ -13,6 +13,7 @@ public class AssemblyPanelUI : MonoBehaviour
     [SerializeField] private ModuleButtonUI buttonPrefab;
 
     private PlayerResearch playerResearch;
+    private LabPanelUI labPanel;
 
     [Header("Info")]
     [SerializeField] private TMP_Text nameText;
@@ -25,6 +26,11 @@ public class AssemblyPanelUI : MonoBehaviour
 
     [Header("Queue")]
     [SerializeField] private ModuleQueueSlotUI[] queueSlots;
+
+    [Header("Tooltip")]
+    [SerializeField] private ActionTooltipUI actionTooltip;
+
+    private PlayerResources localPlayerResources;
 
     private BaseCore localCore;
     private BaseSafeZone localSafeZone;
@@ -40,6 +46,8 @@ public class AssemblyPanelUI : MonoBehaviour
         }
 
         TryFindLocalCore();
+        TryFindLabPanel();
+        TryFindLocalPlayerResources();
     }
 
     private void Update()
@@ -295,8 +303,7 @@ public class AssemblyPanelUI : MonoBehaviour
                 content.GetChild(i).gameObject);
         }
 
-        int coreTier =
-            localCore.tier.Value;
+
 
         // =====================================================
         // SORT MODULES
@@ -351,39 +358,10 @@ public class AssemblyPanelUI : MonoBehaviour
         // =====================================================
 
         foreach (ModuleDefinition module
-                 in sortedModules)
+         in sortedModules)
         {
             if (module == null)
                 continue;
-
-            // Core Tier.
-            if ((int)module.tier > coreTier)
-                continue;
-
-            // =================================================
-            // RESEARCH UNLOCK
-            // =================================================
-
-            if (playerResearch == null)
-            {
-                // Je¿eli PlayerResearch jeszcze nie zosta³
-                // znaleziony, pokazujemy tylko modu³y
-                // dostêpne od pocz¹tku.
-                if (!module.unlockedByDefault)
-                    continue;
-            }
-            else
-            {
-                if (!playerResearch.IsModuleUnlocked(
-                        module))
-                {
-                    continue;
-                }
-            }
-
-            // =================================================
-            // BUTTON
-            // =================================================
 
             ModuleButtonUI button =
                 Instantiate(
@@ -440,5 +418,140 @@ public class AssemblyPanelUI : MonoBehaviour
     NetworkListEvent<FixedString64Bytes> changeEvent)
     {
         RefreshModuleButtons();
+    }
+
+    public bool IsModuleAvailable(
+    ModuleDefinition module)
+    {
+        if (module == null || localCore == null)
+            return false;
+
+        // Core musi mieæ odpowiedni Tier.
+        if ((int)module.tier > localCore.tier.Value)
+            return false;
+
+        // Modu³ dostêpny od pocz¹tku.
+        if (module.unlockedByDefault)
+            return true;
+
+        // Modu³ wymagaj¹cy researchu.
+        if (playerResearch == null)
+            return false;
+
+        return playerResearch.IsModuleUnlocked(module);
+    }
+
+    private void TryFindLabPanel()
+    {
+        if (labPanel != null)
+            return;
+
+        labPanel =
+            FindFirstObjectByType<LabPanelUI>(
+                FindObjectsInactive.Include);
+    }
+
+    public ResearchDefinition GetRequiredResearch(
+    ModuleDefinition module)
+    {
+        if (module == null)
+            return null;
+
+        if (labPanel == null)
+            TryFindLabPanel();
+
+        if (labPanel == null)
+            return null;
+
+        return labPanel.GetResearchUnlockingModule(
+            module);
+    }
+
+    public bool IsRequiredResearchCompleted(
+    ResearchDefinition research)
+    {
+        if (research == null)
+            return true;
+
+        if (playerResearch == null)
+            FindLocalPlayerResearch();
+
+        if (playerResearch == null)
+            return false;
+
+        return playerResearch.IsCompleted(
+            research.researchId);
+    }
+
+    private void TryFindLocalPlayerResources()
+    {
+        if (localPlayerResources != null)
+            return;
+
+        if (NetworkManager.Singleton == null)
+            return;
+
+        PlayerResources[] all =
+            FindObjectsByType<PlayerResources>(
+                FindObjectsSortMode.None);
+
+        foreach (PlayerResources resources in all)
+        {
+            if (resources == null)
+                continue;
+
+            if (!resources.IsSpawned)
+                continue;
+
+            if (resources.OwnerClientId !=
+                NetworkManager.Singleton.LocalClientId)
+            {
+                continue;
+            }
+
+            localPlayerResources = resources;
+            return;
+        }
+    }
+
+    public void ShowModuleTooltip(
+    ModuleDefinition module,
+    RectTransform sourceButton)
+    {
+        if (module == null ||
+            sourceButton == null ||
+            actionTooltip == null)
+        {
+            return;
+        }
+
+        if (localPlayerResources == null)
+            TryFindLocalPlayerResources();
+
+        ResearchDefinition requiredResearch =
+            GetRequiredResearch(module);
+
+        bool researchCompleted =
+            IsRequiredResearchCompleted(
+                requiredResearch);
+
+        int coreTier =
+            localCore != null
+                ? localCore.tier.Value
+                : 0;
+
+        actionTooltip.ShowModule(
+            module,
+            requiredResearch,
+            researchCompleted,
+            coreTier,
+            localPlayerResources,
+            sourceButton);
+    }
+
+    public void HideModuleTooltip()
+    {
+        if (actionTooltip != null)
+            actionTooltip.Hide();
     }
 }

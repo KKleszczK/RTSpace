@@ -536,4 +536,32 @@ public class LabPanelUI : MonoBehaviour
 
         return localPlayerResources;
     }
+
+    public ResearchDefinition GetResearchUnlockingModule(
+    ModuleDefinition module)
+    {
+        if (module == null)
+            return null;
+
+        foreach (ResearchDefinition research in researches)
+        {
+            if (research == null ||
+                research.unlockedModuleIds == null)
+            {
+                continue;
+            }
+
+            foreach (string moduleId
+                     in research.unlockedModuleIds)
+            {
+                if (string.IsNullOrWhiteSpace(moduleId))
+                    continue;
+
+                if (moduleId == module.moduleId)
+                    return research;
+            }
+        }
+
+        return null;
+    }
 }

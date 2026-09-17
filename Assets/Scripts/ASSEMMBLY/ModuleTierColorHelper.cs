@@ -3,39 +3,22 @@ using UnityEngine.UI;
 
 public static class ModuleTierColorHelper
 {
-    public static Color GetColor(ModuleTier tier)
+    public static Color GetColor(
+        ModuleTier tier,
+        bool locked)
     {
-        switch (tier)
-        {
-            case ModuleTier.Tier1:
-                return new Color(
-                    36f/255f,
-                    149f/255f,
-                    40f/255f,
-                    1f); ;
+        if (ModuleTierColors.Instance == null)
+            return Color.white;
 
-            case ModuleTier.Tier2:
-                return new Color(
-                    0f / 255f,
-                    115f / 255f,
-                    223f / 255f,
-                    1f); ;
-
-            case ModuleTier.Tier3:
-                return new Color(
-                    223f / 255f,
-                    22f / 255f,
-                    46f / 255f,
-                    1f); ;
-
-            default:
-                return Color.white;
-        }
+        return ModuleTierColors.Instance.GetColor(
+            tier,
+            locked);
     }
 
     public static void ApplyToImage(
         Image image,
-        ModuleDefinition module)
+        ModuleDefinition module,
+        bool locked)
     {
         if (image == null)
             return;
@@ -48,6 +31,28 @@ public static class ModuleTierColorHelper
         }
 
         image.sprite = module.icon;
-        image.color = GetColor(module.tier);
+
+        image.color =
+            GetColor(
+                module.tier,
+                locked);
+    }
+
+    public static void ApplyToImage(
+    Image image,
+    ModuleDefinition module)
+    {
+        ApplyToImage(
+            image,
+            module,
+            false);
+    }
+
+    public static Color GetColor(
+    ModuleTier tier)
+    {
+        return GetColor(
+            tier,
+            false);
     }
 }
