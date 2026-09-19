@@ -16,6 +16,8 @@ public class PlayerModuleCrafting : NetworkBehaviour
     private ModuleDefinition currentModule;
     private PlayerResearch playerResearch;
 
+    private const float MaxSpeedBonusPercent = 80f;
+
     private BaseSafeZone safeZone;
 
     private void Awake()
@@ -326,7 +328,7 @@ public class PlayerModuleCrafting : NetworkBehaviour
             Mathf.Clamp(
                 assemblyBonusPercent,
                 0f,
-                100f);
+                MaxSpeedBonusPercent);
 
         Debug.Log(
     $"[CRAFT SPEED] " +

@@ -85,11 +85,13 @@ public class ResearchButtonUI :
 
         if (actionTooltip != null)
         {
+
             actionTooltip.ShowResearch(
                 definition,
                 labPanel.GetCurrentCoreTier(),
                 labPanel.GetLocalPlayerResources(),
-                rectTransform);
+                rectTransform,
+                labPanel.GetCurrentResearchTime(definition));
         }
     }
 

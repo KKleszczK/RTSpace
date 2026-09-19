@@ -427,7 +427,8 @@ public class ActionTooltipUI : MonoBehaviour
     ResearchDefinition definition,
     int currentCoreTier,
     PlayerResources playerResources,
-    RectTransform sourceButton)
+    RectTransform sourceButton,
+    float researchTime)
     {
         if (definition == null ||
             sourceButton == null)
@@ -548,7 +549,8 @@ public class ActionTooltipUI : MonoBehaviour
 
                 FillVariant1(
                     definition,
-                    requirementsText);
+                    requirementsText,
+                    researchTime);
 
                 break;
 
@@ -556,7 +558,8 @@ public class ActionTooltipUI : MonoBehaviour
             case TooltipVariant.Details:
 
                 FillVariant2(
-                    definition);
+                    definition,
+                    researchTime);
 
                 break;
 
@@ -565,7 +568,8 @@ public class ActionTooltipUI : MonoBehaviour
 
                 FillVariant3(
                     definition,
-                    requirementsText);
+                    requirementsText,
+                    researchTime);
 
                 break;
         }
@@ -585,7 +589,8 @@ public class ActionTooltipUI : MonoBehaviour
 
     private void FillVariant1(
     ResearchDefinition definition,
-    string requirements)
+    string requirements,
+    float researchTime)
     {
         variant1TypeIcon.sprite =
             researchTypeIcon;
@@ -600,14 +605,15 @@ public class ActionTooltipUI : MonoBehaviour
             definition.baseEnergyCost.ToString();
 
         variant1TimeText.text =
-            $"{definition.baseResearchTime:0.#} s";
+            $"{researchTime:0.#} s";
 
         variant1RequirementsText.text =
             requirements;
     }
 
     private void FillVariant2(
-    ResearchDefinition definition)
+    ResearchDefinition definition,
+    float researchTime)
     {
         variant2TypeIcon.sprite =
             researchTypeIcon;
@@ -622,7 +628,7 @@ public class ActionTooltipUI : MonoBehaviour
             definition.baseEnergyCost.ToString();
 
         variant2TimeText.text =
-            $"{definition.baseResearchTime:0.#} s";
+            $"{researchTime:0.#} s";
 
         variant2DescriptionText.text =
             definition.description;
@@ -630,7 +636,8 @@ public class ActionTooltipUI : MonoBehaviour
 
     private void FillVariant3(
     ResearchDefinition definition,
-    string requirements)
+    string requirements,
+    float researchTime)
     {
         variant3TypeIcon.sprite =
             researchTypeIcon;
@@ -645,7 +652,7 @@ public class ActionTooltipUI : MonoBehaviour
             definition.baseEnergyCost.ToString();
 
         variant3TimeText.text =
-            $"{definition.baseResearchTime:0.#} s";
+            $"{researchTime:0.#} s";
 
         variant3RequirementsText.text =
             requirements;
@@ -937,7 +944,8 @@ public class ActionTooltipUI : MonoBehaviour
     bool requiredResearchCompleted,
     int currentCoreTier,
     PlayerResources playerResources,
-    RectTransform sourceButton)
+    RectTransform sourceButton,
+    float craftTime)
     {
         if (module == null || sourceButton == null)
             return;
@@ -998,7 +1006,7 @@ public class ActionTooltipUI : MonoBehaviour
         nameText.text = module.displayName;
         metalText.text = module.metalCost.ToString();
         energyText.text = module.energyCost.ToString();
-        timeText.text = $"{module.craftTime:0.#} s";
+        timeText.text = $"{craftTime:0.#} s";
         descriptionText.text = module.description;
 
         if (hasRequirements)

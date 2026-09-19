@@ -17,8 +17,7 @@ public class HangarPanelUI : MonoBehaviour
     private ActionTooltipUI actionTooltip;
 
     [Header("Progress")]
-    [SerializeField] private RectTransform progressBar;
-    [SerializeField] private float maxProgressWidth = 500f;
+    [SerializeField] private InteractiveProgressBarUI progressBar;
 
     [Header("Queue")]
     [SerializeField] private Button[] queueButtons;
@@ -75,7 +74,7 @@ public class HangarPanelUI : MonoBehaviour
 
         UpdateHangarHotkeys();
 
-        UpdateProgress();
+        UpdateProgressBar();
         UpdateQueue();
         UpdateDocked();
         RefreshSelectedShipPanel();
@@ -722,24 +721,18 @@ public class HangarPanelUI : MonoBehaviour
             sourceButton);
     }
 
-    private void UpdateProgress()
+    private void UpdateProgressBar()
     {
-        if (progressBar == null)
+        if (selectedHangar == null ||
+            progressBar == null)
+        {
             return;
+        }
 
-        float progress =
-            CanUseSelectedHangar()
-                ? selectedHangar.buildProgress.Value
-                : 0f;
+        progressBar.SetBonus(0f);
 
-        Vector2 size =
-            progressBar.sizeDelta;
-
-        size.x =
-            maxProgressWidth *
-            Mathf.Clamp01(progress);
-
-        progressBar.sizeDelta = size;
+        progressBar.SetProgress(
+            selectedHangar.buildProgress.Value);
     }
 
     private void UpdateQueue()

@@ -16,8 +16,8 @@ public class LabPanelUI : MonoBehaviour
     [SerializeField] private TMP_Text descriptionText;
     [SerializeField] private TMP_Text costText;
 
-    [SerializeField] private RectTransform progressBar;
-    [SerializeField] private float maxProgressWidth = 500f;
+    [Header("Progress")]
+    [SerializeField] private InteractiveProgressBarUI progressBar;
 
     private ResearchDefinition selectedResearch;
     private PlayerResearch playerResearch;
@@ -79,14 +79,34 @@ public class LabPanelUI : MonoBehaviour
     }
     private void UpdateProgressBar()
     {
-        if (playerResearch == null || progressBar == null)
+        if (playerResearch == null ||
+            progressBar == null)
+        {
             return;
+        }
 
-        float progress = playerResearch.currentProgress.Value;
+        float progress =
+            playerResearch.currentProgress.Value;
 
-        Vector2 size = progressBar.sizeDelta;
-        size.x = maxProgressWidth * progress;
-        progressBar.sizeDelta = size;
+        float labBonusPercent =
+            localSafeZone != null
+                ? localSafeZone.GetLabSpeedBonusPercent()
+                : 0f;
+
+        float researchBonusPercent =
+            localUpgradeStats != null
+                ? localUpgradeStats.GetResearchSpeedBonusPercent()
+                : 0f;
+
+        float totalBonusPercent =
+            labBonusPercent +
+            researchBonusPercent;
+
+        progressBar.SetBonus(
+            totalBonusPercent);
+
+        progressBar.SetProgress(
+            progress);
     }
 
     private void TryFindLocalCore()
@@ -412,7 +432,7 @@ public class LabPanelUI : MonoBehaviour
             Mathf.Clamp(
                 totalBonusPercent,
                 0f,
-                100f);
+                90f);
 
         // =====================================================
         // FINAL TIME
@@ -563,5 +583,35 @@ public class LabPanelUI : MonoBehaviour
         }
 
         return null;
+    }
+
+    public float GetCurrentResearchTime(
+    ResearchDefinition research)
+    {
+        if (research == null)
+            return 0f;
+
+        FindLocalResearchBonuses();
+
+        float labBonusPercent =
+            localSafeZone != null
+                ? localSafeZone.GetLabSpeedBonusPercent()
+                : 0f;
+
+        float researchBonusPercent =
+            localUpgradeStats != null
+                ? localUpgradeStats.GetResearchSpeedBonusPercent()
+                : 0f;
+
+        float totalBonusPercent =
+            Mathf.Clamp(
+                labBonusPercent + researchBonusPercent,
+                0f,
+                90f);
+
+        return Mathf.Max(
+            0f,
+            research.baseResearchTime *
+            (1f - totalBonusPercent / 100f));
     }
 }

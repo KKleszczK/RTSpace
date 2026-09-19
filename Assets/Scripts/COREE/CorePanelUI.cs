@@ -14,8 +14,7 @@ public class CorePanelUI : MonoBehaviour
     [SerializeField] private Image iconM;
     [SerializeField] private Image iconE;
     [SerializeField] private TMP_Text iconT;
-    [SerializeField] private RectTransform progressBar;
-    [SerializeField] private float maxProgressWidth = 500f;
+    [SerializeField] private InteractiveProgressBarUI progressBar;
 
     [Header("Tooltip")]
     [SerializeField] private ActionTooltipUI actionTooltip;
@@ -151,9 +150,13 @@ public class CorePanelUI : MonoBehaviour
         constructButton.interactable =
             tier < 3 && !selectedCore.isUpgrading.Value;
 
-        Vector2 size = progressBar.sizeDelta;
-        size.x = maxProgressWidth * selectedCore.progress.Value;
-        progressBar.sizeDelta = size;
+        if (progressBar != null)
+        {
+            progressBar.SetBonus(0f);
+
+            progressBar.SetProgress(
+                selectedCore.progress.Value);
+        }
     }
 
     private void TryFindLocalPlayerResources()

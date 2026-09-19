@@ -21,8 +21,7 @@ public class AssemblyPanelUI : MonoBehaviour
     [SerializeField] private TMP_Text costText;
 
     [Header("Progress")]
-    [SerializeField] private RectTransform progressBar;
-    [SerializeField] private float maxProgressWidth = 500f;
+    [SerializeField] private InteractiveProgressBarUI progressBar;
 
     [Header("Queue")]
     [SerializeField] private ModuleQueueSlotUI[] queueSlots;
@@ -93,7 +92,7 @@ public class AssemblyPanelUI : MonoBehaviour
             Mathf.Clamp(
                 bonusPercent,
                 0f,
-                100f);
+                90f);
 
         float timeMultiplier =
             1f -
@@ -173,15 +172,25 @@ public class AssemblyPanelUI : MonoBehaviour
 
     private void UpdateProgressBar()
     {
-        if (playerCrafting == null || progressBar == null)
+        if (playerCrafting == null ||
+            progressBar == null)
+        {
             return;
+        }
 
-        Vector2 size = progressBar.sizeDelta;
-        size.x =
-            maxProgressWidth *
-            Mathf.Clamp01(playerCrafting.currentProgress.Value);
+        float progress =
+            playerCrafting.currentProgress.Value;
 
-        progressBar.sizeDelta = size;
+        float bonusPercent =
+            localSafeZone != null
+                ? localSafeZone.GetAssemblySpeedBonusPercent()
+                : 0f;
+
+        progressBar.SetBonus(
+            bonusPercent);
+
+        progressBar.SetProgress(
+            progress);
     }
 
     private void UpdateQueueUI()
@@ -539,6 +548,8 @@ public class AssemblyPanelUI : MonoBehaviour
             localCore != null
                 ? localCore.tier.Value
                 : 0;
+        float craftTime =
+            GetCurrentModuleCraftTime(module);
 
         actionTooltip.ShowModule(
             module,
@@ -546,12 +557,33 @@ public class AssemblyPanelUI : MonoBehaviour
             researchCompleted,
             coreTier,
             localPlayerResources,
-            sourceButton);
+            sourceButton,
+            craftTime);
     }
 
     public void HideModuleTooltip()
     {
         if (actionTooltip != null)
             actionTooltip.Hide();
+    }
+
+    public float GetCurrentModuleCraftTime(
+    ModuleDefinition module)
+    {
+        if (module == null)
+            return 0f;
+
+        float bonusPercent =
+            localSafeZone != null
+                ? localSafeZone.GetAssemblySpeedBonusPercent()
+                : 0f;
+
+        bonusPercent =
+            Mathf.Clamp(bonusPercent, 0f, 100f);
+
+        return Mathf.Max(
+            0f,
+            module.craftTime *
+            (1f - bonusPercent / 100f));
     }
 }
