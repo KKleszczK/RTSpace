@@ -1113,4 +1113,25 @@ public class HangarPanelUI : MonoBehaviour
             return;
         }
     }
+
+    public void RequestAutoInstallModule(
+    ModuleDefinition module)
+    {
+        if (!CanUseSelectedHangar())
+            return;
+
+        if (module == null)
+            return;
+
+        if (selectedDockIndex < 0 ||
+            selectedDockIndex >=
+            selectedHangar.dockedShips.Count)
+        {
+            return;
+        }
+
+        selectedHangar.RequestAutoInstallModule(
+            selectedDockIndex,
+            module.moduleId);
+    }
 }

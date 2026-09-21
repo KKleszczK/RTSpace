@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
@@ -9,6 +10,8 @@ public class ModuleInventoryPanelUI :
 {
     [SerializeField] private Transform content;
     [SerializeField] private DraggableModuleUI modulePrefab;
+
+    [SerializeField] private HangarPanelUI hangarPanel;
 
     private PlayerModuleInventory inventory;
 
@@ -72,23 +75,60 @@ public class ModuleInventoryPanelUI :
                 content.GetChild(i).gameObject);
         }
 
+        Dictionary<string, int> moduleCounts =
+            new Dictionary<string, int>();
+
         foreach (FixedString64Bytes moduleId in inventory.modules)
+        {
+            string id = moduleId.ToString();
+
+            if (moduleCounts.ContainsKey(id))
+                moduleCounts[id]++;
+            else
+                moduleCounts[id] = 1;
+        }
+
+        List<ModuleDefinition> sortedModules =
+            new List<ModuleDefinition>();
+
+        foreach (var pair in moduleCounts)
         {
             ModuleDefinition module =
                 ModuleDatabase.Instance != null
-                    ? ModuleDatabase.Instance.GetModule(
-                        moduleId.ToString())
+                    ? ModuleDatabase.Instance.GetModule(pair.Key)
                     : null;
 
-            if (module == null)
-                continue;
+            if (module != null)
+                sortedModules.Add(module);
+        }
 
+        sortedModules.Sort(
+            (a, b) =>
+            {
+                // T3 -> T2 -> T1
+                int tierComparison =
+                    ((int)b.tier).CompareTo((int)a.tier);
+
+                if (tierComparison != 0)
+                    return tierComparison;
+
+                return string.Compare(
+                    a.displayName,
+                    b.displayName,
+                    System.StringComparison.OrdinalIgnoreCase);
+            });
+
+        foreach (ModuleDefinition module in sortedModules)
+        {
             DraggableModuleUI item =
                 Instantiate(
                     modulePrefab,
                     content);
 
-            item.Setup(module);
+            item.Setup(
+                module,
+                moduleCounts[module.moduleId],
+                this);
         }
     }
 
@@ -126,4 +166,20 @@ public class ModuleInventoryPanelUI :
     {
         RefreshInventory();
     }
+
+
+    public void RequestAutoInstall(
+    ModuleDefinition module)
+    {
+        if (module == null ||
+            hangarPanel == null)
+        {
+            return;
+        }
+
+        hangarPanel.RequestAutoInstallModule(
+            module);
+    }
+
+
 }

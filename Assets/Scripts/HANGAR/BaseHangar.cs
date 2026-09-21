@@ -1525,4 +1525,115 @@ public class BaseHangar : NetworkBehaviour
 
         return true;
     }
+
+    public void RequestAutoInstallModule(
+    int dockIndex,
+    string moduleId)
+    {
+        if (string.IsNullOrWhiteSpace(moduleId))
+            return;
+
+        AutoInstallModuleServerRpc(
+            dockIndex,
+            moduleId);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void AutoInstallModuleServerRpc(
+        int dockIndex,
+        string moduleId,
+        ServerRpcParams rpcParams = default)
+    {
+        ulong senderClientId =
+            rpcParams.Receive.SenderClientId;
+
+        if (!CanUseHangar(senderClientId))
+            return;
+
+        if (!IsValidDockIndex(dockIndex))
+            return;
+
+        if (ModuleDatabase.Instance == null ||
+            ShipDatabase.Instance == null)
+        {
+            return;
+        }
+
+        ModuleDefinition module =
+            ModuleDatabase.Instance.GetModule(moduleId);
+
+        if (module == null)
+            return;
+
+        PlayerModuleInventory inventory =
+            FindPlayerInventory(senderClientId);
+
+        if (inventory == null ||
+            !inventory.HasModule(moduleId))
+        {
+            return;
+        }
+
+        DockedShipData shipData =
+            dockedShips[dockIndex];
+
+        ShipDefinition shipDefinition =
+            ShipDatabase.Instance.GetShip(
+                shipData.shipId.ToString());
+
+        if (shipDefinition == null)
+            return;
+
+        BaseCore core =
+            FindCoreForOwner(senderClientId);
+
+        if (core == null)
+            return;
+
+        int coreTier = core.tier.Value;
+
+        // Próba kolejno: 0 -> 1 -> 2 -> 3
+        for (int slotIndex = 0;
+             slotIndex <= 3;
+             slotIndex++)
+        {
+            // Zablokowany normalny slot.
+            if (slotIndex <= NormalSlot3 &&
+                slotIndex >= coreTier)
+            {
+                continue;
+            }
+
+            // Auto-install u¿ywa tylko pustych slotów.
+            if (!shipData.GetModule(slotIndex).IsEmpty)
+                continue;
+
+            if (!CanInstallModule(
+                    module,
+                    shipDefinition,
+                    slotIndex))
+            {
+                continue;
+            }
+
+            if (!inventory.RemoveOneModule(moduleId))
+                return;
+
+            shipData.SetModule(
+                slotIndex,
+                new FixedString64Bytes(moduleId));
+
+            dockedShips[dockIndex] =
+                shipData;
+
+            Debug.Log(
+                $"[MODULE AUTO INSTALL] " +
+                $"{moduleId} -> slot {slotIndex}");
+
+            return;
+        }
+
+        // ¯aden z czterech slotów nie pasuje:
+        // nic nie robimy.
+    }
 }

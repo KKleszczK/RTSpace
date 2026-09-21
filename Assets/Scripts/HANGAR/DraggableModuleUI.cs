@@ -1,11 +1,13 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro;
 
 public class DraggableModuleUI : MonoBehaviour,
     IBeginDragHandler,
     IDragHandler,
-    IEndDragHandler
+    IEndDragHandler,
+    IPointerClickHandler
 {
     [SerializeField] private Image iconImage;
 
@@ -22,6 +24,11 @@ public class DraggableModuleUI : MonoBehaviour,
 
     private RectTransform dragGhost;
     private Image dragGhostImage;
+
+    [SerializeField] private TMP_Text countText;
+
+    private ModuleInventoryPanelUI inventoryPanel;
+    private int moduleCount;
 
     private void Awake()
     {
@@ -43,16 +50,29 @@ public class DraggableModuleUI : MonoBehaviour,
         }
     }
 
-    public void Setup(ModuleDefinition newModule)
+    public void Setup(
+    ModuleDefinition newModule,
+    int count,
+    ModuleInventoryPanelUI panel)
     {
         module = newModule;
+        moduleCount = count;
+        inventoryPanel = panel;
 
-        if (iconImage == null)
-            return;
+        if (iconImage != null)
+        {
+            ModuleTierColorHelper.ApplyToImage(
+                iconImage,
+                module);
+        }
 
-        ModuleTierColorHelper.ApplyToImage(
-            iconImage,
-            module);
+        if (countText != null)
+        {
+            countText.text =
+                count > 1
+                    ? $"{count}"
+                    : "";
+        }
     }
 
     public ModuleDefinition GetModule()
@@ -161,5 +181,23 @@ public class DraggableModuleUI : MonoBehaviour,
             canvasGroup.alpha = 1f;
             canvasGroup.blocksRaycasts = true;
         }
+    }
+
+    public void OnPointerClick(
+    PointerEventData eventData)
+    {
+        if (eventData.button !=
+            PointerEventData.InputButton.Left)
+        {
+            return;
+        }
+
+        if (module == null ||
+            inventoryPanel == null)
+        {
+            return;
+        }
+
+        inventoryPanel.RequestAutoInstall(module);
     }
 }
