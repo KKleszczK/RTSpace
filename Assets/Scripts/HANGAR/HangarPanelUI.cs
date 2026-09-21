@@ -1134,4 +1134,19 @@ public class HangarPanelUI : MonoBehaviour
             selectedDockIndex,
             module.moduleId);
     }
+
+    public void RemoveAllModulesFromSelectedShip()
+    {
+        if (!CanUseSelectedHangar())
+            return;
+
+        if (selectedDockIndex < 0 ||
+            selectedDockIndex >= selectedHangar.dockedShips.Count)
+        {
+            return;
+        }
+
+        selectedHangar.RequestRemoveAllModules(
+            selectedDockIndex);
+    }
 }

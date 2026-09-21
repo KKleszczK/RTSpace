@@ -1636,4 +1636,60 @@ public class BaseHangar : NetworkBehaviour
         // ¯aden z czterech slotów nie pasuje:
         // nic nie robimy.
     }
+
+    public void RequestRemoveAllModules(
+    int dockIndex)
+    {
+        RemoveAllModulesServerRpc(
+            dockIndex);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RemoveAllModulesServerRpc(
+        int dockIndex,
+        ServerRpcParams rpcParams = default)
+    {
+        ulong senderClientId =
+            rpcParams.Receive.SenderClientId;
+
+        if (!CanUseHangar(senderClientId))
+            return;
+
+        if (!IsValidDockIndex(dockIndex))
+            return;
+
+        PlayerModuleInventory inventory =
+            FindPlayerInventory(senderClientId);
+
+        if (inventory == null)
+            return;
+
+        DockedShipData shipData =
+            dockedShips[dockIndex];
+
+        for (int slotIndex = 0;
+             slotIndex <= 3;
+             slotIndex++)
+        {
+            FixedString64Bytes moduleId =
+                shipData.GetModule(slotIndex);
+
+            if (moduleId.IsEmpty)
+                continue;
+
+            inventory.AddModule(
+                moduleId.ToString());
+
+            shipData.ClearModule(
+                slotIndex);
+        }
+
+        dockedShips[dockIndex] =
+            shipData;
+
+        Debug.Log(
+            $"[MODULE REMOVE ALL] " +
+            $"Zdjêto wszystkie modu³y ze statku " +
+            $"{shipData.shipId}");
+    }
 }
