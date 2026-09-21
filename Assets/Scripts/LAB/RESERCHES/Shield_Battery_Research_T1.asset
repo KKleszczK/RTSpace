@@ -10,19 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ced68004270e21c46bc598eb1b7d880b, type: 3}
-  m_Name: Pierce_Laser_Research_T3
+  m_Name: Shield_Battery_Research_T1
   m_EditorClassIdentifier: Assembly-CSharp::ResearchDefinition
-  researchId: pierce_laser_research_t3
-  displayName: Pierce Laser Research
-  description: Enables Pierce Laser module production
-  icon: {fileID: 21300000, guid: 06aed8575472f88479205cdd77358630, type: 3}
+  researchId: shield_battery_t1
+  displayName: Shield Battery
+  description: Unlocks Shield Battery Module
+  icon: {fileID: 21300000, guid: 92f45f9921dac6a4c89230b1d4573e31, type: 3}
   researchedIcon: {fileID: 21300000, guid: c74ce56c8ecb8cd47a91d48bc24a166d, type: 3}
-  tier: 3
-  baseMetalCost: 800
-  baseEnergyCost: 600
-  baseResearchTime: 140
+  tier: 1
+  baseMetalCost: 180
+  baseEnergyCost: 100
+  baseResearchTime: 30
   effectType: 7
   valueType: 0
-  value: 15000
+  value: 100
   unlockedModuleIds:
-  - pierce_laser_t3
+  - shield_battery_t1
+  - shield_battery_t2
+  - shield_battery_t3
