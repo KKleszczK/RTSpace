@@ -56,6 +56,25 @@ public class ShipSelectionController : MonoBehaviour
 
     private ShipUnit preselectedShip;
 
+    [Header("Formation Command")]
+    [SerializeField]
+    private float formationSpacing = 3f;
+
+    [SerializeField]
+    private float formationDoubleCommandTime = 0.3f;
+
+    [SerializeField]
+    private float formationDoubleCommandMaxDistance = 20f;
+
+    private float lastMoveCommandTime = -10f;
+    private Vector2 lastMoveCommandScreenPosition;
+
+    private float lastAttackMoveCommandTime = -10f;
+    private Vector2 lastAttackMoveCommandScreenPosition;
+
+    private float lastGuardCommandTime = -10f;
+    private Vector2 lastGuardCommandScreenPosition;
+
 
     private void Start()
     {
@@ -476,6 +495,35 @@ public class ShipSelectionController : MonoBehaviour
 
         target.y =
             shipFlightHeight;
+
+        Vector2 currentScreenPosition =
+    Mouse.current.position.ReadValue();
+
+        bool formationCommand =
+            Time.unscaledTime -
+            lastMoveCommandTime <=
+            formationDoubleCommandTime &&
+            Vector2.Distance(
+                currentScreenPosition,
+                lastMoveCommandScreenPosition) <=
+            formationDoubleCommandMaxDistance;
+
+        if (formationCommand)
+        {
+            lastMoveCommandTime = -10f;
+
+            IssueFormationMove(
+                target,
+                queueCommand);
+
+            return;
+        }
+
+        lastMoveCommandTime =
+            Time.unscaledTime;
+
+        lastMoveCommandScreenPosition =
+            currentScreenPosition;
 
         // =========================================================
         // SINGLE SHIP
@@ -1220,6 +1268,35 @@ public class ShipSelectionController : MonoBehaviour
         target.y =
             shipFlightHeight;
 
+        Vector2 currentScreenPosition =
+            Mouse.current.position.ReadValue();
+
+        bool formationCommand =
+            Time.unscaledTime -
+            lastAttackMoveCommandTime <=
+            formationDoubleCommandTime &&
+            Vector2.Distance(
+                currentScreenPosition,
+                lastAttackMoveCommandScreenPosition) <=
+            formationDoubleCommandMaxDistance;
+
+        if (formationCommand)
+        {
+            lastAttackMoveCommandTime = -10f;
+
+            IssueFormationAttackMove(
+                target,
+                queueCommand);
+
+            return;
+        }
+
+        lastAttackMoveCommandTime =
+            Time.unscaledTime;
+
+        lastAttackMoveCommandScreenPosition =
+            currentScreenPosition;
+
 
         // =========================================================
         // SINGLE SHIP
@@ -1379,6 +1456,35 @@ public class ShipSelectionController : MonoBehaviour
 
         target.y =
             shipFlightHeight;
+
+        Vector2 currentScreenPosition =
+            Mouse.current.position.ReadValue();
+
+        bool formationCommand =
+            Time.unscaledTime -
+            lastGuardCommandTime <=
+            formationDoubleCommandTime &&
+            Vector2.Distance(
+                currentScreenPosition,
+                lastGuardCommandScreenPosition) <=
+            formationDoubleCommandMaxDistance;
+
+        if (formationCommand)
+        {
+            lastGuardCommandTime = -10f;
+
+            IssueFormationGuard(
+                target,
+                queueCommand);
+
+            return;
+        }
+
+        lastGuardCommandTime =
+            Time.unscaledTime;
+
+        lastGuardCommandScreenPosition =
+            currentScreenPosition;
 
 
         // =========================================================
@@ -2039,6 +2145,226 @@ public class ShipSelectionController : MonoBehaviour
 
         preselectedShip.SetPreselectedLocal(
             true);
+    }
+
+    public void MoveSelectedShipsTo(
+    Vector3 target)
+    {
+        if (selectedShips.Count == 0)
+            return;
+
+        bool queueCommand =
+            GameInputManager.Instance != null &&
+            GameInputManager.Instance.QueueCommandPressed;
+
+        ShowMoveCommandMarker(target);
+
+        target.y =
+            shipFlightHeight;
+
+        // SINGLE SHIP
+        if (selectedShips.Count == 1)
+        {
+            ShipUnit ship =
+                selectedShips[0];
+
+            if (ship == null ||
+                !ship.IsMine() ||
+                !ship.IsSpawned ||
+                ship.isDead.Value)
+            {
+                return;
+            }
+
+            ship.MoveToServerRpc(
+                target,
+                queueCommand);
+
+            if (queueCommand)
+                ship.QueueVisualMoveCommand(target);
+            else
+                ship.SetVisualMoveCommand(target);
+
+            return;
+        }
+
+        // GROUP CENTER
+        Vector3 groupCenter =
+            Vector3.zero;
+
+        int validShipCount = 0;
+
+        foreach (ShipUnit ship in selectedShips)
+        {
+            if (ship == null ||
+                !ship.IsMine() ||
+                !ship.IsSpawned ||
+                ship.isDead.Value)
+            {
+                continue;
+            }
+
+            groupCenter +=
+                ship.transform.position;
+
+            validShipCount++;
+        }
+
+        if (validShipCount == 0)
+            return;
+
+        groupCenter /=
+            validShipCount;
+
+        // INDIVIDUAL TARGETS
+        foreach (ShipUnit ship in selectedShips)
+        {
+            if (ship == null ||
+                !ship.IsMine() ||
+                !ship.IsSpawned ||
+                ship.isDead.Value)
+            {
+                continue;
+            }
+
+            Vector3 offset =
+                ship.transform.position -
+                groupCenter;
+
+            offset.y = 0f;
+
+            Vector3 shipTarget =
+                target + offset;
+
+            shipTarget.y =
+                shipFlightHeight;
+
+            ship.MoveToServerRpc(
+                shipTarget,
+                queueCommand);
+
+            if (queueCommand)
+                ship.QueueVisualMoveCommand(
+                    shipTarget);
+            else
+                ship.SetVisualMoveCommand(
+                    shipTarget);
+        }
+    }
+
+    private void IssueFormationMove(
+    Vector3 target,
+    bool queueCommand)
+    {
+        Dictionary<ShipUnit, Vector3> formation =
+            ShipFormationHelper.CreateFormation(
+                selectedShips,
+                target,
+                formationSpacing);
+
+        foreach (var pair in formation)
+        {
+            ShipUnit ship = pair.Key;
+            Vector3 shipTarget = pair.Value;
+
+            shipTarget.y =
+                shipFlightHeight;
+
+            if (queueCommand)
+            {
+                // Zastêpujemy pierwszy klik double-commandu.
+                ship.ReplaceLastQueuedMoveServerRpc(
+                    shipTarget);
+
+                ship.ReplaceLastVisualMoveCommand(
+                    shipTarget);
+            }
+            else
+            {
+                ship.MoveToServerRpc(
+                    shipTarget,
+                    false);
+
+                ship.SetVisualMoveCommand(
+                    shipTarget);
+            }
+        }
+    }
+
+    private void IssueFormationAttackMove(
+    Vector3 target,
+    bool queueCommand)
+    {
+        Dictionary<ShipUnit, Vector3> formation =
+            ShipFormationHelper.CreateFormation(
+                selectedShips,
+                target,
+                formationSpacing);
+
+        foreach (var pair in formation)
+        {
+            ShipUnit ship = pair.Key;
+            Vector3 shipTarget = pair.Value;
+
+            shipTarget.y =
+                shipFlightHeight;
+
+            if (queueCommand)
+            {
+                ship.ReplaceLastQueuedAttackMoveServerRpc(
+                    shipTarget);
+
+                ship.ReplaceLastVisualAttackMoveCommand(
+                    shipTarget);
+            }
+            else
+            {
+                ship.AttackMoveServerRpc(
+                    shipTarget,
+                    false);
+
+                ship.SetVisualAttackMoveCommand(
+                    shipTarget);
+            }
+        }
+    }
+
+    private void IssueFormationGuard(
+    Vector3 target,
+    bool queueCommand)
+    {
+        Dictionary<ShipUnit, Vector3> formation =
+            ShipFormationHelper.CreateFormation(
+                selectedShips,
+                target,
+                formationSpacing);
+
+        foreach (var pair in formation)
+        {
+            ShipUnit ship = pair.Key;
+            Vector3 shipTarget = pair.Value;
+
+            shipTarget.y =
+                shipFlightHeight;
+
+            if (queueCommand)
+            {
+                ship.ReplaceLastQueuedGuardServerRpc(
+                    shipTarget);
+
+                ship.ReplaceLastVisualGuardCommand(
+                    shipTarget);
+            }
+            else
+            {
+                ship.GuardServerRpc(
+                    shipTarget,
+                    false);
+
+                ship.SetVisualGuardCommand(
+                    shipTarget);
+            }
+        }
     }
 
 }

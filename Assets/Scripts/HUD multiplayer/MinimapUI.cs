@@ -25,6 +25,9 @@ public class MinimapUI :
     [SerializeField]
     private RtsCameraController cameraController;
 
+    [SerializeField]
+    private ShipSelectionController shipSelectionController;
+
 
     private float nextUpdateTime;
 
@@ -322,12 +325,6 @@ public class MinimapUI :
             return;
         }
 
-        if (eventData.button !=
-            PointerEventData.InputButton.Left)
-        {
-            return;
-        }
-
         Vector2 localPoint;
 
         if (!RectTransformUtility
@@ -376,9 +373,26 @@ public class MinimapUI :
                 0f,
                 worldZ);
 
-        cameraController
-            .MoveViewToWorldPosition(
-                worldPosition);
+        if (eventData.button ==
+            PointerEventData.InputButton.Left)
+        {
+            cameraController
+                .MoveViewToWorldPosition(
+                    worldPosition);
+
+            return;
+        }
+
+        if (eventData.button ==
+            PointerEventData.InputButton.Right)
+        {
+            if (shipSelectionController != null)
+            {
+                shipSelectionController
+                    .MoveSelectedShipsTo(
+                        worldPosition);
+            }
+        }
     }
 
     public Vector2 WorldToMinimapLocal(

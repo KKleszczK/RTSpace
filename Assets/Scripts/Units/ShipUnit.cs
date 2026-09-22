@@ -6071,5 +6071,298 @@ public class ShipUnit : NetworkBehaviour, IDamageable
             visible);
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    public void ReplaceLastQueuedMoveServerRpc(
+    Vector3 position,
+    ServerRpcParams rpcParams = default)
+    {
+        ulong senderClientId =
+            rpcParams.Receive.SenderClientId;
+
+        if (senderClientId != ownerId.Value)
+            return;
+
+        if (isDead.Value)
+            return;
+
+        ShipCommand command =
+            new ShipCommand(
+                ShipCommandType.Move,
+                position);
+
+        // Ostatnia komenda czeka w kolejce.
+        if (commandQueue.Count > 0)
+        {
+            int lastIndex =
+                commandQueue.Count - 1;
+
+            if (commandQueue[lastIndex].Type ==
+                ShipCommandType.Move)
+            {
+                commandQueue[lastIndex] =
+                    command;
+
+                return;
+            }
+        }
+
+        // Pierwszy klik móg³ staæ siê ju¿ aktywn¹ komend¹.
+        if (hasActiveCommand &&
+            activeCommand.Type ==
+            ShipCommandType.Move)
+        {
+            activeCommand =
+                command;
+
+            targetPosition.Value =
+                position;
+
+            SetStateServer(
+                ShipState.Moving);
+
+            return;
+        }
+
+        // Awaryjnie dodajemy normalnie.
+        AddCommandToQueueServer(
+            command);
+    }
+
+    public void ReplaceLastVisualMoveCommand(
+    Vector3 position)
+    {
+        if (visualCommands.Count > 0)
+        {
+            int lastIndex =
+                visualCommands.Count - 1;
+
+            if (visualCommands[lastIndex].Type ==
+                ShipCommandType.Move)
+            {
+                visualCommands[lastIndex] =
+                    new VisualShipCommand(
+                        ShipCommandType.Move,
+                        position);
+
+                return;
+            }
+        }
+
+        QueueVisualMoveCommand(
+            position);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void ReplaceLastQueuedAttackMoveServerRpc(
+    Vector3 position,
+    ServerRpcParams rpcParams = default)
+    {
+        ulong senderClientId =
+            rpcParams.Receive.SenderClientId;
+
+        if (senderClientId != ownerId.Value)
+            return;
+
+        if (isDead.Value)
+            return;
+
+        ShipCommand command =
+            new ShipCommand(
+                ShipCommandType.AttackMove,
+                position);
+
+        if (commandQueue.Count > 0)
+        {
+            int lastIndex =
+                commandQueue.Count - 1;
+
+            if (commandQueue[lastIndex].Type ==
+                ShipCommandType.AttackMove)
+            {
+                commandQueue[lastIndex] =
+                    command;
+
+                return;
+            }
+        }
+
+        if (hasActiveCommand &&
+            activeCommand.Type ==
+            ShipCommandType.AttackMove)
+        {
+            activeCommand =
+                command;
+
+            InitializeAttackMoveServer(
+                position);
+
+            targetPosition.Value =
+                position;
+
+            SetStateServer(
+                ShipState.AttackMoving);
+
+            return;
+        }
+
+        AddCommandToQueueServer(
+            command);
+    }
+
+    public void ReplaceLastVisualAttackMoveCommand(
+    Vector3 position)
+    {
+        if (visualCommands.Count > 0)
+        {
+            int lastIndex =
+                visualCommands.Count - 1;
+
+            if (visualCommands[lastIndex].Type ==
+                ShipCommandType.AttackMove)
+            {
+                visualCommands[lastIndex] =
+                    new VisualShipCommand(
+                        ShipCommandType.AttackMove,
+                        position);
+
+                return;
+            }
+        }
+
+        QueueVisualAttackMoveCommand(
+            position);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void ReplaceLastQueuedGuardServerRpc(
+    Vector3 position,
+    ServerRpcParams rpcParams = default)
+    {
+        ulong senderClientId =
+            rpcParams.Receive.SenderClientId;
+
+        if (senderClientId != ownerId.Value)
+            return;
+
+        if (isDead.Value)
+            return;
+
+        ShipCommand command =
+            new ShipCommand(
+                ShipCommandType.Guard,
+                position);
+
+        // =====================================================
+        // AKTYWNY GUARD
+        // Pierwszy Shift+Guard zosta³ dodany do guardPoints.
+        // Double-command ma ZAST¥PIÆ ostatni punkt.
+        // =====================================================
+
+        if (hasActiveCommand &&
+            activeCommand.Type ==
+                ShipCommandType.Guard)
+        {
+            if (guardPoints.Count > 0)
+            {
+                guardPoints[
+                    guardPoints.Count - 1] =
+                    position;
+            }
+            else
+            {
+                guardPoints.Add(
+                    position);
+            }
+
+            // Je¿eli Guard ma tylko jeden punkt,
+            // jest to jego g³ówny cel.
+            if (guardPoints.Count == 1)
+            {
+                activeCommand =
+                    command;
+
+                AttackMoveProgressAnchor.Value =
+                    position;
+
+                targetPosition.Value =
+                    position;
+
+                SetStateServer(
+                    ShipState.Passive);
+            }
+
+            return;
+        }
+
+        // =====================================================
+        // GUARD CZEKA W NORMALNEJ KOLEJCE
+        // =====================================================
+
+        if (commandQueue.Count > 0)
+        {
+            int lastIndex =
+                commandQueue.Count - 1;
+
+            if (commandQueue[lastIndex].Type ==
+                ShipCommandType.Guard)
+            {
+                commandQueue[lastIndex] =
+                    command;
+
+                if (guardPoints.Count > 0)
+                {
+                    guardPoints[
+                        guardPoints.Count - 1] =
+                        position;
+                }
+
+                return;
+            }
+        }
+
+        AddCommandToQueueServer(
+            command);
+    }
+
+    public void ReplaceLastVisualGuardCommand(
+    Vector3 position)
+    {
+        if (visualCommands.Count > 0)
+        {
+            int lastIndex =
+                visualCommands.Count - 1;
+
+            if (visualCommands[lastIndex].Type ==
+                ShipCommandType.Guard)
+            {
+                if (visualGuardPoints.Count > 0)
+                {
+                    visualGuardPoints[
+                        visualGuardPoints.Count - 1] =
+                        position;
+                }
+                else
+                {
+                    visualGuardPoints.Add(
+                        position);
+                }
+
+                // Jeden punkt = g³ówny Guard.
+                if (visualGuardPoints.Count == 1)
+                {
+                    visualCommands[lastIndex] =
+                        new VisualShipCommand(
+                            ShipCommandType.Guard,
+                            position);
+                }
+
+                return;
+            }
+        }
+
+        QueueVisualGuardCommand(
+            position);
+    }
+
 }
 
