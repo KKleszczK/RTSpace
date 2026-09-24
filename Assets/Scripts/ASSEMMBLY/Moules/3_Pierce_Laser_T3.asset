@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
   moduleId: pierce_laser_t3
   displayName: Pierce Laser
-  description: Absolute desintegration - executes if enemy has no shields left. Highly
+  description: Executes hull, deals 20 damage to shields. Needs 4s to reload. Highly
     specialized tactical technology.
   icon: {fileID: 21300000, guid: b1674488c29a8f4429648ccf2618baa7, type: 3}
   tier: 3
@@ -51,9 +51,9 @@ MonoBehaviour:
   abilityCooldown: 20
   isWeapon: 1
   weaponType: 0
-  weaponRange: 6
+  weaponRange: 7
   weaponAttackInterval: 4
-  weaponHullDamage: 9999
+  weaponHullDamage: 99999
   weaponShieldDamage: 20
   projectileSpeed: 5
   weaponHasMagazine: 0

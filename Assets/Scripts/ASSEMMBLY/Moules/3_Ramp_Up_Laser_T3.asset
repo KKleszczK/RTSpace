@@ -14,9 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
   moduleId: ramp_up_laser_t3
   displayName: Ramp Up Laser
-  description: Single point laser that heats up dealing more damage and extending
-    its range of fire by 30% at the cost of 15% mobility at full heat. Damage increase
-    25-150 dmg/s affter 6 seconds. Great defensive tool.
+  description: Laser that heats up dealing 25-150/s. Extends its range by 30% and
+    decreases ship movement speed by 15% after 6s.
   icon: {fileID: 21300000, guid: 04886df039228aa4997f6495a7b578e9, type: 3}
   tier: 3
   type: 1

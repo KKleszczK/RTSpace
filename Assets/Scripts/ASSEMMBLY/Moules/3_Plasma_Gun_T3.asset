@@ -14,8 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
   moduleId: plasma_gun_t3
   displayName: Plasma Gun
-  description: Heavy blows in quick succesion. Magazine with 6 blasts ready to be
-    deployed every 6 seconds. Each blast deals 70 damage. Scary stuff
+  description: Has magazine with 6 blasts, reload time 6s. Each blast deals 70 damage
   icon: {fileID: 21300000, guid: f60424bf24257de4c90d8e994c8bb1c4, type: 3}
   tier: 3
   type: 1
@@ -50,12 +49,12 @@ MonoBehaviour:
   abilityRange: 8
   abilityCooldown: 20
   isWeapon: 1
-  weaponType: 0
-  weaponRange: 4
+  weaponType: 1
+  weaponRange: 5
   weaponAttackInterval: 0.5
   weaponHullDamage: 70
   weaponShieldDamage: 70
-  projectileSpeed: 5
+  projectileSpeed: 20
   weaponHasMagazine: 1
   magazineCapacity: 6
   magazineCanReload: 1

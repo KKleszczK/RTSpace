@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
   moduleId: mining_salvager_t2
   displayName: Mining Salvager
-  description: Salvages nerby metal ores which grants 20/s metal. Does not drop density
+  description: Salvages nerby ores granting 30/s*density metal. Does not drop density
   icon: {fileID: 21300000, guid: f3102fa8084853e44845b02c8d2d5549, type: 3}
   tier: 2
   type: 0
-  metalCost: 250
-  energyCost: 100
+  metalCost: 220
+  energyCost: 110
   craftTime: 15
   maxCopiesPerPlayer: 99
   exclusive: 1
@@ -41,7 +41,7 @@ MonoBehaviour:
   baseBoosterValue: 0
   isSocketMiner: 1
   mineInterval: 1
-  miningAmountAtFullDensity: 20
+  miningAmountAtFullDensity: 30
   densityRemovedPerHit: 0
   miningModuleDurability: 0
   haveAbility: 0

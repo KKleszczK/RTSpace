@@ -14,17 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
   moduleId: micro_reactor_t3
   displayName: Micro Reactor
-  description: Boosts cores energy production at nearby station by 15% (stacks) and
-    reduces flat movement speed of holder by 3
+  description: Boosts cores energy production at nearby station by 10% and reduces
+    flat movement speed of holder by 3
   icon: {fileID: 21300000, guid: 10e2b85dcbf26a947b01fe0f41f794e7, type: 3}
   tier: 3
   type: 2
   metalCost: 200
-  energyCost: 100
+  energyCost: 300
   craftTime: 40
   maxCopiesPerPlayer: 99
   exclusive: 1
-  unlockedByDefault: 0
+  unlockedByDefault: 1
   shieldFlat: 0
   shieldPercent: 0
   hpFlat: 0
@@ -39,7 +39,7 @@ MonoBehaviour:
   auraEffectValue: 0
   haveBaseBooster: 1
   baseBoosterEffect: 1
-  baseBoosterValue: 15
+  baseBoosterValue: 10
   isSocketMiner: 0
   mineInterval: 1
   miningAmountAtFullDensity: 40

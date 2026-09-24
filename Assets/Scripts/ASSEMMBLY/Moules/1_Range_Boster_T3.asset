@@ -22,7 +22,7 @@ MonoBehaviour:
   metalCost: 800
   energyCost: 200
   craftTime: 40
-  maxCopiesPerPlayer: 3
+  maxCopiesPerPlayer: 1
   exclusive: 1
   unlockedByDefault: 1
   shieldFlat: 0

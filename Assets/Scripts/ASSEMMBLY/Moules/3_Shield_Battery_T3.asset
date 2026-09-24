@@ -14,11 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
   moduleId: shield_battery_t3
   displayName: Shield Battery
-  description: Boosts deflector battery capacity and shield dencity giving +200 shield
-    HP and 20% overall shield. Taps into local station power networks to actively
-    recharge all equipped shield modules while in range.
+  description: Boosts shield by +200 flat and +25% overall. Station has to power
+    up the shield.
   icon: {fileID: 21300000, guid: 3dd68358756fa84499b3c2483f95abc5, type: 3}
-  tier: 2
+  tier: 3
   type: 1
   metalCost: 400
   energyCost: 80
@@ -27,7 +26,7 @@ MonoBehaviour:
   exclusive: 0
   unlockedByDefault: 0
   shieldFlat: 200
-  shieldPercent: 20
+  shieldPercent: 25
   hpFlat: 0
   hpPercent: 0
   moveSpeedFlat: 0

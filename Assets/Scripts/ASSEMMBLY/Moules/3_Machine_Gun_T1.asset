@@ -14,8 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
   moduleId: machine_gun_t1
   displayName: Machine Gun
-  description: Reliable jack of all trades turret. Deals 20/s with lightning speed
-    bolts. Shoots fast and makes captain happy.
+  description: Deals 20/s. Shoots fast and makes captain happy.
   icon: {fileID: 21300000, guid: 811e857f556f0a741b005b868afff404, type: 3}
   tier: 1
   type: 1

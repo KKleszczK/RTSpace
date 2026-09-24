@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
   moduleId: torpedo_launcher_t3
   displayName: Torpedo Launcher
-  description: Sends deadly explosive rockets tovards the enemy. Deals 80 to hull
-    and 30 to shield AOE damage in a small radius. Has 6 torpedos in its storage.
+  description: Deals 60 damage to hull and 30 to shield. Has AOE damage in a small
+    radius. Module consists of 8 torpedos in its storage.
   icon: {fileID: 21300000, guid: 61535def2e7e8bc4db9e61d7045d2f0e, type: 3}
   tier: 3
   type: 1
@@ -52,16 +52,16 @@ MonoBehaviour:
   isWeapon: 1
   weaponType: 1
   weaponRange: 5
-  weaponAttackInterval: 1
-  weaponHullDamage: 80
+  weaponAttackInterval: 0.5
+  weaponHullDamage: 60
   weaponShieldDamage: 30
-  projectileSpeed: 5
+  projectileSpeed: 7
   weaponHasMagazine: 1
-  magazineCapacity: 6
+  magazineCapacity: 8
   magazineCanReload: 0
   magazineReloadTime: 3
   weaponHasAoe: 1
-  weaponAoeRange: 1
+  weaponAoeRange: 2
   weaponAoeDamageMultiplier: 1
   weaponIsStacking: 0
   weaponMaxStacks: 20

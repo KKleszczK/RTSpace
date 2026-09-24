@@ -14,14 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
   moduleId: lightning_turret_t3
   displayName: Lightning Turret
-  description: 'High voltage, high damage. Great for breaking multiple high shield
-    targets. Deals chain damage 200/s every additional target gets 50% less damage
+  description: 'Deals chain damage 200/s every additional target gets 50% less damage
     (max 3 targets). '
   icon: {fileID: 21300000, guid: b2f5d68a71bf40f4c8c47f2bf7bf6163, type: 3}
   tier: 3
   type: 1
-  metalCost: 300
-  energyCost: 300
+  metalCost: 400
+  energyCost: 400
   craftTime: 20
   maxCopiesPerPlayer: 99
   exclusive: 0
@@ -52,7 +51,7 @@ MonoBehaviour:
   abilityCooldown: 20
   isWeapon: 1
   weaponType: 0
-  weaponRange: 3
+  weaponRange: 4
   weaponAttackInterval: 0.2
   weaponHullDamage: 5
   weaponShieldDamage: 40
