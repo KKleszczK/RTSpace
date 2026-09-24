@@ -415,13 +415,10 @@ public class BaseUnit : NetworkBehaviour, IDamageable
             $"[BASE DESTROYED] Owner={OwnerId}",
             this);
 
-        /*
-         * Na razie NIE despawnujemy bazy.
-         *
-         * PóŸniej tutaj podepniemy:
-         * GameManager / WinCondition.
-         */
+        MatchManager.Instance?.EndMatchServer(
+            OwnerId,
+            MatchEndReason.BaseDestroyed);
     }
 
-    
+
 }

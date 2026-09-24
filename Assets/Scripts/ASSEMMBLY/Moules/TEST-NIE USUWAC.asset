@@ -50,11 +50,11 @@ MonoBehaviour:
   abilityCooldown: 20
   isWeapon: 1
   weaponType: 1
-  weaponRange: 5
-  weaponAttackInterval: 1
-  weaponHullDamage: 10
-  weaponShieldDamage: 10
-  projectileSpeed: 10
+  weaponRange: 20
+  weaponAttackInterval: 0.2
+  weaponHullDamage: 100
+  weaponShieldDamage: 100
+  projectileSpeed: 50
   weaponHasMagazine: 0
   magazineCapacity: 10
   magazineCanReload: 1
