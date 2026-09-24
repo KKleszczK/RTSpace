@@ -1,5 +1,6 @@
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public enum MatchEndReason
 {
@@ -30,6 +31,13 @@ public class MatchManager : NetworkBehaviour
     private void Awake()
     {
         Instance = this;
+    }
+
+    private bool localMatchFinished = false;
+
+    public bool IsMatchFinished()
+    {
+        return matchFinished.Value || localMatchFinished;
     }
 
     public void EndMatchServer(
@@ -80,9 +88,9 @@ public class MatchManager : NetworkBehaviour
 
     [ClientRpc]
     private void ShowMatchResultClientRpc(
-        ulong winnerId,
-        ulong loserId,
-        MatchEndReason reason)
+    ulong winnerId,
+    ulong loserId,
+    MatchEndReason reason)
     {
         ulong localClientId =
             NetworkManager.Singleton.LocalClientId;
@@ -95,9 +103,25 @@ public class MatchManager : NetworkBehaviour
             $"{(victory ? "VICTORY" : "DEFEAT")} " +
             $"Reason={reason}");
 
-        MatchEndPanelUI.Instance?.Show(
-            victory,
-            reason);
+        if (MatchSnapshotUI.Instance != null)
+        {
+            MatchSnapshotUI.Instance.Capture(() =>
+            {
+                MatchEndPanelUI.Instance?.Show(
+                    victory,
+                    reason);
+
+                ShutdownNetwork();
+            });
+        }
+        else
+        {
+            MatchEndPanelUI.Instance?.Show(
+                victory,
+                reason);
+
+            ShutdownNetwork();
+        }
     }
 
     public void Surrender()
@@ -128,15 +152,27 @@ public class MatchManager : NetworkBehaviour
 
     public void ShowHostDisconnectedVictory()
     {
-        if (IsServer)
-            return;
+        if (IsServer) return;
 
-        Debug.Log(
-            "[MATCH] Host disconnected. Local player wins.");
+        localMatchFinished = true;
 
-        MatchEndPanelUI.Instance?.Show(
-            true,
-            MatchEndReason.Disconnect);
+        Debug.Log("[MATCH] Host disconnected. Local player wins.");
+
+        if (MatchSnapshotUI.Instance != null)
+        {
+            MatchSnapshotUI.Instance.Capture(() =>
+            {
+                MatchEndPanelUI.Instance?.Show(
+                    true,
+                    MatchEndReason.Disconnect);
+            });
+        }
+        else
+        {
+            MatchEndPanelUI.Instance?.Show(
+                true,
+                MatchEndReason.Disconnect);
+        }
     }
 
     public override void OnNetworkSpawn()
@@ -195,5 +231,22 @@ public class MatchManager : NetworkBehaviour
 
         // CLIENT: utraciliœmy po³¹czenie z Hostem
         ShowHostDisconnectedVictory();
+    }
+
+    private void ShutdownNetwork()
+    {
+        if (NetworkManager.Singleton == null)
+            return;
+
+        Debug.Log("[MATCH] Shutting down network.");
+
+        NetworkManager.Singleton.Shutdown();
+    }
+
+    
+
+    public void ReturnToMenu()
+    {
+        SceneManager.LoadScene("SampleScene");
     }
 }

@@ -88,6 +88,12 @@ public class ShipSelectionController : MonoBehaviour
 
     private void Update()
     {
+        if (MatchManager.Instance != null &&
+            MatchManager.Instance.IsMatchFinished())
+        {
+            return;
+        }
+
         if (Mouse.current.leftButton.wasPressedThisFrame)
             StartSelection();
 
