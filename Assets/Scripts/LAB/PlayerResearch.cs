@@ -286,11 +286,14 @@ public class PlayerResearch : NetworkBehaviour
         // =========================================================
 
         if (!IsCompleted(
-                research.researchId))
+        research.researchId))
         {
             completedResearches.Add(
                 new FixedString64Bytes(
                     research.researchId));
+
+            RegisterResearchCompletedClientRpc(
+                OwnerClientId);
         }
 
         // =========================================================
@@ -324,6 +327,14 @@ public class PlayerResearch : NetworkBehaviour
             $"[RESEARCH COMPLETE] " +
             $"{research.displayName} | " +
             $"ID={research.researchId}");
+    }
+
+    [ClientRpc]
+    private void RegisterResearchCompletedClientRpc(
+    ulong playerId)
+    {
+        MatchStatistics.Instance?.
+            RegisterResearchCompleted(playerId);
     }
 
     [ClientRpc]

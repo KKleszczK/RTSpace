@@ -388,12 +388,22 @@ public class PlayerModuleCrafting : NetworkBehaviour
 
         inventory.AddModule(module.moduleId);
 
+        RegisterModuleCraftedClientRpc(OwnerClientId);
+
         ShowModuleCompletedClientRpc(
             module.moduleId);
 
         Debug.Log(
             "[CRAFT 10] Wywo³ano AddModule: " +
             module.moduleId);
+    }
+
+    [ClientRpc]
+    private void RegisterModuleCraftedClientRpc(
+    ulong playerId)
+    {
+        MatchStatistics.Instance?.
+            RegisterModuleCrafted(playerId);
     }
 
     [ClientRpc]

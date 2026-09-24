@@ -1159,8 +1159,11 @@ public class ShipUnit : NetworkBehaviour, IDamageable
             if (actualShieldDamage <= 0)
                 return;
 
-            shield.Value -=
-                actualShieldDamage;
+            shield.Value -= actualShieldDamage;
+
+            RegisterDamageClientRpc(
+                ownerId.Value,
+                actualShieldDamage);
 
             if (currentState.Value ==
                 ShipState.Docking)
@@ -1192,8 +1195,11 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         if (actualHullDamage <= 0)
             return;
 
-        hp.Value -=
-            actualHullDamage;
+        hp.Value -= actualHullDamage;
+
+        RegisterDamageClientRpc(
+            ownerId.Value,
+            actualHullDamage);
 
         ShowHullDamageClientRpc(
             actualHullDamage);
@@ -1231,8 +1237,11 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         if (actualDamage <= 0)
             return;
 
-        hp.Value -=
-            actualDamage;
+        hp.Value -= actualDamage;
+
+        RegisterDamageClientRpc(
+            ownerId.Value,
+            actualDamage);
 
         if (currentState.Value ==
                 ShipState.Docking)
@@ -1248,6 +1257,17 @@ public class ShipUnit : NetworkBehaviour, IDamageable
             hp.Value = 0;
             Die();
         }
+    }
+
+    [ClientRpc]
+    private void RegisterDamageClientRpc(
+    ulong damagedPlayerId,
+    int damage)
+    {
+        MatchStatistics.Instance?.
+            RegisterDamage(
+                damagedPlayerId,
+                damage);
     }
 
     // =========================================================
@@ -1343,9 +1363,11 @@ public class ShipUnit : NetworkBehaviour, IDamageable
 
         isDead.Value = true;
 
+        // Zapisz statystykê œmierci zanim statek zostanie Despawn.
+        RegisterShipDeathClientRpc(ownerId.Value);
+
         PlayerUnits units =
-            FindPlayerUnits(
-                ownerId.Value);
+            FindPlayerUnits(ownerId.Value);
 
         if (units != null)
         {
@@ -1353,6 +1375,12 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         }
 
         NetworkObject.Despawn(true);
+    }
+
+    [ClientRpc]
+    private void RegisterShipDeathClientRpc(ulong deadPlayerId)
+    {
+        MatchStatistics.Instance?.RegisterShipDeath(deadPlayerId);
     }
 
     private PlayerUnits FindPlayerUnits(

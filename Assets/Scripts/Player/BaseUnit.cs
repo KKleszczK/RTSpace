@@ -235,8 +235,11 @@ public class BaseUnit : NetworkBehaviour, IDamageable
                     shield.Value,
                     requestedShieldDamage);
 
-            shield.Value -=
-                actualShieldDamage;
+            shield.Value -= actualShieldDamage;
+
+            RegisterDamageClientRpc(
+                OwnerId,
+                actualShieldDamage);
 
             ShowShieldDamageClientRpc(
                 actualShieldDamage);
@@ -272,8 +275,11 @@ public class BaseUnit : NetworkBehaviour, IDamageable
                 hp.Value,
                 requestedHullDamage);
 
-        hp.Value -=
-            actualHullDamage;
+        hp.Value -= actualHullDamage;
+
+        RegisterDamageClientRpc(
+            OwnerId,
+            actualHullDamage);
 
         ShowHullDamageClientRpc(
             actualHullDamage);
@@ -298,6 +304,19 @@ public class BaseUnit : NetworkBehaviour, IDamageable
     // =========================================================
     // COMBAT FEEDBACK
     // =========================================================
+
+
+    [ClientRpc]
+    private void RegisterDamageClientRpc(
+    ulong damagedPlayerId,
+    int damage)
+    {
+        MatchStatistics.Instance?.
+            RegisterDamage(
+                damagedPlayerId,
+                damage);
+    }
+
 
     [ClientRpc]
     private void ShowHullDamageClientRpc(
