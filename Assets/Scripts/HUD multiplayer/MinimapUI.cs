@@ -6,8 +6,10 @@ using UnityEngine.UI;
 
 public class MinimapUI :
     MonoBehaviour,
-    IPointerClickHandler
-{
+    IPointerClickHandler,
+    IPointerDownHandler,
+    IDragHandler
+    {
     [Header("Map")]
     [SerializeField] private float mapSize = 100f;
 
@@ -374,16 +376,6 @@ public class MinimapUI :
                 worldZ);
 
         if (eventData.button ==
-            PointerEventData.InputButton.Left)
-        {
-            cameraController
-                .MoveViewToWorldPosition(
-                    worldPosition);
-
-            return;
-        }
-
-        if (eventData.button ==
             PointerEventData.InputButton.Right)
         {
             if (shipSelectionController != null)
@@ -440,5 +432,81 @@ public class MinimapUI :
         return new Vector2(
             x,
             y);
+    }
+
+    public void OnPointerDown(
+    PointerEventData eventData)
+    {
+        if (eventData.button !=
+            PointerEventData.InputButton.Left)
+            return;
+
+        MoveCameraToMinimapPosition(eventData);
+    }
+
+
+    public void OnDrag(
+        PointerEventData eventData)
+    {
+        if (eventData.button !=
+            PointerEventData.InputButton.Left)
+            return;
+
+        MoveCameraToMinimapPosition(eventData);
+    }
+
+    private void MoveCameraToMinimapPosition(PointerEventData eventData)
+    {
+        if (markersContainer == null ||
+            cameraController == null)
+            return;
+
+        if (!RectTransformUtility
+                .ScreenPointToLocalPointInRectangle(
+                    markersContainer,
+                    eventData.position,
+                    eventData.pressEventCamera,
+                    out Vector2 localPoint))
+            return;
+
+        Rect rect =
+            markersContainer.rect;
+
+        float normalizedX =
+            Mathf.InverseLerp(
+                rect.xMin,
+                rect.xMax,
+                localPoint.x);
+
+        float normalizedY =
+            Mathf.InverseLerp(
+                rect.yMin,
+                rect.yMax,
+                localPoint.y);
+
+        float halfMap =
+            mapSize * 0.5f;
+
+        float worldX =
+            Mathf.Lerp(
+                -halfMap,
+                halfMap,
+                normalizedX);
+
+        float worldZ =
+            Mathf.Lerp(
+                -halfMap,
+                halfMap,
+                normalizedY);
+
+        Vector3 worldPosition =
+            new Vector3(
+                worldX,
+                0f,
+                worldZ);
+
+        cameraController
+            .MoveViewToWorldPosition(
+                worldPosition);
     }
 }
