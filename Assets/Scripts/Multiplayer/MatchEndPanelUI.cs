@@ -1,4 +1,5 @@
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 
 public class MatchEndPanelUI : MonoBehaviour
@@ -9,15 +10,24 @@ public class MatchEndPanelUI : MonoBehaviour
     [SerializeField] private TMP_Text resultText;
     [SerializeField] private TMP_Text reasonText;
 
+    [Header("Statistics")]
+    [SerializeField] private TMP_Text shipKillsValue;
+    [SerializeField] private TMP_Text modulesCraftedValue;
+    [SerializeField] private TMP_Text researchesValue;
+    [SerializeField] private TMP_Text damageDealtValue;
+    [SerializeField] private TMP_Text totalMetalValue;
+    [SerializeField] private TMP_Text totalEnergyValue;
+
+    [SerializeField] private Color localPlayerColor = Color.blue;
+    [SerializeField] private Color enemyPlayerColor = Color.red;
+
     private void Awake()
     {
         Instance = this;
         panel.SetActive(false);
     }
 
-    public void Show(
-        bool victory,
-        MatchEndReason reason)
+    public void Show(bool victory, MatchEndReason reason)
     {
         panel.SetActive(true);
 
@@ -26,6 +36,8 @@ public class MatchEndPanelUI : MonoBehaviour
 
         reasonText.text =
             GetReasonText(victory, reason);
+
+        RefreshStatistics();
     }
 
     private string GetReasonText(
@@ -52,5 +64,89 @@ public class MatchEndPanelUI : MonoBehaviour
             default:
                 return "";
         }
+    }
+
+    private void RefreshStatistics()
+    {
+        if (MatchStatistics.Instance == null)
+            return;
+
+        if (NetworkManager.Singleton == null)
+            return;
+
+        ulong localId =
+            NetworkManager.Singleton.LocalClientId;
+
+        MatchStatistics.PlayerStats localStats =
+            MatchStatistics.Instance.GetStats(localId);
+
+        MatchStatistics.PlayerStats enemyStats = null;
+
+        foreach (var pair in
+                 MatchStatistics.Instance.GetAllStats())
+        {
+            if (pair.Key == localId)
+                continue;
+
+            enemyStats = pair.Value;
+            break;
+        }
+
+        if (localStats == null ||
+            enemyStats == null)
+        {
+            Debug.LogWarning(
+                "[STATS UI] Brak statystyk jednego z graczy.");
+
+            return;
+        }
+
+        shipKillsValue.text =
+            FormatStats(
+                localStats.shipsKilled,
+                enemyStats.shipsKilled);
+
+        modulesCraftedValue.text =
+            FormatStats(
+                localStats.modulesCrafted,
+                enemyStats.modulesCrafted);
+
+        researchesValue.text =
+            FormatStats(
+                localStats.researches,
+                enemyStats.researches);
+
+        damageDealtValue.text =
+            FormatStats(
+                localStats.damageDealt,
+                enemyStats.damageDealt);
+
+        totalMetalValue.text =
+            FormatStats(
+                localStats.totalMetal,
+                enemyStats.totalMetal);
+
+        totalEnergyValue.text =
+            FormatStats(
+                localStats.totalEnergy,
+                enemyStats.totalEnergy);
+    }
+
+    private string FormatStats(
+        int localValue,
+        int enemyValue)
+    {
+        string localColor =
+            ColorUtility.ToHtmlStringRGB(
+                localPlayerColor);
+
+        string enemyColor =
+            ColorUtility.ToHtmlStringRGB(
+                enemyPlayerColor);
+
+        return
+            $"<color=#{localColor}>{localValue}</color>" +
+            " | " +
+            $"<color=#{enemyColor}>{enemyValue}</color>";
     }
 }

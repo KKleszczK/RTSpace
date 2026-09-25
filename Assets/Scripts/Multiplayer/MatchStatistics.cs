@@ -6,29 +6,28 @@ public class MatchStatistics : MonoBehaviour
     public static MatchStatistics Instance { get; private set; }
 
     [System.Serializable]
-    public class ResourceSnapshot
-    {
-        public float time;
-        public int metal;
-        public int energy;
-    }
-
-    [System.Serializable]
     public class PlayerStats
     {
         public ulong clientId;
 
         public int shipsKilled;
+        public int modulesCrafted;
+        public int researches;
+        public int damageDealt;
 
         public int totalMetal;
         public int totalEnergy;
 
-        public int modulesCrafted;
-        public int researches;
+        // Income w kolejnych interwa³ach.
+        // Pierwsza wartoœæ zawsze = 0.
+        public List<int> metalIncomeHistory = new();
+        public List<int> energyIncomeHistory = new();
 
-        public int damageDealt;
+        [System.NonSerialized]
+        public int lastTotalMetal;
 
-        public List<ResourceSnapshot> resourceHistory = new();
+        [System.NonSerialized]
+        public int lastTotalEnergy;
     }
 
     [SerializeField] private float snapshotInterval = 30f;
@@ -37,27 +36,20 @@ public class MatchStatistics : MonoBehaviour
 
     private readonly Dictionary<ulong, PlayerResources> trackedResources = new();
 
-    public int shipsKilled;
-
-
-
-
-
-    private float matchTime;
     private float nextSnapshotTime;
+
 
     private void Awake()
     {
         Instance = this;
     }
 
+
     private void Start()
     {
-        // Pierwszy odczyt od razu po rozpoczêciu meczu.
-        CaptureResourceSnapshot();
-
         nextSnapshotTime = snapshotInterval;
     }
+
 
     private void Update()
     {
@@ -67,61 +59,38 @@ public class MatchStatistics : MonoBehaviour
             MatchManager.Instance.IsMatchFinished())
             return;
 
-        matchTime += Time.deltaTime;
-
-        if (matchTime >= nextSnapshotTime)
+        if (Time.time >= nextSnapshotTime)
         {
-            CaptureResourceSnapshot();
+            CaptureResourceIncome();
+
             nextSnapshotTime += snapshotInterval;
         }
     }
 
+
+    // =========================================================
+    // PLAYER STATS
+    // =========================================================
+
     private PlayerStats GetPlayerStats(ulong clientId)
     {
-        if (!playerStats.TryGetValue(clientId, out PlayerStats stats))
+        if (!playerStats.TryGetValue(
+                clientId,
+                out PlayerStats stats))
         {
             stats = new PlayerStats
             {
                 clientId = clientId
             };
 
-            playerStats.Add(clientId, stats);
+            playerStats.Add(
+                clientId,
+                stats);
         }
 
         return stats;
     }
 
-    private void CaptureResourceSnapshot()
-    {
-        PlayerResources[] resources =
-            FindObjectsByType<PlayerResources>(
-                FindObjectsSortMode.None);
-
-        foreach (PlayerResources resource in resources)
-        {
-            if (!resource.IsSpawned)
-                continue;
-
-            ulong clientId = resource.OwnerClientId;
-
-            PlayerStats stats =
-                GetPlayerStats(clientId);
-
-            stats.resourceHistory.Add(
-                new ResourceSnapshot
-                {
-                    time = matchTime,
-                    metal = resource.metal.Value,
-                    energy = resource.energy.Value
-                });
-
-            Debug.Log(
-                $"[STATS LOCAL] Player={clientId} " +
-                $"Time={matchTime:F0}s " +
-                $"Metal={resource.metal.Value} " +
-                $"Energy={resource.energy.Value}");
-        }
-    }
 
     public PlayerStats GetStats(ulong clientId)
     {
@@ -132,10 +101,16 @@ public class MatchStatistics : MonoBehaviour
         return stats;
     }
 
+
     public IReadOnlyDictionary<ulong, PlayerStats> GetAllStats()
     {
         return playerStats;
     }
+
+
+    // =========================================================
+    // RESOURCES
+    // =========================================================
 
     private void TrackPlayerResources()
     {
@@ -151,23 +126,49 @@ public class MatchStatistics : MonoBehaviour
             if (!resource.IsSpawned)
                 continue;
 
-            ulong clientId = resource.OwnerClientId;
+            ulong clientId =
+                resource.OwnerClientId;
 
             if (trackedResources.ContainsKey(clientId))
                 continue;
 
-            trackedResources.Add(clientId, resource);
+            trackedResources.Add(
+                clientId,
+                resource);
 
-            PlayerStats stats = GetPlayerStats(clientId);
+            PlayerStats stats =
+                GetPlayerStats(clientId);
 
-            // Startowe zasoby równie¿ liczymy do Total.
-            stats.totalMetal = resource.metal.Value;
-            stats.totalEnergy = resource.energy.Value;
+            /*
+             * Total zawiera zasoby startowe.
+             */
+            stats.totalMetal =
+                resource.metal.Value;
 
+            stats.totalEnergy =
+                resource.energy.Value;
+
+            /*
+             * Income zaczyna siê od 0.
+             * Zasoby startowe NIE s¹ income.
+             */
+            stats.lastTotalMetal =
+                stats.totalMetal;
+
+            stats.lastTotalEnergy =
+                stats.totalEnergy;
+
+            stats.metalIncomeHistory.Add(0);
+            stats.energyIncomeHistory.Add(0);
+
+            /*
+             * Nas³uchujemy tylko zmian zasobów.
+             */
             resource.metal.OnValueChanged +=
                 (oldValue, newValue) =>
                 {
-                    int gained = newValue - oldValue;
+                    int gained =
+                        newValue - oldValue;
 
                     if (gained > 0)
                         stats.totalMetal += gained;
@@ -176,18 +177,62 @@ public class MatchStatistics : MonoBehaviour
             resource.energy.OnValueChanged +=
                 (oldValue, newValue) =>
                 {
-                    int gained = newValue - oldValue;
+                    int gained =
+                        newValue - oldValue;
 
                     if (gained > 0)
                         stats.totalEnergy += gained;
                 };
 
             Debug.Log(
-                $"[STATS] Tracking Player={clientId} " +
-                $"Start Metal={stats.totalMetal} " +
-                $"Energy={stats.totalEnergy}");
+                $"[STATS] Tracking Player={clientId} | " +
+                $"Start Metal={stats.totalMetal} | " +
+                $"Start Energy={stats.totalEnergy}");
         }
     }
+
+
+    private void CaptureResourceIncome()
+    {
+        foreach (PlayerStats stats in playerStats.Values)
+        {
+            int metalIncome =
+                stats.totalMetal -
+                stats.lastTotalMetal;
+
+            int energyIncome =
+                stats.totalEnergy -
+                stats.lastTotalEnergy;
+
+            metalIncome =
+                Mathf.Max(0, metalIncome);
+
+            energyIncome =
+                Mathf.Max(0, energyIncome);
+
+            stats.metalIncomeHistory.Add(
+                metalIncome);
+
+            stats.energyIncomeHistory.Add(
+                energyIncome);
+
+            stats.lastTotalMetal =
+                stats.totalMetal;
+
+            stats.lastTotalEnergy =
+                stats.totalEnergy;
+
+            Debug.Log(
+                $"[STATS INCOME] Player={stats.clientId} | " +
+                $"Metal +{metalIncome} | " +
+                $"Energy +{energyIncome}");
+        }
+    }
+
+
+    // =========================================================
+    // SHIP KILLS
+    // =========================================================
 
     public void RegisterShipDeath(ulong deadPlayerId)
     {
@@ -206,9 +251,16 @@ public class MatchStatistics : MonoBehaviour
         }
     }
 
+
+    // =========================================================
+    // MODULES
+    // =========================================================
+
     public void RegisterModuleCrafted(ulong playerId)
     {
-        PlayerStats stats = GetPlayerStats(playerId);
+        PlayerStats stats =
+            GetPlayerStats(playerId);
+
         stats.modulesCrafted++;
 
         Debug.Log(
@@ -216,9 +268,16 @@ public class MatchStatistics : MonoBehaviour
             $"Modules Crafted={stats.modulesCrafted}");
     }
 
+
+    // =========================================================
+    // RESEARCH
+    // =========================================================
+
     public void RegisterResearchCompleted(ulong playerId)
     {
-        PlayerStats stats = GetPlayerStats(playerId);
+        PlayerStats stats =
+            GetPlayerStats(playerId);
+
         stats.researches++;
 
         Debug.Log(
@@ -226,7 +285,14 @@ public class MatchStatistics : MonoBehaviour
             $"Researches={stats.researches}");
     }
 
-    public void RegisterDamage(ulong damagedPlayerId, int damage)
+
+    // =========================================================
+    // DAMAGE
+    // =========================================================
+
+    public void RegisterDamage(
+        ulong damagedPlayerId,
+        int damage)
     {
         if (damage <= 0)
             return;
