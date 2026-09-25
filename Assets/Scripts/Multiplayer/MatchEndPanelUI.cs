@@ -21,6 +21,10 @@ public class MatchEndPanelUI : MonoBehaviour
     [SerializeField] private Color localPlayerColor = Color.blue;
     [SerializeField] private Color enemyPlayerColor = Color.red;
 
+    [Header("Charts")]
+    [SerializeField] private MatchResourceChartUI metalChart;
+    [SerializeField] private MatchResourceChartUI energyChart;
+
     private void Awake()
     {
         Instance = this;
@@ -36,6 +40,8 @@ public class MatchEndPanelUI : MonoBehaviour
 
         reasonText.text =
             GetReasonText(victory, reason);
+
+        Canvas.ForceUpdateCanvases();
 
         RefreshStatistics();
     }
@@ -130,6 +136,14 @@ public class MatchEndPanelUI : MonoBehaviour
             FormatStats(
                 localStats.totalEnergy,
                 enemyStats.totalEnergy);
+
+        metalChart.Draw(
+            localStats.metalIncomeHistory,
+            enemyStats.metalIncomeHistory);
+
+        energyChart.Draw(
+            localStats.energyIncomeHistory,
+            enemyStats.energyIncomeHistory);
     }
 
     private string FormatStats(
