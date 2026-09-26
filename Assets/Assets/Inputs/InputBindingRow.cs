@@ -232,12 +232,14 @@ public class InputBindingRow : MonoBehaviour
         if (hasConflict)
         {
             Debug.LogWarning(
-                "[INPUT] Binding conflict: " +
-                inputAction.name +
-                " cannot use " +
-                inputAction.bindings[BindingIndex].effectivePath +
-                " because it is already assigned to " +
-                conflictingAction.name);
+    "[INPUT] Binding conflict: " +
+    inputAction.actionMap.name + "/" +
+    inputAction.name +
+    " cannot use " +
+    inputAction.bindings[BindingIndex].effectivePath +
+    " because it is already assigned to " +
+    conflictingAction.actionMap.name + "/" +
+    conflictingAction.name);
 
             RestorePreviousBinding();
 

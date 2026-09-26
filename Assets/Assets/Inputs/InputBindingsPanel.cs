@@ -1,10 +1,14 @@
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using System.Collections.Generic;
 
 public class InputBindingsPanel : MonoBehaviour
 {
+    [SerializeField]
+    private GameObject bindingHeaderPrefab;
+
     [Header("Bindings")]
     [SerializeField]
     private Transform content;
@@ -24,6 +28,23 @@ public class InputBindingsPanel : MonoBehaviour
     bindingRows = new();
 
     private InputBindingRow activeRebindingRow;
+
+
+    private readonly HashSet<string> fixedActions = new()
+        {
+            "Move",
+            "Queue command",
+            "Set control group from selection",
+            "Activate selection from control group",
+            "Center camera on alert",
+            "Select units sharing the same class",
+            "Selector",
+            "Deploy",
+            "Clear modules from ship",
+            "select module T2",
+            "select module T3",
+            "Change station tab"
+        };
 
     private void Start()
     {
@@ -51,42 +72,45 @@ public class InputBindingsPanel : MonoBehaviour
 
     private void GenerateBindings()
     {
-        if (GameInputManager.Instance == null)
-        {
-            Debug.LogError(
-                "[INPUT] Brak GameInputManager.");
+        AddMap(
+            GameInputManager.Instance.InputActions.Ships.Get());
 
-            return;
-        }
+        AddMap(
+            GameInputManager.Instance.InputActions.Base.Get());
 
-        if (content == null ||
-            bindingRowPrefab == null)
-        {
-            Debug.LogError(
-                "[INPUT] Brak Content lub BindingRowPrefab.");
+        AddMap(
+            GameInputManager.Instance.InputActions.CameraControls.Get());
+        AddMap(
+            GameInputManager.Instance.InputActions.Selections.Get());
+    }
 
-            return;
-        }
+    private void AddMap(InputActionMap actionMap)
+    {
+        GameObject headerObject =
+            Instantiate(bindingHeaderPrefab, content);
 
-        InputActionMap gameplay =
-            GameInputManager.Instance
-                .InputActions
-                .Gameplay
-                .Get();
+        TMP_Text headerText =
+            headerObject.GetComponentInChildren<TMP_Text>();
 
-        foreach (InputAction action in gameplay.actions)
+        if (headerText != null)
+            headerText.text = actionMap.name;
+
+        // Bindy
+        foreach (InputAction action in actionMap.actions)
         {
             InputBindingRow row =
-                Instantiate(
-                    bindingRowPrefab,
-                    content);
+                Instantiate(bindingRowPrefab, content);
 
-                row.Initialize(
-                    action,
-                    this);
+            row.Initialize(
+                action,
+                this);
 
-                bindingRows.Add(
-                    row);
+            if (fixedActions.Contains(action.name))
+            {
+                row.SetButtonInteractable(false);
+            }
+
+            bindingRows.Add(row);
         }
     }
 

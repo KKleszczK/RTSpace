@@ -626,6 +626,1138 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Ships"",
+            ""id"": ""7267979f-4d2d-4e7e-9dc5-152754c9e6af"",
+            ""actions"": [
+                {
+                    ""name"": ""Guard"",
+                    ""type"": ""Button"",
+                    ""id"": ""2afb45d5-bc3d-4860-b690-8e694c8b7b5c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Stop"",
+                    ""type"": ""Button"",
+                    ""id"": ""618c4330-5340-475d-afe9-a7f8184d4438"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Attack"",
+                    ""type"": ""Button"",
+                    ""id"": ""9009462e-7573-4f6e-8cea-3198e5da86a9"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Attack Move"",
+                    ""type"": ""Button"",
+                    ""id"": ""411f02a7-dd6f-4d5f-8bea-a3cd3b30ab85"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Move"",
+                    ""type"": ""Button"",
+                    ""id"": ""f7057aa3-9c0b-42e1-90a5-5865787d473e"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Queue command"",
+                    ""type"": ""Button"",
+                    ""id"": ""3238d5eb-f5ba-45cd-8c10-a16f8c9ddb79"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Use skill 1"",
+                    ""type"": ""Button"",
+                    ""id"": ""450f44fd-8d56-46a1-8efc-a4163f65791b"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Use skill 2"",
+                    ""type"": ""Button"",
+                    ""id"": ""ae00a0ac-6d49-4044-9f0b-ec8cee8697da"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Use skill 3"",
+                    ""type"": ""Button"",
+                    ""id"": ""62cf9de7-dd85-4d6e-8b48-7dcf7db1d666"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Use skill 4"",
+                    ""type"": ""Button"",
+                    ""id"": ""8b5b7404-490b-4319-98ff-a30ab1a57dc7"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Escort"",
+                    ""type"": ""Button"",
+                    ""id"": ""85605e0c-517a-4740-8543-64cb9f73ea8c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Back to base"",
+                    ""type"": ""Button"",
+                    ""id"": ""91a59a8a-7042-4141-8e06-fc04d9aa4f84"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Dock"",
+                    ""type"": ""Button"",
+                    ""id"": ""410865fd-0bc8-45eb-84c3-408ce9975289"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Set control group from selection"",
+                    ""type"": ""Button"",
+                    ""id"": ""c3184ee0-83b0-4ef0-b5f9-e30a865cb372"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""1ee6d0a6-3019-4f8e-b10a-f1972bb91c6e"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Guard"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4f6d576c-8e07-44f6-8b25-3d74f2c11b39"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Stop"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""97b7f208-ad52-47c9-8278-2edf7d0192b2"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""506a484b-881f-42b9-a921-8f9b96b95c19"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Attack Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""753f11e7-43f0-4cd9-abce-f447bfd80720"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""29c58921-b097-4e47-9b64-003793e54cc5"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Queue command"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3072b3f9-809d-466f-b72f-d0bf7ea9a6d4"",
+                    ""path"": ""<Keyboard>/z"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Use skill 1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5265dea6-03a5-43a9-b9e1-6a0d19659939"",
+                    ""path"": ""<Keyboard>/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Use skill 2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""17cbfdbf-ddb9-495c-a216-6ce90272988f"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Use skill 3"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""494a9b7b-f54c-4ca9-a53b-f09895391112"",
+                    ""path"": ""<Keyboard>/v"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Use skill 4"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""acae1fa3-070e-4dde-bdee-5b7d0790938a"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Escort"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""68823b95-1708-4706-9591-0b93778ef1eb"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Back to base"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c9015703-7729-4683-813c-14f297eee0d7"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Dock"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fa481f4c-dd85-4839-b0cb-9a354778e893"",
+                    ""path"": ""<Keyboard>/ctrl"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Set control group from selection"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""Base"",
+            ""id"": ""2a98eba5-805c-450f-ba85-ce44dbf9556c"",
+            ""actions"": [
+                {
+                    ""name"": ""Deplay"",
+                    ""type"": ""Button"",
+                    ""id"": ""92766bb1-278f-449b-b6f8-65b4b106115b"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Clear modules from ship"",
+                    ""type"": ""Button"",
+                    ""id"": ""208e6aec-08bf-40de-9de0-790d4743d1a2"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""select module T2"",
+                    ""type"": ""Button"",
+                    ""id"": ""d92cd5b9-254c-4753-9e7f-e80ec80455d0"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""select module T3"",
+                    ""type"": ""Button"",
+                    ""id"": ""c1488437-bc60-43db-ab51-4d13cacc20d0"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Change station tab"",
+                    ""type"": ""Button"",
+                    ""id"": ""d2f92b01-00c8-4910-8a7a-acb47b061f90"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""machine gun"",
+                    ""type"": ""Button"",
+                    ""id"": ""3761cd4f-7061-441c-8690-1377ce721ed1"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Mining laser"",
+                    ""type"": ""Button"",
+                    ""id"": ""3f307136-40ad-4e98-b2d2-d06e204929c9"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Ramp up laser"",
+                    ""type"": ""Button"",
+                    ""id"": ""40bcbdcd-da88-49be-8505-8925ba62a0d6"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Mobile assembly"",
+                    ""type"": ""Button"",
+                    ""id"": ""5d2aafad-3778-4bfb-9710-007312627513"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Hull reinforcement"",
+                    ""type"": ""Button"",
+                    ""id"": ""520a3c3b-52f5-46ea-8cb0-dd35f4442743"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Shield battery"",
+                    ""type"": ""Button"",
+                    ""id"": ""10210758-2a43-41d5-b5ed-902741c332e8"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Plasma gun"",
+                    ""type"": ""Button"",
+                    ""id"": ""6a695547-5e67-401a-9fcb-38ca457d340e"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Queue cancel"",
+                    ""type"": ""Button"",
+                    ""id"": ""8ebda8a3-1aad-4c93-a5e8-ee8beee966d3"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Torpedo launcher"",
+                    ""type"": ""Button"",
+                    ""id"": ""a1eb28b4-fee5-4ff8-9543-bd629311e7c5"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Mining slavager"",
+                    ""type"": ""Button"",
+                    ""id"": ""03f9a754-0730-4849-9eec-89fd29b5fad8"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Fighter Ship"",
+                    ""type"": ""Button"",
+                    ""id"": ""8353a7a1-fc07-45bc-8bac-fef2789eb5ce"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Utility Ship"",
+                    ""type"": ""Button"",
+                    ""id"": ""f1480a24-056d-4e74-b249-447b1cc3602b"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Miner Ship"",
+                    ""type"": ""Button"",
+                    ""id"": ""407e6a73-4641-456d-94cf-3c1faf16ea48"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Speed engines"",
+                    ""type"": ""Button"",
+                    ""id"": ""8287e964-cf88-4ed0-97c5-0fc93921f727"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Reconstruction module"",
+                    ""type"": ""Button"",
+                    ""id"": ""0967c049-4017-49ba-94e4-9084f0a6c096"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Mining explosives"",
+                    ""type"": ""Button"",
+                    ""id"": ""7d668201-60b5-48d1-bfbc-d710fe22e104"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Lightning turret"",
+                    ""type"": ""Button"",
+                    ""id"": ""a4f730ff-4030-4bfd-be55-73856e252901"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Pierce laser"",
+                    ""type"": ""Button"",
+                    ""id"": ""d3992523-0a1d-41c5-8583-4129192b77cc"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Science lab module"",
+                    ""type"": ""Button"",
+                    ""id"": ""8bf1ca80-4e9f-4fc1-b382-7a8c2a85a38f"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Micro reactor"",
+                    ""type"": ""Button"",
+                    ""id"": ""8f9d4914-e0df-428e-bea2-5707b62fdfab"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Dencity scanner"",
+                    ""type"": ""Button"",
+                    ""id"": ""e2809d7b-339d-4fa2-8c94-400485d03ea0"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Range booster"",
+                    ""type"": ""Button"",
+                    ""id"": ""477817c8-06cf-4723-8369-4c45a2b18596"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Shield braker"",
+                    ""type"": ""Button"",
+                    ""id"": ""fdfd9a36-e2d9-4298-b0fd-01e3dcb54726"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""b9e180d2-b420-4261-952f-c3599e1c96c7"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Deplay"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7f1edf5d-baf8-4fa6-b533-b7cd12acf07e"",
+                    ""path"": ""<Keyboard>/alt"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Clear modules from ship"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""158c1735-ecd3-4b07-a18b-3c71ec3f684a"",
+                    ""path"": ""<Keyboard>/ctrl"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""select module T2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8727c90c-7d9d-4501-a6fa-c760f7e397e1"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""select module T3"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f01e220a-80bf-4dfb-8bce-104ed18a0b70"",
+                    ""path"": ""<Keyboard>/capsLock"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Change station tab"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0ca94c46-5652-41ee-ac96-6a2addb49a06"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""machine gun"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f6457111-747a-401e-823a-51a54d69c301"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Mining laser"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d432fdcf-04b7-4610-a3f4-fef97d03251b"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Ramp up laser"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ea80f96a-270b-4378-92a9-fb2738b13b80"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Mobile assembly"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b783bb1d-f28e-44dc-8602-2b0b5e8f5631"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Hull reinforcement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e3c6373a-fda5-4a26-9092-de86d7c4bae9"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Shield battery"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""275a915d-4885-48ba-a1e7-d2bcda7f3f59"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Plasma gun"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e5fd579b-fb07-4bb0-a177-a76592ae1ca6"",
+                    ""path"": ""<Keyboard>/z"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Queue cancel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5de49ff7-cadc-4a21-80c3-2e47d1b8e1e1"",
+                    ""path"": ""<Keyboard>/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Torpedo launcher"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""404bb965-c0db-4e6c-bb1a-0d3e54abd6d0"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Mining slavager"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""386ed3cf-e76d-4fec-ae4f-bacda293bda2"",
+                    ""path"": ""<Keyboard>/t"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Fighter Ship"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8ec33444-782d-42d9-a91b-c17567d3dba6"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Utility Ship"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bc3b547d-c345-492b-9f00-ebd6c53e5d98"",
+                    ""path"": ""<Keyboard>/v"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Miner Ship"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a762bd11-aff2-4283-a431-b4dc2406b9a2"",
+                    ""path"": ""<Keyboard>/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Speed engines"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7ed49760-039f-407c-bb03-210793fa0f8c"",
+                    ""path"": ""<Keyboard>/g"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Reconstruction module"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1a52d954-9e65-40e2-99fd-590364c2d7cf"",
+                    ""path"": ""<Keyboard>/b"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Mining explosives"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ba202f20-c472-424e-ad3d-9c1f3fd5b7bb"",
+                    ""path"": ""<Keyboard>/u"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Lightning turret"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2e11bedd-2ae3-4187-b4f7-136540709536"",
+                    ""path"": ""<Keyboard>/h"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pierce laser"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""763c20b7-6731-476c-9210-f604939b828b"",
+                    ""path"": ""<Keyboard>/n"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Science lab module"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6beeb8c3-4fdd-46a1-bb97-1df00e746290"",
+                    ""path"": ""<Keyboard>/i"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Micro reactor"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a13a9ae3-5088-44de-aaae-d76763656515"",
+                    ""path"": ""<Keyboard>/j"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Dencity scanner"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dd4f0c6e-b439-4ec5-a76d-b56e83ba491b"",
+                    ""path"": ""<Keyboard>/k"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Range booster"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9a3b8b81-5773-4ebb-ae37-62783924871c"",
+                    ""path"": ""<Keyboard>/m"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Shield braker"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""Camera Controls"",
+            ""id"": ""2c4ab10e-00e6-4a94-97e1-c92526efc7cf"",
+            ""actions"": [
+                {
+                    ""name"": ""Center camera on alert"",
+                    ""type"": ""Button"",
+                    ""id"": ""83f10f6d-085f-47d3-bd0b-e755702e7802"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Camera up"",
+                    ""type"": ""Button"",
+                    ""id"": ""1c88000e-b818-4a05-b5dc-eb386933f62f"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Camera right"",
+                    ""type"": ""Button"",
+                    ""id"": ""191237cc-7631-4d9c-a181-b44a07f055db"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Camera down"",
+                    ""type"": ""Button"",
+                    ""id"": ""12db34fe-f4b5-4727-aa6b-6b758fafb6ae"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Camera left"",
+                    ""type"": ""Button"",
+                    ""id"": ""ea88ea84-3c09-4fb9-b429-64d786fbf097"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""3cea85ad-4c9a-4346-85d3-da70cb3e6c84"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Center camera on alert"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""503b2f8d-1924-4c03-9aa3-1cc346cd9d7f"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Camera up"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5acf0e33-a5c1-4cd6-b4d1-10cb259bc789"",
+                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Camera right"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e9c74266-0a0e-4b84-8730-641d719ea4df"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Camera down"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""57f6838d-a8df-49e9-9251-254155380618"",
+                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Camera left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""Selections"",
+            ""id"": ""82eb5e55-30ce-4866-a274-459649503d93"",
+            ""actions"": [
+                {
+                    ""name"": ""Select all army"",
+                    ""type"": ""Button"",
+                    ""id"": ""9c17c4bf-a049-4838-a668-a203ed9e030d"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Select station"",
+                    ""type"": ""Button"",
+                    ""id"": ""c3998218-c947-476e-96ed-fce8a079b37e"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Activate selection from control group 2"",
+                    ""type"": ""Button"",
+                    ""id"": ""a21a2b96-2f1e-4c81-852c-3a7c8b39de20"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Activate selection from control group 3"",
+                    ""type"": ""Button"",
+                    ""id"": ""98ebbedb-756a-490e-a10b-fa439cc0e2a9"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Activate selection from control group 4"",
+                    ""type"": ""Button"",
+                    ""id"": ""444cb401-6421-4dac-8cd9-c66f695772af"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Activate selection from control group 5"",
+                    ""type"": ""Button"",
+                    ""id"": ""b25c5dde-944a-4df2-98f4-e7642912b9cd"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Selector"",
+                    ""type"": ""Button"",
+                    ""id"": ""aa2d6943-987a-4f91-ab38-6c0cc8201fe3"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Select units sharing the same class"",
+                    ""type"": ""Button"",
+                    ""id"": ""59b00e88-1559-45e5-ab76-a71fd57a767c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""e0b9c0ad-879f-4a1f-90dd-ed102ae4267c"",
+                    ""path"": ""<Keyboard>/6"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Select all army"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""159a07a2-f9f7-4564-8fff-1b493ff25121"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Select station"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1fd10952-b4b3-414f-aa22-a5e78d961964"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Activate selection from control group 2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b140e17b-db49-497b-b45b-58db8a3654b2"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Activate selection from control group 3"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2a7aa437-3c0a-42d5-8eae-12521e066dc1"",
+                    ""path"": ""<Keyboard>/4"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Activate selection from control group 4"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f86ecd5d-fa93-43f7-a26f-454210c5ff2a"",
+                    ""path"": ""<Keyboard>/5"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Activate selection from control group 5"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""45ba657f-c452-4520-997a-a508f6864d84"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Selector"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8c642c5a-13ef-4e07-9454-17047c376f2f"",
+                    ""path"": ""<Keyboard>/ctrl"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Select units sharing the same class"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -658,11 +1790,78 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         m_Gameplay_BackToBase = m_Gameplay.FindAction("BackToBase", throwIfNotFound: true);
         m_Gameplay_AllArmy = m_Gameplay.FindAction("AllArmy", throwIfNotFound: true);
         m_Gameplay_Deploy = m_Gameplay.FindAction("Deploy", throwIfNotFound: true);
+        // Ships
+        m_Ships = asset.FindActionMap("Ships", throwIfNotFound: true);
+        m_Ships_Guard = m_Ships.FindAction("Guard", throwIfNotFound: true);
+        m_Ships_Stop = m_Ships.FindAction("Stop", throwIfNotFound: true);
+        m_Ships_Attack = m_Ships.FindAction("Attack", throwIfNotFound: true);
+        m_Ships_AttackMove = m_Ships.FindAction("Attack Move", throwIfNotFound: true);
+        m_Ships_Move = m_Ships.FindAction("Move", throwIfNotFound: true);
+        m_Ships_Queuecommand = m_Ships.FindAction("Queue command", throwIfNotFound: true);
+        m_Ships_Useskill1 = m_Ships.FindAction("Use skill 1", throwIfNotFound: true);
+        m_Ships_Useskill2 = m_Ships.FindAction("Use skill 2", throwIfNotFound: true);
+        m_Ships_Useskill3 = m_Ships.FindAction("Use skill 3", throwIfNotFound: true);
+        m_Ships_Useskill4 = m_Ships.FindAction("Use skill 4", throwIfNotFound: true);
+        m_Ships_Escort = m_Ships.FindAction("Escort", throwIfNotFound: true);
+        m_Ships_Backtobase = m_Ships.FindAction("Back to base", throwIfNotFound: true);
+        m_Ships_Dock = m_Ships.FindAction("Dock", throwIfNotFound: true);
+        m_Ships_Setcontrolgroupfromselection = m_Ships.FindAction("Set control group from selection", throwIfNotFound: true);
+        // Base
+        m_Base = asset.FindActionMap("Base", throwIfNotFound: true);
+        m_Base_Deplay = m_Base.FindAction("Deplay", throwIfNotFound: true);
+        m_Base_Clearmodulesfromship = m_Base.FindAction("Clear modules from ship", throwIfNotFound: true);
+        m_Base_selectmoduleT2 = m_Base.FindAction("select module T2", throwIfNotFound: true);
+        m_Base_selectmoduleT3 = m_Base.FindAction("select module T3", throwIfNotFound: true);
+        m_Base_Changestationtab = m_Base.FindAction("Change station tab", throwIfNotFound: true);
+        m_Base_machinegun = m_Base.FindAction("machine gun", throwIfNotFound: true);
+        m_Base_Mininglaser = m_Base.FindAction("Mining laser", throwIfNotFound: true);
+        m_Base_Rampuplaser = m_Base.FindAction("Ramp up laser", throwIfNotFound: true);
+        m_Base_Mobileassembly = m_Base.FindAction("Mobile assembly", throwIfNotFound: true);
+        m_Base_Hullreinforcement = m_Base.FindAction("Hull reinforcement", throwIfNotFound: true);
+        m_Base_Shieldbattery = m_Base.FindAction("Shield battery", throwIfNotFound: true);
+        m_Base_Plasmagun = m_Base.FindAction("Plasma gun", throwIfNotFound: true);
+        m_Base_Queuecancel = m_Base.FindAction("Queue cancel", throwIfNotFound: true);
+        m_Base_Torpedolauncher = m_Base.FindAction("Torpedo launcher", throwIfNotFound: true);
+        m_Base_Miningslavager = m_Base.FindAction("Mining slavager", throwIfNotFound: true);
+        m_Base_FighterShip = m_Base.FindAction("Fighter Ship", throwIfNotFound: true);
+        m_Base_UtilityShip = m_Base.FindAction("Utility Ship", throwIfNotFound: true);
+        m_Base_MinerShip = m_Base.FindAction("Miner Ship", throwIfNotFound: true);
+        m_Base_Speedengines = m_Base.FindAction("Speed engines", throwIfNotFound: true);
+        m_Base_Reconstructionmodule = m_Base.FindAction("Reconstruction module", throwIfNotFound: true);
+        m_Base_Miningexplosives = m_Base.FindAction("Mining explosives", throwIfNotFound: true);
+        m_Base_Lightningturret = m_Base.FindAction("Lightning turret", throwIfNotFound: true);
+        m_Base_Piercelaser = m_Base.FindAction("Pierce laser", throwIfNotFound: true);
+        m_Base_Sciencelabmodule = m_Base.FindAction("Science lab module", throwIfNotFound: true);
+        m_Base_Microreactor = m_Base.FindAction("Micro reactor", throwIfNotFound: true);
+        m_Base_Dencityscanner = m_Base.FindAction("Dencity scanner", throwIfNotFound: true);
+        m_Base_Rangebooster = m_Base.FindAction("Range booster", throwIfNotFound: true);
+        m_Base_Shieldbraker = m_Base.FindAction("Shield braker", throwIfNotFound: true);
+        // Camera Controls
+        m_CameraControls = asset.FindActionMap("Camera Controls", throwIfNotFound: true);
+        m_CameraControls_Centercameraonalert = m_CameraControls.FindAction("Center camera on alert", throwIfNotFound: true);
+        m_CameraControls_Cameraup = m_CameraControls.FindAction("Camera up", throwIfNotFound: true);
+        m_CameraControls_Cameraright = m_CameraControls.FindAction("Camera right", throwIfNotFound: true);
+        m_CameraControls_Cameradown = m_CameraControls.FindAction("Camera down", throwIfNotFound: true);
+        m_CameraControls_Cameraleft = m_CameraControls.FindAction("Camera left", throwIfNotFound: true);
+        // Selections
+        m_Selections = asset.FindActionMap("Selections", throwIfNotFound: true);
+        m_Selections_Selectallarmy = m_Selections.FindAction("Select all army", throwIfNotFound: true);
+        m_Selections_Selectstation = m_Selections.FindAction("Select station", throwIfNotFound: true);
+        m_Selections_Activateselectionfromcontrolgroup2 = m_Selections.FindAction("Activate selection from control group 2", throwIfNotFound: true);
+        m_Selections_Activateselectionfromcontrolgroup3 = m_Selections.FindAction("Activate selection from control group 3", throwIfNotFound: true);
+        m_Selections_Activateselectionfromcontrolgroup4 = m_Selections.FindAction("Activate selection from control group 4", throwIfNotFound: true);
+        m_Selections_Activateselectionfromcontrolgroup5 = m_Selections.FindAction("Activate selection from control group 5", throwIfNotFound: true);
+        m_Selections_Selector = m_Selections.FindAction("Selector", throwIfNotFound: true);
+        m_Selections_Selectunitssharingthesameclass = m_Selections.FindAction("Select units sharing the same class", throwIfNotFound: true);
     }
 
     ~@GameInputActions()
     {
         UnityEngine.Debug.Assert(!m_Gameplay.enabled, "This will cause a leak and performance issues, GameInputActions.Gameplay.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Ships.enabled, "This will cause a leak and performance issues, GameInputActions.Ships.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Base.enabled, "This will cause a leak and performance issues, GameInputActions.Base.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_CameraControls.enabled, "This will cause a leak and performance issues, GameInputActions.CameraControls.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Selections.enabled, "This will cause a leak and performance issues, GameInputActions.Selections.Disable() has not been called.");
     }
 
     /// <summary>
@@ -1105,6 +2304,951 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="GameplayActions" /> instance referencing this action map.
     /// </summary>
     public GameplayActions @Gameplay => new GameplayActions(this);
+
+    // Ships
+    private readonly InputActionMap m_Ships;
+    private List<IShipsActions> m_ShipsActionsCallbackInterfaces = new List<IShipsActions>();
+    private readonly InputAction m_Ships_Guard;
+    private readonly InputAction m_Ships_Stop;
+    private readonly InputAction m_Ships_Attack;
+    private readonly InputAction m_Ships_AttackMove;
+    private readonly InputAction m_Ships_Move;
+    private readonly InputAction m_Ships_Queuecommand;
+    private readonly InputAction m_Ships_Useskill1;
+    private readonly InputAction m_Ships_Useskill2;
+    private readonly InputAction m_Ships_Useskill3;
+    private readonly InputAction m_Ships_Useskill4;
+    private readonly InputAction m_Ships_Escort;
+    private readonly InputAction m_Ships_Backtobase;
+    private readonly InputAction m_Ships_Dock;
+    private readonly InputAction m_Ships_Setcontrolgroupfromselection;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "Ships".
+    /// </summary>
+    public struct ShipsActions
+    {
+        private @GameInputActions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public ShipsActions(@GameInputActions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "Ships/Guard".
+        /// </summary>
+        public InputAction @Guard => m_Wrapper.m_Ships_Guard;
+        /// <summary>
+        /// Provides access to the underlying input action "Ships/Stop".
+        /// </summary>
+        public InputAction @Stop => m_Wrapper.m_Ships_Stop;
+        /// <summary>
+        /// Provides access to the underlying input action "Ships/Attack".
+        /// </summary>
+        public InputAction @Attack => m_Wrapper.m_Ships_Attack;
+        /// <summary>
+        /// Provides access to the underlying input action "Ships/AttackMove".
+        /// </summary>
+        public InputAction @AttackMove => m_Wrapper.m_Ships_AttackMove;
+        /// <summary>
+        /// Provides access to the underlying input action "Ships/Move".
+        /// </summary>
+        public InputAction @Move => m_Wrapper.m_Ships_Move;
+        /// <summary>
+        /// Provides access to the underlying input action "Ships/Queuecommand".
+        /// </summary>
+        public InputAction @Queuecommand => m_Wrapper.m_Ships_Queuecommand;
+        /// <summary>
+        /// Provides access to the underlying input action "Ships/Useskill1".
+        /// </summary>
+        public InputAction @Useskill1 => m_Wrapper.m_Ships_Useskill1;
+        /// <summary>
+        /// Provides access to the underlying input action "Ships/Useskill2".
+        /// </summary>
+        public InputAction @Useskill2 => m_Wrapper.m_Ships_Useskill2;
+        /// <summary>
+        /// Provides access to the underlying input action "Ships/Useskill3".
+        /// </summary>
+        public InputAction @Useskill3 => m_Wrapper.m_Ships_Useskill3;
+        /// <summary>
+        /// Provides access to the underlying input action "Ships/Useskill4".
+        /// </summary>
+        public InputAction @Useskill4 => m_Wrapper.m_Ships_Useskill4;
+        /// <summary>
+        /// Provides access to the underlying input action "Ships/Escort".
+        /// </summary>
+        public InputAction @Escort => m_Wrapper.m_Ships_Escort;
+        /// <summary>
+        /// Provides access to the underlying input action "Ships/Backtobase".
+        /// </summary>
+        public InputAction @Backtobase => m_Wrapper.m_Ships_Backtobase;
+        /// <summary>
+        /// Provides access to the underlying input action "Ships/Dock".
+        /// </summary>
+        public InputAction @Dock => m_Wrapper.m_Ships_Dock;
+        /// <summary>
+        /// Provides access to the underlying input action "Ships/Setcontrolgroupfromselection".
+        /// </summary>
+        public InputAction @Setcontrolgroupfromselection => m_Wrapper.m_Ships_Setcontrolgroupfromselection;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_Ships; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="ShipsActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(ShipsActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="ShipsActions" />
+        public void AddCallbacks(IShipsActions instance)
+        {
+            if (instance == null || m_Wrapper.m_ShipsActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_ShipsActionsCallbackInterfaces.Add(instance);
+            @Guard.started += instance.OnGuard;
+            @Guard.performed += instance.OnGuard;
+            @Guard.canceled += instance.OnGuard;
+            @Stop.started += instance.OnStop;
+            @Stop.performed += instance.OnStop;
+            @Stop.canceled += instance.OnStop;
+            @Attack.started += instance.OnAttack;
+            @Attack.performed += instance.OnAttack;
+            @Attack.canceled += instance.OnAttack;
+            @AttackMove.started += instance.OnAttackMove;
+            @AttackMove.performed += instance.OnAttackMove;
+            @AttackMove.canceled += instance.OnAttackMove;
+            @Move.started += instance.OnMove;
+            @Move.performed += instance.OnMove;
+            @Move.canceled += instance.OnMove;
+            @Queuecommand.started += instance.OnQueuecommand;
+            @Queuecommand.performed += instance.OnQueuecommand;
+            @Queuecommand.canceled += instance.OnQueuecommand;
+            @Useskill1.started += instance.OnUseskill1;
+            @Useskill1.performed += instance.OnUseskill1;
+            @Useskill1.canceled += instance.OnUseskill1;
+            @Useskill2.started += instance.OnUseskill2;
+            @Useskill2.performed += instance.OnUseskill2;
+            @Useskill2.canceled += instance.OnUseskill2;
+            @Useskill3.started += instance.OnUseskill3;
+            @Useskill3.performed += instance.OnUseskill3;
+            @Useskill3.canceled += instance.OnUseskill3;
+            @Useskill4.started += instance.OnUseskill4;
+            @Useskill4.performed += instance.OnUseskill4;
+            @Useskill4.canceled += instance.OnUseskill4;
+            @Escort.started += instance.OnEscort;
+            @Escort.performed += instance.OnEscort;
+            @Escort.canceled += instance.OnEscort;
+            @Backtobase.started += instance.OnBacktobase;
+            @Backtobase.performed += instance.OnBacktobase;
+            @Backtobase.canceled += instance.OnBacktobase;
+            @Dock.started += instance.OnDock;
+            @Dock.performed += instance.OnDock;
+            @Dock.canceled += instance.OnDock;
+            @Setcontrolgroupfromselection.started += instance.OnSetcontrolgroupfromselection;
+            @Setcontrolgroupfromselection.performed += instance.OnSetcontrolgroupfromselection;
+            @Setcontrolgroupfromselection.canceled += instance.OnSetcontrolgroupfromselection;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="ShipsActions" />
+        private void UnregisterCallbacks(IShipsActions instance)
+        {
+            @Guard.started -= instance.OnGuard;
+            @Guard.performed -= instance.OnGuard;
+            @Guard.canceled -= instance.OnGuard;
+            @Stop.started -= instance.OnStop;
+            @Stop.performed -= instance.OnStop;
+            @Stop.canceled -= instance.OnStop;
+            @Attack.started -= instance.OnAttack;
+            @Attack.performed -= instance.OnAttack;
+            @Attack.canceled -= instance.OnAttack;
+            @AttackMove.started -= instance.OnAttackMove;
+            @AttackMove.performed -= instance.OnAttackMove;
+            @AttackMove.canceled -= instance.OnAttackMove;
+            @Move.started -= instance.OnMove;
+            @Move.performed -= instance.OnMove;
+            @Move.canceled -= instance.OnMove;
+            @Queuecommand.started -= instance.OnQueuecommand;
+            @Queuecommand.performed -= instance.OnQueuecommand;
+            @Queuecommand.canceled -= instance.OnQueuecommand;
+            @Useskill1.started -= instance.OnUseskill1;
+            @Useskill1.performed -= instance.OnUseskill1;
+            @Useskill1.canceled -= instance.OnUseskill1;
+            @Useskill2.started -= instance.OnUseskill2;
+            @Useskill2.performed -= instance.OnUseskill2;
+            @Useskill2.canceled -= instance.OnUseskill2;
+            @Useskill3.started -= instance.OnUseskill3;
+            @Useskill3.performed -= instance.OnUseskill3;
+            @Useskill3.canceled -= instance.OnUseskill3;
+            @Useskill4.started -= instance.OnUseskill4;
+            @Useskill4.performed -= instance.OnUseskill4;
+            @Useskill4.canceled -= instance.OnUseskill4;
+            @Escort.started -= instance.OnEscort;
+            @Escort.performed -= instance.OnEscort;
+            @Escort.canceled -= instance.OnEscort;
+            @Backtobase.started -= instance.OnBacktobase;
+            @Backtobase.performed -= instance.OnBacktobase;
+            @Backtobase.canceled -= instance.OnBacktobase;
+            @Dock.started -= instance.OnDock;
+            @Dock.performed -= instance.OnDock;
+            @Dock.canceled -= instance.OnDock;
+            @Setcontrolgroupfromselection.started -= instance.OnSetcontrolgroupfromselection;
+            @Setcontrolgroupfromselection.performed -= instance.OnSetcontrolgroupfromselection;
+            @Setcontrolgroupfromselection.canceled -= instance.OnSetcontrolgroupfromselection;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="ShipsActions.UnregisterCallbacks(IShipsActions)" />.
+        /// </summary>
+        /// <seealso cref="ShipsActions.UnregisterCallbacks(IShipsActions)" />
+        public void RemoveCallbacks(IShipsActions instance)
+        {
+            if (m_Wrapper.m_ShipsActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="ShipsActions.AddCallbacks(IShipsActions)" />
+        /// <seealso cref="ShipsActions.RemoveCallbacks(IShipsActions)" />
+        /// <seealso cref="ShipsActions.UnregisterCallbacks(IShipsActions)" />
+        public void SetCallbacks(IShipsActions instance)
+        {
+            foreach (var item in m_Wrapper.m_ShipsActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_ShipsActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="ShipsActions" /> instance referencing this action map.
+    /// </summary>
+    public ShipsActions @Ships => new ShipsActions(this);
+
+    // Base
+    private readonly InputActionMap m_Base;
+    private List<IBaseActions> m_BaseActionsCallbackInterfaces = new List<IBaseActions>();
+    private readonly InputAction m_Base_Deplay;
+    private readonly InputAction m_Base_Clearmodulesfromship;
+    private readonly InputAction m_Base_selectmoduleT2;
+    private readonly InputAction m_Base_selectmoduleT3;
+    private readonly InputAction m_Base_Changestationtab;
+    private readonly InputAction m_Base_machinegun;
+    private readonly InputAction m_Base_Mininglaser;
+    private readonly InputAction m_Base_Rampuplaser;
+    private readonly InputAction m_Base_Mobileassembly;
+    private readonly InputAction m_Base_Hullreinforcement;
+    private readonly InputAction m_Base_Shieldbattery;
+    private readonly InputAction m_Base_Plasmagun;
+    private readonly InputAction m_Base_Queuecancel;
+    private readonly InputAction m_Base_Torpedolauncher;
+    private readonly InputAction m_Base_Miningslavager;
+    private readonly InputAction m_Base_FighterShip;
+    private readonly InputAction m_Base_UtilityShip;
+    private readonly InputAction m_Base_MinerShip;
+    private readonly InputAction m_Base_Speedengines;
+    private readonly InputAction m_Base_Reconstructionmodule;
+    private readonly InputAction m_Base_Miningexplosives;
+    private readonly InputAction m_Base_Lightningturret;
+    private readonly InputAction m_Base_Piercelaser;
+    private readonly InputAction m_Base_Sciencelabmodule;
+    private readonly InputAction m_Base_Microreactor;
+    private readonly InputAction m_Base_Dencityscanner;
+    private readonly InputAction m_Base_Rangebooster;
+    private readonly InputAction m_Base_Shieldbraker;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "Base".
+    /// </summary>
+    public struct BaseActions
+    {
+        private @GameInputActions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public BaseActions(@GameInputActions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "Base/Deplay".
+        /// </summary>
+        public InputAction @Deplay => m_Wrapper.m_Base_Deplay;
+        /// <summary>
+        /// Provides access to the underlying input action "Base/Clearmodulesfromship".
+        /// </summary>
+        public InputAction @Clearmodulesfromship => m_Wrapper.m_Base_Clearmodulesfromship;
+        /// <summary>
+        /// Provides access to the underlying input action "Base/selectmoduleT2".
+        /// </summary>
+        public InputAction @selectmoduleT2 => m_Wrapper.m_Base_selectmoduleT2;
+        /// <summary>
+        /// Provides access to the underlying input action "Base/selectmoduleT3".
+        /// </summary>
+        public InputAction @selectmoduleT3 => m_Wrapper.m_Base_selectmoduleT3;
+        /// <summary>
+        /// Provides access to the underlying input action "Base/Changestationtab".
+        /// </summary>
+        public InputAction @Changestationtab => m_Wrapper.m_Base_Changestationtab;
+        /// <summary>
+        /// Provides access to the underlying input action "Base/machinegun".
+        /// </summary>
+        public InputAction @machinegun => m_Wrapper.m_Base_machinegun;
+        /// <summary>
+        /// Provides access to the underlying input action "Base/Mininglaser".
+        /// </summary>
+        public InputAction @Mininglaser => m_Wrapper.m_Base_Mininglaser;
+        /// <summary>
+        /// Provides access to the underlying input action "Base/Rampuplaser".
+        /// </summary>
+        public InputAction @Rampuplaser => m_Wrapper.m_Base_Rampuplaser;
+        /// <summary>
+        /// Provides access to the underlying input action "Base/Mobileassembly".
+        /// </summary>
+        public InputAction @Mobileassembly => m_Wrapper.m_Base_Mobileassembly;
+        /// <summary>
+        /// Provides access to the underlying input action "Base/Hullreinforcement".
+        /// </summary>
+        public InputAction @Hullreinforcement => m_Wrapper.m_Base_Hullreinforcement;
+        /// <summary>
+        /// Provides access to the underlying input action "Base/Shieldbattery".
+        /// </summary>
+        public InputAction @Shieldbattery => m_Wrapper.m_Base_Shieldbattery;
+        /// <summary>
+        /// Provides access to the underlying input action "Base/Plasmagun".
+        /// </summary>
+        public InputAction @Plasmagun => m_Wrapper.m_Base_Plasmagun;
+        /// <summary>
+        /// Provides access to the underlying input action "Base/Queuecancel".
+        /// </summary>
+        public InputAction @Queuecancel => m_Wrapper.m_Base_Queuecancel;
+        /// <summary>
+        /// Provides access to the underlying input action "Base/Torpedolauncher".
+        /// </summary>
+        public InputAction @Torpedolauncher => m_Wrapper.m_Base_Torpedolauncher;
+        /// <summary>
+        /// Provides access to the underlying input action "Base/Miningslavager".
+        /// </summary>
+        public InputAction @Miningslavager => m_Wrapper.m_Base_Miningslavager;
+        /// <summary>
+        /// Provides access to the underlying input action "Base/FighterShip".
+        /// </summary>
+        public InputAction @FighterShip => m_Wrapper.m_Base_FighterShip;
+        /// <summary>
+        /// Provides access to the underlying input action "Base/UtilityShip".
+        /// </summary>
+        public InputAction @UtilityShip => m_Wrapper.m_Base_UtilityShip;
+        /// <summary>
+        /// Provides access to the underlying input action "Base/MinerShip".
+        /// </summary>
+        public InputAction @MinerShip => m_Wrapper.m_Base_MinerShip;
+        /// <summary>
+        /// Provides access to the underlying input action "Base/Speedengines".
+        /// </summary>
+        public InputAction @Speedengines => m_Wrapper.m_Base_Speedengines;
+        /// <summary>
+        /// Provides access to the underlying input action "Base/Reconstructionmodule".
+        /// </summary>
+        public InputAction @Reconstructionmodule => m_Wrapper.m_Base_Reconstructionmodule;
+        /// <summary>
+        /// Provides access to the underlying input action "Base/Miningexplosives".
+        /// </summary>
+        public InputAction @Miningexplosives => m_Wrapper.m_Base_Miningexplosives;
+        /// <summary>
+        /// Provides access to the underlying input action "Base/Lightningturret".
+        /// </summary>
+        public InputAction @Lightningturret => m_Wrapper.m_Base_Lightningturret;
+        /// <summary>
+        /// Provides access to the underlying input action "Base/Piercelaser".
+        /// </summary>
+        public InputAction @Piercelaser => m_Wrapper.m_Base_Piercelaser;
+        /// <summary>
+        /// Provides access to the underlying input action "Base/Sciencelabmodule".
+        /// </summary>
+        public InputAction @Sciencelabmodule => m_Wrapper.m_Base_Sciencelabmodule;
+        /// <summary>
+        /// Provides access to the underlying input action "Base/Microreactor".
+        /// </summary>
+        public InputAction @Microreactor => m_Wrapper.m_Base_Microreactor;
+        /// <summary>
+        /// Provides access to the underlying input action "Base/Dencityscanner".
+        /// </summary>
+        public InputAction @Dencityscanner => m_Wrapper.m_Base_Dencityscanner;
+        /// <summary>
+        /// Provides access to the underlying input action "Base/Rangebooster".
+        /// </summary>
+        public InputAction @Rangebooster => m_Wrapper.m_Base_Rangebooster;
+        /// <summary>
+        /// Provides access to the underlying input action "Base/Shieldbraker".
+        /// </summary>
+        public InputAction @Shieldbraker => m_Wrapper.m_Base_Shieldbraker;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_Base; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="BaseActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(BaseActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="BaseActions" />
+        public void AddCallbacks(IBaseActions instance)
+        {
+            if (instance == null || m_Wrapper.m_BaseActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_BaseActionsCallbackInterfaces.Add(instance);
+            @Deplay.started += instance.OnDeplay;
+            @Deplay.performed += instance.OnDeplay;
+            @Deplay.canceled += instance.OnDeplay;
+            @Clearmodulesfromship.started += instance.OnClearmodulesfromship;
+            @Clearmodulesfromship.performed += instance.OnClearmodulesfromship;
+            @Clearmodulesfromship.canceled += instance.OnClearmodulesfromship;
+            @selectmoduleT2.started += instance.OnSelectmoduleT2;
+            @selectmoduleT2.performed += instance.OnSelectmoduleT2;
+            @selectmoduleT2.canceled += instance.OnSelectmoduleT2;
+            @selectmoduleT3.started += instance.OnSelectmoduleT3;
+            @selectmoduleT3.performed += instance.OnSelectmoduleT3;
+            @selectmoduleT3.canceled += instance.OnSelectmoduleT3;
+            @Changestationtab.started += instance.OnChangestationtab;
+            @Changestationtab.performed += instance.OnChangestationtab;
+            @Changestationtab.canceled += instance.OnChangestationtab;
+            @machinegun.started += instance.OnMachinegun;
+            @machinegun.performed += instance.OnMachinegun;
+            @machinegun.canceled += instance.OnMachinegun;
+            @Mininglaser.started += instance.OnMininglaser;
+            @Mininglaser.performed += instance.OnMininglaser;
+            @Mininglaser.canceled += instance.OnMininglaser;
+            @Rampuplaser.started += instance.OnRampuplaser;
+            @Rampuplaser.performed += instance.OnRampuplaser;
+            @Rampuplaser.canceled += instance.OnRampuplaser;
+            @Mobileassembly.started += instance.OnMobileassembly;
+            @Mobileassembly.performed += instance.OnMobileassembly;
+            @Mobileassembly.canceled += instance.OnMobileassembly;
+            @Hullreinforcement.started += instance.OnHullreinforcement;
+            @Hullreinforcement.performed += instance.OnHullreinforcement;
+            @Hullreinforcement.canceled += instance.OnHullreinforcement;
+            @Shieldbattery.started += instance.OnShieldbattery;
+            @Shieldbattery.performed += instance.OnShieldbattery;
+            @Shieldbattery.canceled += instance.OnShieldbattery;
+            @Plasmagun.started += instance.OnPlasmagun;
+            @Plasmagun.performed += instance.OnPlasmagun;
+            @Plasmagun.canceled += instance.OnPlasmagun;
+            @Queuecancel.started += instance.OnQueuecancel;
+            @Queuecancel.performed += instance.OnQueuecancel;
+            @Queuecancel.canceled += instance.OnQueuecancel;
+            @Torpedolauncher.started += instance.OnTorpedolauncher;
+            @Torpedolauncher.performed += instance.OnTorpedolauncher;
+            @Torpedolauncher.canceled += instance.OnTorpedolauncher;
+            @Miningslavager.started += instance.OnMiningslavager;
+            @Miningslavager.performed += instance.OnMiningslavager;
+            @Miningslavager.canceled += instance.OnMiningslavager;
+            @FighterShip.started += instance.OnFighterShip;
+            @FighterShip.performed += instance.OnFighterShip;
+            @FighterShip.canceled += instance.OnFighterShip;
+            @UtilityShip.started += instance.OnUtilityShip;
+            @UtilityShip.performed += instance.OnUtilityShip;
+            @UtilityShip.canceled += instance.OnUtilityShip;
+            @MinerShip.started += instance.OnMinerShip;
+            @MinerShip.performed += instance.OnMinerShip;
+            @MinerShip.canceled += instance.OnMinerShip;
+            @Speedengines.started += instance.OnSpeedengines;
+            @Speedengines.performed += instance.OnSpeedengines;
+            @Speedengines.canceled += instance.OnSpeedengines;
+            @Reconstructionmodule.started += instance.OnReconstructionmodule;
+            @Reconstructionmodule.performed += instance.OnReconstructionmodule;
+            @Reconstructionmodule.canceled += instance.OnReconstructionmodule;
+            @Miningexplosives.started += instance.OnMiningexplosives;
+            @Miningexplosives.performed += instance.OnMiningexplosives;
+            @Miningexplosives.canceled += instance.OnMiningexplosives;
+            @Lightningturret.started += instance.OnLightningturret;
+            @Lightningturret.performed += instance.OnLightningturret;
+            @Lightningturret.canceled += instance.OnLightningturret;
+            @Piercelaser.started += instance.OnPiercelaser;
+            @Piercelaser.performed += instance.OnPiercelaser;
+            @Piercelaser.canceled += instance.OnPiercelaser;
+            @Sciencelabmodule.started += instance.OnSciencelabmodule;
+            @Sciencelabmodule.performed += instance.OnSciencelabmodule;
+            @Sciencelabmodule.canceled += instance.OnSciencelabmodule;
+            @Microreactor.started += instance.OnMicroreactor;
+            @Microreactor.performed += instance.OnMicroreactor;
+            @Microreactor.canceled += instance.OnMicroreactor;
+            @Dencityscanner.started += instance.OnDencityscanner;
+            @Dencityscanner.performed += instance.OnDencityscanner;
+            @Dencityscanner.canceled += instance.OnDencityscanner;
+            @Rangebooster.started += instance.OnRangebooster;
+            @Rangebooster.performed += instance.OnRangebooster;
+            @Rangebooster.canceled += instance.OnRangebooster;
+            @Shieldbraker.started += instance.OnShieldbraker;
+            @Shieldbraker.performed += instance.OnShieldbraker;
+            @Shieldbraker.canceled += instance.OnShieldbraker;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="BaseActions" />
+        private void UnregisterCallbacks(IBaseActions instance)
+        {
+            @Deplay.started -= instance.OnDeplay;
+            @Deplay.performed -= instance.OnDeplay;
+            @Deplay.canceled -= instance.OnDeplay;
+            @Clearmodulesfromship.started -= instance.OnClearmodulesfromship;
+            @Clearmodulesfromship.performed -= instance.OnClearmodulesfromship;
+            @Clearmodulesfromship.canceled -= instance.OnClearmodulesfromship;
+            @selectmoduleT2.started -= instance.OnSelectmoduleT2;
+            @selectmoduleT2.performed -= instance.OnSelectmoduleT2;
+            @selectmoduleT2.canceled -= instance.OnSelectmoduleT2;
+            @selectmoduleT3.started -= instance.OnSelectmoduleT3;
+            @selectmoduleT3.performed -= instance.OnSelectmoduleT3;
+            @selectmoduleT3.canceled -= instance.OnSelectmoduleT3;
+            @Changestationtab.started -= instance.OnChangestationtab;
+            @Changestationtab.performed -= instance.OnChangestationtab;
+            @Changestationtab.canceled -= instance.OnChangestationtab;
+            @machinegun.started -= instance.OnMachinegun;
+            @machinegun.performed -= instance.OnMachinegun;
+            @machinegun.canceled -= instance.OnMachinegun;
+            @Mininglaser.started -= instance.OnMininglaser;
+            @Mininglaser.performed -= instance.OnMininglaser;
+            @Mininglaser.canceled -= instance.OnMininglaser;
+            @Rampuplaser.started -= instance.OnRampuplaser;
+            @Rampuplaser.performed -= instance.OnRampuplaser;
+            @Rampuplaser.canceled -= instance.OnRampuplaser;
+            @Mobileassembly.started -= instance.OnMobileassembly;
+            @Mobileassembly.performed -= instance.OnMobileassembly;
+            @Mobileassembly.canceled -= instance.OnMobileassembly;
+            @Hullreinforcement.started -= instance.OnHullreinforcement;
+            @Hullreinforcement.performed -= instance.OnHullreinforcement;
+            @Hullreinforcement.canceled -= instance.OnHullreinforcement;
+            @Shieldbattery.started -= instance.OnShieldbattery;
+            @Shieldbattery.performed -= instance.OnShieldbattery;
+            @Shieldbattery.canceled -= instance.OnShieldbattery;
+            @Plasmagun.started -= instance.OnPlasmagun;
+            @Plasmagun.performed -= instance.OnPlasmagun;
+            @Plasmagun.canceled -= instance.OnPlasmagun;
+            @Queuecancel.started -= instance.OnQueuecancel;
+            @Queuecancel.performed -= instance.OnQueuecancel;
+            @Queuecancel.canceled -= instance.OnQueuecancel;
+            @Torpedolauncher.started -= instance.OnTorpedolauncher;
+            @Torpedolauncher.performed -= instance.OnTorpedolauncher;
+            @Torpedolauncher.canceled -= instance.OnTorpedolauncher;
+            @Miningslavager.started -= instance.OnMiningslavager;
+            @Miningslavager.performed -= instance.OnMiningslavager;
+            @Miningslavager.canceled -= instance.OnMiningslavager;
+            @FighterShip.started -= instance.OnFighterShip;
+            @FighterShip.performed -= instance.OnFighterShip;
+            @FighterShip.canceled -= instance.OnFighterShip;
+            @UtilityShip.started -= instance.OnUtilityShip;
+            @UtilityShip.performed -= instance.OnUtilityShip;
+            @UtilityShip.canceled -= instance.OnUtilityShip;
+            @MinerShip.started -= instance.OnMinerShip;
+            @MinerShip.performed -= instance.OnMinerShip;
+            @MinerShip.canceled -= instance.OnMinerShip;
+            @Speedengines.started -= instance.OnSpeedengines;
+            @Speedengines.performed -= instance.OnSpeedengines;
+            @Speedengines.canceled -= instance.OnSpeedengines;
+            @Reconstructionmodule.started -= instance.OnReconstructionmodule;
+            @Reconstructionmodule.performed -= instance.OnReconstructionmodule;
+            @Reconstructionmodule.canceled -= instance.OnReconstructionmodule;
+            @Miningexplosives.started -= instance.OnMiningexplosives;
+            @Miningexplosives.performed -= instance.OnMiningexplosives;
+            @Miningexplosives.canceled -= instance.OnMiningexplosives;
+            @Lightningturret.started -= instance.OnLightningturret;
+            @Lightningturret.performed -= instance.OnLightningturret;
+            @Lightningturret.canceled -= instance.OnLightningturret;
+            @Piercelaser.started -= instance.OnPiercelaser;
+            @Piercelaser.performed -= instance.OnPiercelaser;
+            @Piercelaser.canceled -= instance.OnPiercelaser;
+            @Sciencelabmodule.started -= instance.OnSciencelabmodule;
+            @Sciencelabmodule.performed -= instance.OnSciencelabmodule;
+            @Sciencelabmodule.canceled -= instance.OnSciencelabmodule;
+            @Microreactor.started -= instance.OnMicroreactor;
+            @Microreactor.performed -= instance.OnMicroreactor;
+            @Microreactor.canceled -= instance.OnMicroreactor;
+            @Dencityscanner.started -= instance.OnDencityscanner;
+            @Dencityscanner.performed -= instance.OnDencityscanner;
+            @Dencityscanner.canceled -= instance.OnDencityscanner;
+            @Rangebooster.started -= instance.OnRangebooster;
+            @Rangebooster.performed -= instance.OnRangebooster;
+            @Rangebooster.canceled -= instance.OnRangebooster;
+            @Shieldbraker.started -= instance.OnShieldbraker;
+            @Shieldbraker.performed -= instance.OnShieldbraker;
+            @Shieldbraker.canceled -= instance.OnShieldbraker;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="BaseActions.UnregisterCallbacks(IBaseActions)" />.
+        /// </summary>
+        /// <seealso cref="BaseActions.UnregisterCallbacks(IBaseActions)" />
+        public void RemoveCallbacks(IBaseActions instance)
+        {
+            if (m_Wrapper.m_BaseActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="BaseActions.AddCallbacks(IBaseActions)" />
+        /// <seealso cref="BaseActions.RemoveCallbacks(IBaseActions)" />
+        /// <seealso cref="BaseActions.UnregisterCallbacks(IBaseActions)" />
+        public void SetCallbacks(IBaseActions instance)
+        {
+            foreach (var item in m_Wrapper.m_BaseActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_BaseActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="BaseActions" /> instance referencing this action map.
+    /// </summary>
+    public BaseActions @Base => new BaseActions(this);
+
+    // Camera Controls
+    private readonly InputActionMap m_CameraControls;
+    private List<ICameraControlsActions> m_CameraControlsActionsCallbackInterfaces = new List<ICameraControlsActions>();
+    private readonly InputAction m_CameraControls_Centercameraonalert;
+    private readonly InputAction m_CameraControls_Cameraup;
+    private readonly InputAction m_CameraControls_Cameraright;
+    private readonly InputAction m_CameraControls_Cameradown;
+    private readonly InputAction m_CameraControls_Cameraleft;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "Camera Controls".
+    /// </summary>
+    public struct CameraControlsActions
+    {
+        private @GameInputActions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public CameraControlsActions(@GameInputActions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "CameraControls/Centercameraonalert".
+        /// </summary>
+        public InputAction @Centercameraonalert => m_Wrapper.m_CameraControls_Centercameraonalert;
+        /// <summary>
+        /// Provides access to the underlying input action "CameraControls/Cameraup".
+        /// </summary>
+        public InputAction @Cameraup => m_Wrapper.m_CameraControls_Cameraup;
+        /// <summary>
+        /// Provides access to the underlying input action "CameraControls/Cameraright".
+        /// </summary>
+        public InputAction @Cameraright => m_Wrapper.m_CameraControls_Cameraright;
+        /// <summary>
+        /// Provides access to the underlying input action "CameraControls/Cameradown".
+        /// </summary>
+        public InputAction @Cameradown => m_Wrapper.m_CameraControls_Cameradown;
+        /// <summary>
+        /// Provides access to the underlying input action "CameraControls/Cameraleft".
+        /// </summary>
+        public InputAction @Cameraleft => m_Wrapper.m_CameraControls_Cameraleft;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_CameraControls; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="CameraControlsActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(CameraControlsActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="CameraControlsActions" />
+        public void AddCallbacks(ICameraControlsActions instance)
+        {
+            if (instance == null || m_Wrapper.m_CameraControlsActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_CameraControlsActionsCallbackInterfaces.Add(instance);
+            @Centercameraonalert.started += instance.OnCentercameraonalert;
+            @Centercameraonalert.performed += instance.OnCentercameraonalert;
+            @Centercameraonalert.canceled += instance.OnCentercameraonalert;
+            @Cameraup.started += instance.OnCameraup;
+            @Cameraup.performed += instance.OnCameraup;
+            @Cameraup.canceled += instance.OnCameraup;
+            @Cameraright.started += instance.OnCameraright;
+            @Cameraright.performed += instance.OnCameraright;
+            @Cameraright.canceled += instance.OnCameraright;
+            @Cameradown.started += instance.OnCameradown;
+            @Cameradown.performed += instance.OnCameradown;
+            @Cameradown.canceled += instance.OnCameradown;
+            @Cameraleft.started += instance.OnCameraleft;
+            @Cameraleft.performed += instance.OnCameraleft;
+            @Cameraleft.canceled += instance.OnCameraleft;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="CameraControlsActions" />
+        private void UnregisterCallbacks(ICameraControlsActions instance)
+        {
+            @Centercameraonalert.started -= instance.OnCentercameraonalert;
+            @Centercameraonalert.performed -= instance.OnCentercameraonalert;
+            @Centercameraonalert.canceled -= instance.OnCentercameraonalert;
+            @Cameraup.started -= instance.OnCameraup;
+            @Cameraup.performed -= instance.OnCameraup;
+            @Cameraup.canceled -= instance.OnCameraup;
+            @Cameraright.started -= instance.OnCameraright;
+            @Cameraright.performed -= instance.OnCameraright;
+            @Cameraright.canceled -= instance.OnCameraright;
+            @Cameradown.started -= instance.OnCameradown;
+            @Cameradown.performed -= instance.OnCameradown;
+            @Cameradown.canceled -= instance.OnCameradown;
+            @Cameraleft.started -= instance.OnCameraleft;
+            @Cameraleft.performed -= instance.OnCameraleft;
+            @Cameraleft.canceled -= instance.OnCameraleft;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="CameraControlsActions.UnregisterCallbacks(ICameraControlsActions)" />.
+        /// </summary>
+        /// <seealso cref="CameraControlsActions.UnregisterCallbacks(ICameraControlsActions)" />
+        public void RemoveCallbacks(ICameraControlsActions instance)
+        {
+            if (m_Wrapper.m_CameraControlsActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="CameraControlsActions.AddCallbacks(ICameraControlsActions)" />
+        /// <seealso cref="CameraControlsActions.RemoveCallbacks(ICameraControlsActions)" />
+        /// <seealso cref="CameraControlsActions.UnregisterCallbacks(ICameraControlsActions)" />
+        public void SetCallbacks(ICameraControlsActions instance)
+        {
+            foreach (var item in m_Wrapper.m_CameraControlsActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_CameraControlsActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="CameraControlsActions" /> instance referencing this action map.
+    /// </summary>
+    public CameraControlsActions @CameraControls => new CameraControlsActions(this);
+
+    // Selections
+    private readonly InputActionMap m_Selections;
+    private List<ISelectionsActions> m_SelectionsActionsCallbackInterfaces = new List<ISelectionsActions>();
+    private readonly InputAction m_Selections_Selectallarmy;
+    private readonly InputAction m_Selections_Selectstation;
+    private readonly InputAction m_Selections_Activateselectionfromcontrolgroup2;
+    private readonly InputAction m_Selections_Activateselectionfromcontrolgroup3;
+    private readonly InputAction m_Selections_Activateselectionfromcontrolgroup4;
+    private readonly InputAction m_Selections_Activateselectionfromcontrolgroup5;
+    private readonly InputAction m_Selections_Selector;
+    private readonly InputAction m_Selections_Selectunitssharingthesameclass;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "Selections".
+    /// </summary>
+    public struct SelectionsActions
+    {
+        private @GameInputActions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public SelectionsActions(@GameInputActions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "Selections/Selectallarmy".
+        /// </summary>
+        public InputAction @Selectallarmy => m_Wrapper.m_Selections_Selectallarmy;
+        /// <summary>
+        /// Provides access to the underlying input action "Selections/Selectstation".
+        /// </summary>
+        public InputAction @Selectstation => m_Wrapper.m_Selections_Selectstation;
+        /// <summary>
+        /// Provides access to the underlying input action "Selections/Activateselectionfromcontrolgroup2".
+        /// </summary>
+        public InputAction @Activateselectionfromcontrolgroup2 => m_Wrapper.m_Selections_Activateselectionfromcontrolgroup2;
+        /// <summary>
+        /// Provides access to the underlying input action "Selections/Activateselectionfromcontrolgroup3".
+        /// </summary>
+        public InputAction @Activateselectionfromcontrolgroup3 => m_Wrapper.m_Selections_Activateselectionfromcontrolgroup3;
+        /// <summary>
+        /// Provides access to the underlying input action "Selections/Activateselectionfromcontrolgroup4".
+        /// </summary>
+        public InputAction @Activateselectionfromcontrolgroup4 => m_Wrapper.m_Selections_Activateselectionfromcontrolgroup4;
+        /// <summary>
+        /// Provides access to the underlying input action "Selections/Activateselectionfromcontrolgroup5".
+        /// </summary>
+        public InputAction @Activateselectionfromcontrolgroup5 => m_Wrapper.m_Selections_Activateselectionfromcontrolgroup5;
+        /// <summary>
+        /// Provides access to the underlying input action "Selections/Selector".
+        /// </summary>
+        public InputAction @Selector => m_Wrapper.m_Selections_Selector;
+        /// <summary>
+        /// Provides access to the underlying input action "Selections/Selectunitssharingthesameclass".
+        /// </summary>
+        public InputAction @Selectunitssharingthesameclass => m_Wrapper.m_Selections_Selectunitssharingthesameclass;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_Selections; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="SelectionsActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(SelectionsActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="SelectionsActions" />
+        public void AddCallbacks(ISelectionsActions instance)
+        {
+            if (instance == null || m_Wrapper.m_SelectionsActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_SelectionsActionsCallbackInterfaces.Add(instance);
+            @Selectallarmy.started += instance.OnSelectallarmy;
+            @Selectallarmy.performed += instance.OnSelectallarmy;
+            @Selectallarmy.canceled += instance.OnSelectallarmy;
+            @Selectstation.started += instance.OnSelectstation;
+            @Selectstation.performed += instance.OnSelectstation;
+            @Selectstation.canceled += instance.OnSelectstation;
+            @Activateselectionfromcontrolgroup2.started += instance.OnActivateselectionfromcontrolgroup2;
+            @Activateselectionfromcontrolgroup2.performed += instance.OnActivateselectionfromcontrolgroup2;
+            @Activateselectionfromcontrolgroup2.canceled += instance.OnActivateselectionfromcontrolgroup2;
+            @Activateselectionfromcontrolgroup3.started += instance.OnActivateselectionfromcontrolgroup3;
+            @Activateselectionfromcontrolgroup3.performed += instance.OnActivateselectionfromcontrolgroup3;
+            @Activateselectionfromcontrolgroup3.canceled += instance.OnActivateselectionfromcontrolgroup3;
+            @Activateselectionfromcontrolgroup4.started += instance.OnActivateselectionfromcontrolgroup4;
+            @Activateselectionfromcontrolgroup4.performed += instance.OnActivateselectionfromcontrolgroup4;
+            @Activateselectionfromcontrolgroup4.canceled += instance.OnActivateselectionfromcontrolgroup4;
+            @Activateselectionfromcontrolgroup5.started += instance.OnActivateselectionfromcontrolgroup5;
+            @Activateselectionfromcontrolgroup5.performed += instance.OnActivateselectionfromcontrolgroup5;
+            @Activateselectionfromcontrolgroup5.canceled += instance.OnActivateselectionfromcontrolgroup5;
+            @Selector.started += instance.OnSelector;
+            @Selector.performed += instance.OnSelector;
+            @Selector.canceled += instance.OnSelector;
+            @Selectunitssharingthesameclass.started += instance.OnSelectunitssharingthesameclass;
+            @Selectunitssharingthesameclass.performed += instance.OnSelectunitssharingthesameclass;
+            @Selectunitssharingthesameclass.canceled += instance.OnSelectunitssharingthesameclass;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="SelectionsActions" />
+        private void UnregisterCallbacks(ISelectionsActions instance)
+        {
+            @Selectallarmy.started -= instance.OnSelectallarmy;
+            @Selectallarmy.performed -= instance.OnSelectallarmy;
+            @Selectallarmy.canceled -= instance.OnSelectallarmy;
+            @Selectstation.started -= instance.OnSelectstation;
+            @Selectstation.performed -= instance.OnSelectstation;
+            @Selectstation.canceled -= instance.OnSelectstation;
+            @Activateselectionfromcontrolgroup2.started -= instance.OnActivateselectionfromcontrolgroup2;
+            @Activateselectionfromcontrolgroup2.performed -= instance.OnActivateselectionfromcontrolgroup2;
+            @Activateselectionfromcontrolgroup2.canceled -= instance.OnActivateselectionfromcontrolgroup2;
+            @Activateselectionfromcontrolgroup3.started -= instance.OnActivateselectionfromcontrolgroup3;
+            @Activateselectionfromcontrolgroup3.performed -= instance.OnActivateselectionfromcontrolgroup3;
+            @Activateselectionfromcontrolgroup3.canceled -= instance.OnActivateselectionfromcontrolgroup3;
+            @Activateselectionfromcontrolgroup4.started -= instance.OnActivateselectionfromcontrolgroup4;
+            @Activateselectionfromcontrolgroup4.performed -= instance.OnActivateselectionfromcontrolgroup4;
+            @Activateselectionfromcontrolgroup4.canceled -= instance.OnActivateselectionfromcontrolgroup4;
+            @Activateselectionfromcontrolgroup5.started -= instance.OnActivateselectionfromcontrolgroup5;
+            @Activateselectionfromcontrolgroup5.performed -= instance.OnActivateselectionfromcontrolgroup5;
+            @Activateselectionfromcontrolgroup5.canceled -= instance.OnActivateselectionfromcontrolgroup5;
+            @Selector.started -= instance.OnSelector;
+            @Selector.performed -= instance.OnSelector;
+            @Selector.canceled -= instance.OnSelector;
+            @Selectunitssharingthesameclass.started -= instance.OnSelectunitssharingthesameclass;
+            @Selectunitssharingthesameclass.performed -= instance.OnSelectunitssharingthesameclass;
+            @Selectunitssharingthesameclass.canceled -= instance.OnSelectunitssharingthesameclass;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="SelectionsActions.UnregisterCallbacks(ISelectionsActions)" />.
+        /// </summary>
+        /// <seealso cref="SelectionsActions.UnregisterCallbacks(ISelectionsActions)" />
+        public void RemoveCallbacks(ISelectionsActions instance)
+        {
+            if (m_Wrapper.m_SelectionsActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="SelectionsActions.AddCallbacks(ISelectionsActions)" />
+        /// <seealso cref="SelectionsActions.RemoveCallbacks(ISelectionsActions)" />
+        /// <seealso cref="SelectionsActions.UnregisterCallbacks(ISelectionsActions)" />
+        public void SetCallbacks(ISelectionsActions instance)
+        {
+            foreach (var item in m_Wrapper.m_SelectionsActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_SelectionsActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="SelectionsActions" /> instance referencing this action map.
+    /// </summary>
+    public SelectionsActions @Selections => new SelectionsActions(this);
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Gameplay" which allows adding and removing callbacks.
     /// </summary>
@@ -1294,5 +3438,422 @@ public partial class @GameInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnDeploy(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Ships" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="ShipsActions.AddCallbacks(IShipsActions)" />
+    /// <seealso cref="ShipsActions.RemoveCallbacks(IShipsActions)" />
+    public interface IShipsActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "Guard" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnGuard(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Stop" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnStop(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Attack" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnAttack(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Attack Move" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnAttackMove(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Move" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMove(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Queue command" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnQueuecommand(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Use skill 1" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnUseskill1(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Use skill 2" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnUseskill2(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Use skill 3" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnUseskill3(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Use skill 4" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnUseskill4(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Escort" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnEscort(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Back to base" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnBacktobase(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Dock" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDock(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Set control group from selection" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSetcontrolgroupfromselection(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Base" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="BaseActions.AddCallbacks(IBaseActions)" />
+    /// <seealso cref="BaseActions.RemoveCallbacks(IBaseActions)" />
+    public interface IBaseActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "Deplay" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDeplay(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Clear modules from ship" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnClearmodulesfromship(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "select module T2" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSelectmoduleT2(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "select module T3" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSelectmoduleT3(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Change station tab" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnChangestationtab(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "machine gun" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMachinegun(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Mining laser" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMininglaser(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Ramp up laser" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnRampuplaser(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Mobile assembly" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMobileassembly(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Hull reinforcement" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnHullreinforcement(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Shield battery" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnShieldbattery(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Plasma gun" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPlasmagun(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Queue cancel" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnQueuecancel(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Torpedo launcher" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnTorpedolauncher(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Mining slavager" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMiningslavager(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Fighter Ship" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnFighterShip(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Utility Ship" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnUtilityShip(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Miner Ship" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMinerShip(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Speed engines" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSpeedengines(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Reconstruction module" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnReconstructionmodule(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Mining explosives" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMiningexplosives(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Lightning turret" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnLightningturret(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Pierce laser" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPiercelaser(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Science lab module" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSciencelabmodule(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Micro reactor" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMicroreactor(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Dencity scanner" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDencityscanner(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Range booster" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnRangebooster(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Shield braker" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnShieldbraker(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Camera Controls" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="CameraControlsActions.AddCallbacks(ICameraControlsActions)" />
+    /// <seealso cref="CameraControlsActions.RemoveCallbacks(ICameraControlsActions)" />
+    public interface ICameraControlsActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "Center camera on alert" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCentercameraonalert(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Camera up" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCameraup(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Camera right" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCameraright(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Camera down" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCameradown(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Camera left" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCameraleft(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Selections" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="SelectionsActions.AddCallbacks(ISelectionsActions)" />
+    /// <seealso cref="SelectionsActions.RemoveCallbacks(ISelectionsActions)" />
+    public interface ISelectionsActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "Select all army" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSelectallarmy(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Select station" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSelectstation(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Activate selection from control group 2" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnActivateselectionfromcontrolgroup2(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Activate selection from control group 3" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnActivateselectionfromcontrolgroup3(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Activate selection from control group 4" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnActivateselectionfromcontrolgroup4(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Activate selection from control group 5" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnActivateselectionfromcontrolgroup5(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Selector" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSelector(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Select units sharing the same class" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSelectunitssharingthesameclass(InputAction.CallbackContext context);
     }
 }

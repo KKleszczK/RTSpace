@@ -202,9 +202,9 @@ public class GameInputManager : MonoBehaviour
     }
 
     public bool HasBindingConflict(
-    UnityEngine.InputSystem.InputAction actionToCheck,
+    InputAction actionToCheck,
     int bindingIndex,
-    out UnityEngine.InputSystem.InputAction conflictingAction)
+    out InputAction conflictingAction)
     {
         conflictingAction = null;
 
@@ -226,18 +226,33 @@ public class GameInputManager : MonoBehaviour
         if (string.IsNullOrEmpty(effectivePath))
             return false;
 
+        InputActionMap sourceMap =
+            actionToCheck.actionMap;
 
-        foreach (UnityEngine.InputSystem.InputActionMap map
+        foreach (InputActionMap map
                  in inputActions.asset.actionMaps)
         {
-            foreach (UnityEngine.InputSystem.InputAction action
-                     in map.actions)
+
+            // Stara mapa - ignorujemy podczas migracji.
+            if (map.name == "Gameplay")
+                continue;
+            // Ships i Base nigdy nie s¹ aktywne jednoczeœnie,
+            // wiêc mog¹ u¿ywaæ tych samych klawiszy.
+            bool shipsBaseException =
+                (sourceMap.name == "Ships" &&
+                 map.name == "Base") ||
+                (sourceMap.name == "Base" &&
+                 map.name == "Ships");
+
+            if (shipsBaseException)
+                continue;
+
+            foreach (InputAction action in map.actions)
             {
-                // Nie porównujemy akcji z sam¹ sob¹.
                 if (action == actionToCheck)
                     continue;
 
-                foreach (UnityEngine.InputSystem.InputBinding binding
+                foreach (InputBinding binding
                          in action.bindings)
                 {
                     if (string.IsNullOrEmpty(
@@ -251,9 +266,7 @@ public class GameInputManager : MonoBehaviour
                             effectivePath,
                             System.StringComparison.OrdinalIgnoreCase))
                     {
-                        conflictingAction =
-                            action;
-
+                        conflictingAction = action;
                         return true;
                     }
                 }
