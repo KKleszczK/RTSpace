@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ResearchDefinition
   researchId: shield_breaker_research_t3
   displayName: Shield Breaker Research
-  description: Enables Shield Breaker module production
+  description: 
   icon: {fileID: 21300000, guid: d9e2e25449522f641b71dd02d57d912e, type: 3}
   researchedIcon: {fileID: 21300000, guid: c74ce56c8ecb8cd47a91d48bc24a166d, type: 3}
   tier: 3
-  baseMetalCost: 200
-  baseEnergyCost: 150
-  baseResearchTime: 80
+  baseMetalCost: 1000
+  baseEnergyCost: 1300
+  baseResearchTime: 100
   effectType: 7
   valueType: 0
   value: 15000

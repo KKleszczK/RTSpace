@@ -20,7 +20,7 @@ MonoBehaviour:
   tier: 3
   baseMetalCost: 900
   baseEnergyCost: 800
-  baseResearchTime: 120
+  baseResearchTime: 100
   effectType: 7
   valueType: 0
   value: 7000

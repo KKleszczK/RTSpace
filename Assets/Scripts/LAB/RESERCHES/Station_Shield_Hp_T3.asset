@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Station_Shield_Hp_T3
   m_EditorClassIdentifier: Assembly-CSharp::ResearchDefinition
   researchId: station_shield_hp_t3
-  displayName: Station Shield Polarization ++
+  displayName: Station Shield Polarization
   description: Increases shield hitpoints of your station by 15 000 flat
   icon: {fileID: 21300000, guid: 334b9fda355d9a74dafa945db5087689, type: 3}
   researchedIcon: {fileID: 21300000, guid: d702479ed6ea81f4383a7e5844263a05, type: 3}

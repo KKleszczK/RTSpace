@@ -19,9 +19,9 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 10e2b85dcbf26a947b01fe0f41f794e7, type: 3}
   tier: 3
   type: 2
-  metalCost: 200
-  energyCost: 300
-  craftTime: 40
+  metalCost: 500
+  energyCost: 700
+  craftTime: 50
   maxCopiesPerPlayer: 99
   exclusive: 1
   unlockedByDefault: 1

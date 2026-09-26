@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ResearchDefinition
   researchId: ramp_up_laser_research_t1
   displayName: Ramp Up Laser Research
-  description: Enables Ramp Up Laser module production
+  description: 
   icon: {fileID: 21300000, guid: f730f3ca4a1cdb941ba2fbe8ea6d2720, type: 3}
   researchedIcon: {fileID: 21300000, guid: c74ce56c8ecb8cd47a91d48bc24a166d, type: 3}
   tier: 1

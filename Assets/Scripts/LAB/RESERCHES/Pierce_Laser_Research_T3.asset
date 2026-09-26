@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ResearchDefinition
   researchId: pierce_laser_research_t3
   displayName: Pierce Laser Research
-  description: Enables Pierce Laser module production
+  description: 
   icon: {fileID: 21300000, guid: 06aed8575472f88479205cdd77358630, type: 3}
   researchedIcon: {fileID: 21300000, guid: c74ce56c8ecb8cd47a91d48bc24a166d, type: 3}
   tier: 3
-  baseMetalCost: 800
+  baseMetalCost: 700
   baseEnergyCost: 600
-  baseResearchTime: 140
+  baseResearchTime: 100
   effectType: 7
   valueType: 0
   value: 15000

@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
   moduleId: density_scanner_t3
   displayName: Density Scanner
-  description: Boosts the density of nearby asteroid cluster by 20%, but reduces
-    holder movement speed by 30%. Only one module can be active within an asteroid's
+  description: Boosts the density of nearby asteroid cluster by 30%, but reduces
+    holder movement speed by 50%. Only one module can be active within an asteroid's
     range, and you can only own one at a time.
   icon: {fileID: 21300000, guid: 04eaf6b6ca044ba42821ddf8b9d6e945, type: 3}
   tier: 3

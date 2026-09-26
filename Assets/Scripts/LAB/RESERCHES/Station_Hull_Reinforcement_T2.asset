@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: Station_Hull_Reinforcement_T2
   m_EditorClassIdentifier: Assembly-CSharp::ResearchDefinition
   researchId: station_hull_reinforcement_t2
-  displayName: Station Hull Reinfforcement +
+  displayName: Station Hull Reinfforcement
   description: Increases hull hitpoints of your station by 3 000 flat
   icon: {fileID: 21300000, guid: 5c9974942f487db48a699ad00080b748, type: 3}
   researchedIcon: {fileID: 21300000, guid: d702479ed6ea81f4383a7e5844263a05, type: 3}
   tier: 2
-  baseMetalCost: 400
-  baseEnergyCost: 300
+  baseMetalCost: 600
+  baseEnergyCost: 500
   baseResearchTime: 60
   effectType: 4
   valueType: 0
