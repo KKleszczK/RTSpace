@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0024218ce9266a34694abb828c810cd2, type: 3}
   m_Name: 1_Reconstruction_Module_T3
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
-  moduleId: reconstruction_module_t3
-  displayName: Reconstruction Module
+  moduleId: reconstruction_bay_t3
+  displayName: Reconstruction Bay
   description: Creates healing aura that repairs damaged hull by 1% every second.
     Reduces holder's hull durability by 5% (stacks)
   icon: {fileID: 21300000, guid: 66654eb7b9335ce4285a3477f6264c99, type: 3}
