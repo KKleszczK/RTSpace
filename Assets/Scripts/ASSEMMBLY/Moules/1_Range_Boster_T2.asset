@@ -14,17 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
   moduleId: range_booster_t2
   displayName: Range Booster
-  description: Extends range of all offensive modules by 10%. You can possess 2 such
+  description: Extends range of all offensive modules by 10%. You can possess 1 such
     modules at a time
   icon: {fileID: 21300000, guid: defddbbe3eea02c458d134f944403e8c, type: 3}
   tier: 2
   type: 2
   metalCost: 400
-  energyCost: 100
+  energyCost: 300
   craftTime: 20
-  maxCopiesPerPlayer: 2
+  maxCopiesPerPlayer: 1
   exclusive: 1
-  unlockedByDefault: 0
+  unlockedByDefault: 1
   shieldFlat: 0
   shieldPercent: 0
   hpFlat: 0
