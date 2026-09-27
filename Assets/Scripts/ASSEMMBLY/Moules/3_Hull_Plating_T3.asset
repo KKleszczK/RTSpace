@@ -10,24 +10,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0024218ce9266a34694abb828c810cd2, type: 3}
-  m_Name: 3_Hull_Reinforcement_T1
+  m_Name: 3_Hull_Plating_T3
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
-  moduleId: hull_reinforcement_t1
-  displayName: Hull Reinforcement
-  description: Increases hull durability giving additional 20hp flat
+  moduleId: hull_plating_t3
+  displayName: Hull Plating
+  description: Increases hull durability and toughness, giving additional 60hp flat
+    and 30% hp bonus
   icon: {fileID: 21300000, guid: 49d7afd589d27a34dbc65c01382ff42a, type: 3}
-  tier: 1
+  tier: 3
   type: 1
-  metalCost: 40
-  energyCost: 20
-  craftTime: 7
+  metalCost: 300
+  energyCost: 200
+  craftTime: 40
   maxCopiesPerPlayer: 99
   exclusive: 0
   unlockedByDefault: 1
   shieldFlat: 0
   shieldPercent: 0
-  hpFlat: 20
-  hpPercent: 0
+  hpFlat: 60
+  hpPercent: 30
   moveSpeedFlat: 0
   moveSpeedPercent: 0
   allWeaponsDamagePercent: 0

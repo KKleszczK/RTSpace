@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0024218ce9266a34694abb828c810cd2, type: 3}
-  m_Name: 3_Hull_Reinforcement_T2
+  m_Name: 3_Hull_Plating_T2
   m_EditorClassIdentifier: Assembly-CSharp::ModuleDefinition
-  moduleId: hull_reinforcement_t2
-  displayName: Hull Reinforcement
+  moduleId: hull_plating_t2
+  displayName: Hull Plating
   description: Increases hull durability and toughness, giving additional 30hp flat
     and 20% hp bonus
   icon: {fileID: 21300000, guid: 49d7afd589d27a34dbc65c01382ff42a, type: 3}
@@ -24,6 +24,7 @@ MonoBehaviour:
   craftTime: 20
   maxCopiesPerPlayer: 99
   exclusive: 0
+  unlockedByDefault: 1
   shieldFlat: 0
   shieldPercent: 0
   hpFlat: 30
@@ -44,6 +45,10 @@ MonoBehaviour:
   miningAmountAtFullDensity: 40
   densityRemovedPerHit: 0.04
   miningModuleDurability: 0
+  haveAbility: 0
+  abilityType: 0
+  abilityRange: 8
+  abilityCooldown: 20
   isWeapon: 0
   weaponType: 0
   weaponRange: 5
@@ -65,8 +70,8 @@ MonoBehaviour:
   stackRangePercent: 0
   stackAttackSpeedPercent: 0
   stackInactiveTimeToReset: 3
-  maxTargets: 0
   canChainAttack: 0
+  maxTargets: 0
   chainJumpsRange: 1
   chainDamageMultiplier: 0.5
   canSlowOnHit: 0

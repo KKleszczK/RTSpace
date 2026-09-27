@@ -10,19 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ced68004270e21c46bc598eb1b7d880b, type: 3}
-  m_Name: Station_Hull_Reinforcement_T1
+  m_Name: Station_Hull_Plating_T2
   m_EditorClassIdentifier: Assembly-CSharp::ResearchDefinition
-  researchId: station_hull_reinforcement_t1
-  displayName: Station Hull Reinfforcement
-  description: Increases hull hitpoints of your station by 2 000 flat
+  researchId: station_hull_plating_t2
+  displayName: Station Hull Plating
+  description: Increases hull hitpoints of your station by 3 000 flat
   icon: {fileID: 21300000, guid: 5c9974942f487db48a699ad00080b748, type: 3}
   researchedIcon: {fileID: 21300000, guid: d702479ed6ea81f4383a7e5844263a05, type: 3}
-  tier: 1
-  baseMetalCost: 200
-  baseEnergyCost: 200
-  baseResearchTime: 30
+  tier: 2
+  baseMetalCost: 600
+  baseEnergyCost: 500
+  baseResearchTime: 60
   effectType: 4
   valueType: 0
-  value: 2000
+  value: 3000
   unlockedModuleIds:
   - 
