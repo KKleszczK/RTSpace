@@ -62,6 +62,9 @@ public class AssemblyPanelUI : MonoBehaviour
 
         UpdateProgressBar();
         UpdateQueueUI();
+
+        UpdateModuleHotkeys();
+        UpdateQueueCancelHotkey();
     }
 
 
@@ -586,4 +589,149 @@ public class AssemblyPanelUI : MonoBehaviour
             module.craftTime *
             (1f - bonusPercent / 100f));
     }
+
+    private ModuleTier GetSelectedModuleTier()
+    {
+        if (GameInputManager.Instance == null)
+            return ModuleTier.Tier1;
+
+        if (GameInputManager.Instance.selectModuleT3)
+            return ModuleTier.Tier3;
+
+        if (GameInputManager.Instance.selectModuleT2)
+            return ModuleTier.Tier2;
+
+        return ModuleTier.Tier1;
+    }
+
+    private ModuleDefinition FindModuleByBind(
+    BaseModuleBind inputBind,
+    ModuleTier tier)
+    {
+        foreach (ModuleDefinition module in modules)
+        {
+            if (module == null)
+                continue;
+
+            if (module.inputBind != inputBind)
+                continue;
+
+            if (module.tier != tier)
+                continue;
+
+            return module;
+        }
+
+        return null;
+    }
+
+    private void TryCraftFromHotkey(
+    BaseModuleBind inputBind)
+    {
+        ModuleTier tier =
+            GetSelectedModuleTier();
+
+        ModuleDefinition module =
+            FindModuleByBind(
+                inputBind,
+                tier);
+
+        if (module == null)
+        {
+            Debug.Log(
+                "[ASSEMBLY HOTKEY] No module for " +
+                inputBind +
+                " " +
+                tier);
+
+            return;
+        }
+
+        Debug.Log(
+            "[ASSEMBLY HOTKEY] " +
+            module.displayName);
+
+        SelectModule(module);
+    }
+
+    private void UpdateModuleHotkeys()
+    {
+        if (GameInputManager.Instance == null)
+            return;
+
+        if (GameInputManager.Instance.machineGun)
+            TryCraftFromHotkey(BaseModuleBind.MachineGun);
+
+        if (GameInputManager.Instance.MiningLaser)
+            TryCraftFromHotkey(BaseModuleBind.MiningLaser);
+
+        if (GameInputManager.Instance.RampUpLaser)
+            TryCraftFromHotkey(BaseModuleBind.RampUpLaser);
+
+        if (GameInputManager.Instance.MobileAssembly)
+            TryCraftFromHotkey(BaseModuleBind.MobileAssembly);
+
+        if (GameInputManager.Instance.HullReinforcement)
+            TryCraftFromHotkey(BaseModuleBind.HullReinforcement);
+
+        if (GameInputManager.Instance.ShieldBattery)
+            TryCraftFromHotkey(BaseModuleBind.ShieldBattery);
+
+        if (GameInputManager.Instance.PlasmaGun)
+            TryCraftFromHotkey(BaseModuleBind.PlasmaGun);
+
+        if (GameInputManager.Instance.TorpedoLauncher)
+            TryCraftFromHotkey(BaseModuleBind.TorpedoLauncher);
+
+        if (GameInputManager.Instance.MiningSlavager)
+            TryCraftFromHotkey(BaseModuleBind.MiningSlavager);
+
+        if (GameInputManager.Instance.SpeedEngines)
+            TryCraftFromHotkey(BaseModuleBind.SpeedEngines);
+
+        if (GameInputManager.Instance.ReconstructionModule)
+            TryCraftFromHotkey(BaseModuleBind.ReconstructionModule);
+
+        if (GameInputManager.Instance.MiningExplosives)
+            TryCraftFromHotkey(BaseModuleBind.MiningExplosives);
+
+        if (GameInputManager.Instance.LightningTurret)
+            TryCraftFromHotkey(BaseModuleBind.LightningTurret);
+
+        if (GameInputManager.Instance.PierceLaser)
+            TryCraftFromHotkey(BaseModuleBind.PierceLaser);
+
+        if (GameInputManager.Instance.ScienceLabModule)
+            TryCraftFromHotkey(BaseModuleBind.ScienceLabModule);
+
+        if (GameInputManager.Instance.MicroReactor)
+            TryCraftFromHotkey(BaseModuleBind.MicroReactor);
+
+        if (GameInputManager.Instance.DencityScanner)
+            TryCraftFromHotkey(BaseModuleBind.DencityScanner);
+
+        if (GameInputManager.Instance.RangeBooster)
+            TryCraftFromHotkey(BaseModuleBind.RangeBooster);
+
+        if (GameInputManager.Instance.ShieldBraker)
+            TryCraftFromHotkey(BaseModuleBind.ShieldBraker);
+    }
+
+    private void UpdateQueueCancelHotkey()
+    {
+        if (GameInputManager.Instance == null)
+            return;
+
+        if (!GameInputManager.Instance.QueueCancel)
+            return;
+
+        if (playerCrafting == null)
+            return;
+
+        if (playerCrafting.moduleQueue.Count == 0)
+            return;
+
+        RemoveQueueItem(0);
+    }
+
 }

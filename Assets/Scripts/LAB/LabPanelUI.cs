@@ -70,6 +70,8 @@ public class LabPanelUI : MonoBehaviour
 
         UpdateProgressBar();
         UpdateQueueUI();
+        UpdateResearchHotkeys();
+        UpdateQueueCancelHotkey();
 
         foreach (ResearchButtonUI button in createdButtons)
         {
@@ -613,5 +615,150 @@ public class LabPanelUI : MonoBehaviour
             0f,
             research.baseResearchTime *
             (1f - totalBonusPercent / 100f));
+    }
+
+    private ResearchTier GetSelectedResearchTier()
+    {
+        if (GameInputManager.Instance == null)
+            return ResearchTier.Tier1;
+
+        // Je¿eli oba s¹ trzymane, T3 ma priorytet.
+        if (GameInputManager.Instance.selectModuleT3)
+            return ResearchTier.Tier3;
+
+        if (GameInputManager.Instance.selectModuleT2)
+            return ResearchTier.Tier2;
+
+        return ResearchTier.Tier1;
+    }
+
+    private ResearchDefinition FindResearchByBind(
+    BaseModuleBind inputBind,
+    ResearchTier tier)
+    {
+        foreach (ResearchDefinition research in researches)
+        {
+            if (research == null)
+                continue;
+
+            if (research.inputBind != inputBind)
+                continue;
+
+            if (research.tier != tier)
+                continue;
+
+            return research;
+        }
+
+        return null;
+    }
+
+    private void TryResearchFromHotkey(
+    BaseModuleBind inputBind)
+    {
+        ResearchTier tier =
+            GetSelectedResearchTier();
+
+        ResearchDefinition research =
+            FindResearchByBind(
+                inputBind,
+                tier);
+
+        if (research == null)
+        {
+            Debug.Log(
+                "[RESEARCH HOTKEY] No research for " +
+                inputBind +
+                " " +
+                tier);
+
+            return;
+        }
+
+        Debug.Log(
+            "[RESEARCH HOTKEY] " +
+            research.displayName);
+
+        SelectResearch(research);
+    }
+
+    private void UpdateResearchHotkeys()
+    {
+        if (GameInputManager.Instance == null)
+            return;
+
+        if (GameInputManager.Instance.machineGun)
+            TryResearchFromHotkey(BaseModuleBind.MachineGun);
+
+        if (GameInputManager.Instance.MiningLaser)
+            TryResearchFromHotkey(BaseModuleBind.MiningLaser);
+
+        if (GameInputManager.Instance.RampUpLaser)
+            TryResearchFromHotkey(BaseModuleBind.RampUpLaser);
+
+        if (GameInputManager.Instance.MobileAssembly)
+            TryResearchFromHotkey(BaseModuleBind.MobileAssembly);
+
+        if (GameInputManager.Instance.HullReinforcement)
+            TryResearchFromHotkey(BaseModuleBind.HullReinforcement);
+
+        if (GameInputManager.Instance.ShieldBattery)
+            TryResearchFromHotkey(BaseModuleBind.ShieldBattery);
+
+        if (GameInputManager.Instance.PlasmaGun)
+            TryResearchFromHotkey(BaseModuleBind.PlasmaGun);
+
+        if (GameInputManager.Instance.TorpedoLauncher)
+            TryResearchFromHotkey(BaseModuleBind.TorpedoLauncher);
+
+        if (GameInputManager.Instance.MiningSlavager)
+            TryResearchFromHotkey(BaseModuleBind.MiningSlavager);
+
+        if (GameInputManager.Instance.SpeedEngines)
+            TryResearchFromHotkey(BaseModuleBind.SpeedEngines);
+
+        if (GameInputManager.Instance.ReconstructionModule)
+            TryResearchFromHotkey(BaseModuleBind.ReconstructionModule);
+
+        if (GameInputManager.Instance.MiningExplosives)
+            TryResearchFromHotkey(BaseModuleBind.MiningExplosives);
+
+        if (GameInputManager.Instance.LightningTurret)
+            TryResearchFromHotkey(BaseModuleBind.LightningTurret);
+
+        if (GameInputManager.Instance.PierceLaser)
+            TryResearchFromHotkey(BaseModuleBind.PierceLaser);
+
+        if (GameInputManager.Instance.ScienceLabModule)
+            TryResearchFromHotkey(BaseModuleBind.ScienceLabModule);
+
+        if (GameInputManager.Instance.MicroReactor)
+            TryResearchFromHotkey(BaseModuleBind.MicroReactor);
+
+        if (GameInputManager.Instance.DencityScanner)
+            TryResearchFromHotkey(BaseModuleBind.DencityScanner);
+
+        if (GameInputManager.Instance.RangeBooster)
+            TryResearchFromHotkey(BaseModuleBind.RangeBooster);
+
+        if (GameInputManager.Instance.ShieldBraker)
+            TryResearchFromHotkey(BaseModuleBind.ShieldBraker);
+    }
+
+    private void UpdateQueueCancelHotkey()
+    {
+        if (GameInputManager.Instance == null)
+            return;
+
+        if (!GameInputManager.Instance.QueueCancel)
+            return;
+
+        if (playerResearch == null)
+            return;
+
+        if (playerResearch.researchQueue.Count == 0)
+            return;
+
+        RemoveQueueItem(0);
     }
 }

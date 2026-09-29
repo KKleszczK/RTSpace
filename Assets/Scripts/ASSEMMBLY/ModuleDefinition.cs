@@ -55,6 +55,7 @@ public class ModuleDefinition : ScriptableObject
     public ModuleTier tier;
     public ModuleType type;
 
+    public BaseModuleBind inputBind = BaseModuleBind.None;
 
     [Header("Crafting")]
     public int metalCost = 100;

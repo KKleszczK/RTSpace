@@ -29,6 +29,32 @@ public enum ResearchTier
     Tier3 = 3
 }
 
+public enum BaseModuleBind
+{
+    None,
+
+    MachineGun,
+    MiningLaser,
+    RampUpLaser,
+    MobileAssembly,
+    HullReinforcement,
+    ShieldBattery,
+    PlasmaGun,
+    TorpedoLauncher,
+    MiningSlavager,
+    SpeedEngines,
+    ReconstructionModule,
+    MiningExplosives,
+    LightningTurret,
+    PierceLaser,
+    ScienceLabModule,
+    MicroReactor,
+    DencityScanner,
+    RangeBooster,
+    ShieldBraker,
+    FighterShip
+}
+
 [CreateAssetMenu(
     fileName = "New Research",
     menuName = "RTS/Research Definition")]
@@ -49,6 +75,8 @@ public class ResearchDefinition : ScriptableObject
     public Sprite researchedIcon;
 
     public ResearchTier tier;
+
+    public BaseModuleBind inputBind = BaseModuleBind.None;
 
     // =========================================================
     // COST

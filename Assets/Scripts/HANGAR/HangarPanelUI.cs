@@ -1001,38 +1001,138 @@ public class HangarPanelUI : MonoBehaviour
         if (!CanUseSelectedHangar())
             return;
 
-
         // =========================================================
         // DEPLOY
         // =========================================================
 
-        if (GameInputManager.Instance.DeployPressed)
+        if (GameInputManager.Instance.Deplay)
         {
             TryDeploySelectedShip();
         }
 
+        // =========================================================
+        // CLEAR MODULES FROM SELECTED SHIP
+        // =========================================================
+
+        if (GameInputManager.Instance.ClearModulesFromShip)
+        {
+            RemoveAllModulesFromSelectedShip();
+        }
 
         // =========================================================
-        // CRAFT
+        // BUILD SHIPS
         // =========================================================
 
-        if (GameInputManager.Instance.FighterCraftPressed)
+        if (GameInputManager.Instance.FighterShip)
         {
             TryCraftShipType(
                 ShipType.Fighter);
         }
 
-        if (GameInputManager.Instance.UtilityCraftPressed)
+        if (GameInputManager.Instance.UtilityShip)
         {
             TryCraftShipType(
                 ShipType.Utility);
         }
 
-        if (GameInputManager.Instance.MinerCraftPressed)
+        if (GameInputManager.Instance.MinerShip)
         {
             TryCraftShipType(
                 ShipType.Miner);
         }
+
+        // =========================================================
+        // QUEUE CANCEL
+        // =========================================================
+
+        if (GameInputManager.Instance.QueueCancel)
+        {
+            if (selectedHangar.buildQueue.Count > 0)
+            {
+                selectedHangar.RequestRemoveFromQueue(0);
+            }
+        }
+
+        // =========================================================
+        // INSTALL MODULES
+        // =========================================================
+
+        if (GameInputManager.Instance.machineGun)
+            TryInstallModuleFromHotkey(
+                BaseModuleBind.MachineGun);
+
+        if (GameInputManager.Instance.MiningLaser)
+            TryInstallModuleFromHotkey(
+                BaseModuleBind.MiningLaser);
+
+        if (GameInputManager.Instance.RampUpLaser)
+            TryInstallModuleFromHotkey(
+                BaseModuleBind.RampUpLaser);
+
+        if (GameInputManager.Instance.MobileAssembly)
+            TryInstallModuleFromHotkey(
+                BaseModuleBind.MobileAssembly);
+
+        if (GameInputManager.Instance.HullReinforcement)
+            TryInstallModuleFromHotkey(
+                BaseModuleBind.HullReinforcement);
+
+        if (GameInputManager.Instance.ShieldBattery)
+            TryInstallModuleFromHotkey(
+                BaseModuleBind.ShieldBattery);
+
+        if (GameInputManager.Instance.PlasmaGun)
+            TryInstallModuleFromHotkey(
+                BaseModuleBind.PlasmaGun);
+
+        if (GameInputManager.Instance.TorpedoLauncher)
+            TryInstallModuleFromHotkey(
+                BaseModuleBind.TorpedoLauncher);
+
+        if (GameInputManager.Instance.MiningSlavager)
+            TryInstallModuleFromHotkey(
+                BaseModuleBind.MiningSlavager);
+
+        if (GameInputManager.Instance.SpeedEngines)
+            TryInstallModuleFromHotkey(
+                BaseModuleBind.SpeedEngines);
+
+        if (GameInputManager.Instance.ReconstructionModule)
+            TryInstallModuleFromHotkey(
+                BaseModuleBind.ReconstructionModule);
+
+        if (GameInputManager.Instance.MiningExplosives)
+            TryInstallModuleFromHotkey(
+                BaseModuleBind.MiningExplosives);
+
+        if (GameInputManager.Instance.LightningTurret)
+            TryInstallModuleFromHotkey(
+                BaseModuleBind.LightningTurret);
+
+        if (GameInputManager.Instance.PierceLaser)
+            TryInstallModuleFromHotkey(
+                BaseModuleBind.PierceLaser);
+
+        if (GameInputManager.Instance.ScienceLabModule)
+            TryInstallModuleFromHotkey(
+                BaseModuleBind.ScienceLabModule);
+
+        if (GameInputManager.Instance.MicroReactor)
+            TryInstallModuleFromHotkey(
+                BaseModuleBind.MicroReactor);
+
+        if (GameInputManager.Instance.DencityScanner)
+            TryInstallModuleFromHotkey(
+                BaseModuleBind.DencityScanner);
+
+        if (GameInputManager.Instance.RangeBooster)
+            TryInstallModuleFromHotkey(
+                BaseModuleBind.RangeBooster);
+
+        if (GameInputManager.Instance.ShieldBraker)
+            TryInstallModuleFromHotkey(
+                BaseModuleBind.ShieldBraker);
+        
     }
 
     private void TryCraftShipType(
@@ -1148,5 +1248,40 @@ public class HangarPanelUI : MonoBehaviour
 
         selectedHangar.RequestRemoveAllModules(
             selectedDockIndex);
+    }
+
+    private ModuleTier GetSelectedModuleTier()
+    {
+        if (GameInputManager.Instance == null)
+            return ModuleTier.Tier1;
+
+        if (GameInputManager.Instance.selectModuleT3)
+            return ModuleTier.Tier3;
+
+        if (GameInputManager.Instance.selectModuleT2)
+            return ModuleTier.Tier2;
+
+        return ModuleTier.Tier1;
+    }
+
+    private void TryInstallModuleFromHotkey(
+    BaseModuleBind inputBind)
+    {
+        if (inventoryPanel == null)
+            return;
+
+        ModuleTier tier =
+            GetSelectedModuleTier();
+
+        ModuleDefinition module =
+            inventoryPanel.FindModuleByBind(
+                inputBind,
+                tier);
+
+        // Takiego modu³u nie ma w inventory.
+        if (module == null)
+            return;
+
+        RequestAutoInstallModule(module);
     }
 }

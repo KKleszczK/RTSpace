@@ -23,6 +23,8 @@ public class ResearchDefinitionEditor : Editor
 
     private SerializedProperty unlockedModuleIds;
 
+    private SerializedProperty inputBind;
+
     private void OnEnable()
     {
         researchId =
@@ -63,6 +65,9 @@ public class ResearchDefinitionEditor : Editor
 
         unlockedModuleIds =
             serializedObject.FindProperty("unlockedModuleIds");
+
+        inputBind =
+            serializedObject.FindProperty("inputBind");
     }
 
     public override void OnInspectorGUI()
@@ -82,6 +87,10 @@ public class ResearchDefinitionEditor : Editor
         EditorGUILayout.PropertyField(icon);
         EditorGUILayout.PropertyField(researchedIcon);
         EditorGUILayout.PropertyField(tier);
+
+        EditorGUILayout.PropertyField(
+            inputBind,
+            new GUIContent("Input Bind"));
 
         // =====================================================
         // COST

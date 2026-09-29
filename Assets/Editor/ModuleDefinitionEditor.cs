@@ -12,6 +12,8 @@ public class ModuleDefinitionEditor : Editor
     private SerializedProperty tier;
     private SerializedProperty type;
 
+    private SerializedProperty inputBind;
+
     private SerializedProperty unlockedByDefault;
 
     private SerializedProperty metalCost;
@@ -96,6 +98,7 @@ public class ModuleDefinitionEditor : Editor
         icon = serializedObject.FindProperty("icon");
         tier = serializedObject.FindProperty("tier");
         type = serializedObject.FindProperty("type");
+        inputBind = serializedObject.FindProperty("inputBind");
 
         unlockedByDefault = serializedObject.FindProperty("unlockedByDefault");
 
@@ -184,7 +187,8 @@ public class ModuleDefinitionEditor : Editor
         EditorGUILayout.PropertyField(icon);
         EditorGUILayout.PropertyField(tier);
         EditorGUILayout.PropertyField(type);
-        
+        EditorGUILayout.PropertyField(inputBind, new GUIContent("Input Bind"));
+
 
         DrawHeader("CRAFTING");
         EditorGUILayout.PropertyField(metalCost);

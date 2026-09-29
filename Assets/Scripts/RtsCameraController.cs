@@ -24,7 +24,9 @@ public class RtsCameraController : MonoBehaviour
 
     private void Update()
     {
-        UpdateBaseCameraJump();
+        //UpdateBaseCameraJump();
+
+        UpdateCenterCameraOnAlert();
 
         UpdateMovement();
         UpdateZoom();
@@ -294,6 +296,8 @@ public class RtsCameraController : MonoBehaviour
         return true;
     }
 
+
+    /*
     private void UpdateBaseCameraJump()
     {
         if (GameInputManager.Instance == null)
@@ -316,6 +320,8 @@ public class RtsCameraController : MonoBehaviour
         MoveViewToWorldPosition(
             target);
     }
+
+    */
 
     private Transform FindOwnBaseTransform()
     {
@@ -353,5 +359,17 @@ public class RtsCameraController : MonoBehaviour
         }
 
         return null;
+    }
+
+    private void UpdateCenterCameraOnAlert()
+    {
+        if (GameInputManager.Instance == null)
+            return;
+
+        if (!GameInputManager.Instance.CenterCameraOnAlert)
+            return;
+
+        Debug.Log(
+            "[CAMERA] CenterCameraOnAlert pressed - bind works.");
     }
 }

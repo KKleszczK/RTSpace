@@ -6,6 +6,8 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using static ShipUnit;
 
+
+
 public class ShipSelectionController : MonoBehaviour
 {
     [SerializeField] private float shipFlightHeight = 0.5f;
@@ -75,6 +77,18 @@ public class ShipSelectionController : MonoBehaviour
     private float lastGuardCommandTime = -10f;
     private Vector2 lastGuardCommandScreenPosition;
 
+    private float lastSelectAllArmyTime = -10f;
+
+    private float lastSelectStationTime = -10f;
+
+    private float lastControlGroup2Time = -10f;
+    private float lastControlGroup3Time = -10f;
+    private float lastControlGroup4Time = -10f;
+    private float lastControlGroup5Time = -10f;
+
+    private readonly Dictionary<int, List<ShipUnit>>
+    controlGroups = new();
+
 
     private void Start()
     {
@@ -94,23 +108,29 @@ public class ShipSelectionController : MonoBehaviour
             return;
         }
 
-        if (Mouse.current.leftButton.wasPressedThisFrame)
-            StartSelection();
+        if (GameInputManager.Instance != null)
+        {
+            if (GameInputManager.Instance.SelectorPressed)
+                StartSelection();
 
-        if (Mouse.current.leftButton.isPressed)
-            UpdateSelectionBox();
+            if (GameInputManager.Instance.SelectorHeld)
+                UpdateSelectionBox();
 
-        if (Mouse.current.leftButton.wasReleasedThisFrame)
-            FinishSelection();
+            if (GameInputManager.Instance.SelectorReleased)
+                FinishSelection();
+        }
 
-        if (Mouse.current.rightButton.wasPressedThisFrame)
+        if (GameInputManager.Instance != null &&
+            GameInputManager.Instance.Move)
+        {
             TryMove();
+        }
 
         TryAttackMove();
 
-        TryGuard();
+        TryAttack();
 
-        TryFollow();
+        TryGuard();
 
         TryEscort();
 
@@ -122,12 +142,26 @@ public class ShipSelectionController : MonoBehaviour
 
         TryAllArmy();
 
+        TrySelectStation();
+
+        TryActivateControlGroups();
+
         UpdateDockButton();
+
+        TryUseSkills();
 
         RefreshAttackTargetMarkers();
         RefreshFollowTargetMarkers();
 
         UpdateShipPreselection();
+    }
+
+    private void InitializeControlGroups()
+    {
+        controlGroups[2] = new List<ShipUnit>();
+        controlGroups[3] = new List<ShipUnit>();
+        controlGroups[4] = new List<ShipUnit>();
+        controlGroups[5] = new List<ShipUnit>();
     }
 
     private void TrySelect()
@@ -203,16 +237,14 @@ public class ShipSelectionController : MonoBehaviour
             // ALT CLICK / DOUBLE CLICK
             // =========================================================
 
-            if (IsAltPressed() ||
-                doubleClick)
+            if ((GameInputManager.Instance != null &&
+                    GameInputManager.Instance.SelectUnitsSharingThesameClass) ||
+                    doubleClick)
             {
                 SelectShipsOfSameTypeOnScreen(
                     ship,
                     shiftPressed);
 
-                // Resetujemy double click,
-                // ¿eby trzeci szybki klik nie zosta³
-                // potraktowany jako kolejny double click.
                 lastClickedShip = null;
                 lastShipClickTime = -10f;
 
@@ -269,64 +301,7 @@ public class ShipSelectionController : MonoBehaviour
 
             return;
         }
-
-        // =========================================================
-        // W£ASNA BAZA
-        // =========================================================
-
-        // Na razie baza pozostaje osobnym typem zaznaczenia.
-        // Klikniêcie bazy czyœci zaznaczone statki.
-        ClearSelection();
-
-        selectedObject =
-            owner.gameObject;
-
-        selectedBase =
-            playerBase;
-
-        SelectionTarget baseSelection =
-            owner.GetComponent<SelectionTarget>();
-
-        if (baseSelection != null)
-            baseSelection.SetSelected(true);
-
-        if (basePanel != null)
-            basePanel.SetActive(true);
-
-        if (corePanelUI != null)
-        {
-            corePanelUI.SetCore(
-                selectedBase.GetComponent<BaseCore>());
-        }
-
-        if (coreEnergyUI != null)
-        {
-            coreEnergyUI.SetEnergyProduction(
-                selectedBase.GetComponent<BaseEnergyProduction>());
-        }
-
-        BaseEnergyGenerator[] generators =
-            selectedBase.GetComponents<BaseEnergyGenerator>();
-
-        foreach (BaseEnergyGenerator generator in generators)
-        {
-            int index =
-                generator.GetGeneratorIndex() - 1;
-
-            if (generatorUIs != null &&
-                index >= 0 &&
-                index < generatorUIs.Length)
-            {
-                generatorUIs[index]
-                    .SetGenerator(generator);
-            }
-        }
-
-        if (hangarPanelUI != null)
-        {
-            hangarPanelUI.SetHangar(
-                selectedBase.GetComponent<BaseHangar>());
-        }
+        SelectBase(playerBase);
     }
 
     private void UpdateDockButton()
@@ -445,53 +420,43 @@ public class ShipSelectionController : MonoBehaviour
 
         bool queueCommand =
             GameInputManager.Instance != null &&
-            GameInputManager.Instance.QueueCommandPressed;
+            GameInputManager.Instance.QueueCommand;
 
         // =========================================================
-        // RIGHT CLICK ON ENEMY SHIP = ATTACK
+        // ENEMY SHIP = ATTACK
         // =========================================================
 
-        ShipUnit targetShip =
-            hit.collider.GetComponentInParent<ShipUnit>();
-
-        if (targetShip != null &&
-            targetShip.IsSpawned &&
-            !targetShip.isDead.Value &&
-            !targetShip.IsMine())
+        if (TryAttackTarget(
+                hit,
+                queueCommand))
         {
-            foreach (ShipUnit ship in selectedShips)
-            {
-                if (ship == null)
-                    continue;
-
-                if (!ship.IsMine())
-                    continue;
-
-                if (!ship.IsSpawned)
-                    continue;
-
-                if (ship.isDead.Value)
-                    continue;
-
-                if (queueCommand)
-                {
-                    ship.QueueVisualAttackCommand(
-                        targetShip);
-                }
-                else
-                {
-                    ship.SetVisualAttackCommand(
-                        targetShip);
-                }
-
-                ship.AttackServerRpc(
-                    new NetworkObjectReference(
-                        targetShip.NetworkObject),
-                    queueCommand);
-            }
-
             return;
         }
+
+        // =========================================================
+        // OWN SHIP = FOLLOW
+        // =========================================================
+
+        ShipUnit clickedShip =
+            hit.collider.GetComponentInParent<ShipUnit>();
+
+        if (clickedShip != null &&
+            clickedShip.IsMine())
+        {
+            // Klikniêto w³asny statek.
+            // Próbujemy wydaæ Follow.
+            TryFollowTarget(
+                hit,
+                queueCommand);
+
+            // Nawet je¿eli zaznaczony statek klikn¹³ sam siebie,
+            // NIE wykonujemy póŸniej Move.
+            return;
+        }
+
+        // =========================================================
+        // NORMAL MOVE
+        // =========================================================
 
         Vector3 target =
             hit.point;
@@ -503,7 +468,7 @@ public class ShipSelectionController : MonoBehaviour
             shipFlightHeight;
 
         Vector2 currentScreenPosition =
-    Mouse.current.position.ReadValue();
+            Mouse.current.position.ReadValue();
 
         bool formationCommand =
             Time.unscaledTime -
@@ -1050,13 +1015,6 @@ public class ShipSelectionController : MonoBehaviour
         }
     }
 
-    private bool IsAltPressed()
-    {
-        return Keyboard.current != null &&
-               (Keyboard.current.leftAltKey.isPressed ||
-                Keyboard.current.rightAltKey.isPressed);
-    }
-
     private bool IsShipVisibleOnScreen(
     ShipUnit ship)
     {
@@ -1166,7 +1124,7 @@ public class ShipSelectionController : MonoBehaviour
         if (GameInputManager.Instance == null)
             return;
 
-        if (!GameInputManager.Instance.StopPressed)
+        if (!GameInputManager.Instance.Stop)
             return;
 
         foreach (ShipUnit ship in selectedShips)
@@ -1239,7 +1197,7 @@ public class ShipSelectionController : MonoBehaviour
         if (GameInputManager.Instance == null)
             return;
 
-        if (!GameInputManager.Instance.AttackMovePressed)
+        if (!GameInputManager.Instance.AttackMove)
             return;
 
         if (EventSystem.current.IsPointerOverGameObject())
@@ -1263,7 +1221,7 @@ public class ShipSelectionController : MonoBehaviour
         }
 
         bool queueCommand =
-            GameInputManager.Instance.QueueCommandPressed;
+            GameInputManager.Instance.QueueCommand;
 
         Vector3 target =
             hit.point;
@@ -1423,12 +1381,51 @@ public class ShipSelectionController : MonoBehaviour
         }
     }
 
+    private void TryAttack()
+    {
+        if (GameInputManager.Instance == null)
+            return;
+
+        if (!GameInputManager.Instance.Attack)
+            return;
+
+        if (EventSystem.current != null &&
+            EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
+
+        if (selectedShips.Count == 0)
+            return;
+
+        if (Camera.main == null)
+            return;
+
+        Ray ray =
+            Camera.main.ScreenPointToRay(
+                Mouse.current.position.ReadValue());
+
+        if (!Physics.Raycast(
+                ray,
+                out RaycastHit hit))
+        {
+            return;
+        }
+
+        bool queueCommand =
+            GameInputManager.Instance.QueueCommand;
+
+        TryAttackTarget(
+            hit,
+            queueCommand);
+    }
+
     private void TryGuard()
     {
         if (GameInputManager.Instance == null)
             return;
 
-        if (!GameInputManager.Instance.GuardPressed)
+        if (!GameInputManager.Instance.Guard)
             return;
 
         if (EventSystem.current.IsPointerOverGameObject())
@@ -1452,7 +1449,7 @@ public class ShipSelectionController : MonoBehaviour
         }
 
         bool queueCommand =
-            GameInputManager.Instance.QueueCommandPressed;
+            GameInputManager.Instance.QueueCommand;
 
         Vector3 target =
             hit.point;
@@ -1609,56 +1606,28 @@ public class ShipSelectionController : MonoBehaviour
         }
     }
 
-    private void TryFollow()
+
+    private bool TryFollowTarget(
+    RaycastHit hit,
+    bool queueCommand)
     {
-        if (GameInputManager.Instance == null)
-            return;
-
-        if (!GameInputManager.Instance.FollowPressed)
-            return;
-
-        if (EventSystem.current != null &&
-            EventSystem.current.IsPointerOverGameObject())
-        {
-            return;
-        }
-
-        if (selectedShips.Count == 0)
-            return;
-
-        if (Camera.main == null)
-            return;
-
-        Ray ray =
-            Camera.main.ScreenPointToRay(
-                Mouse.current.position.ReadValue());
-
-        if (!Physics.Raycast(
-                ray,
-                out RaycastHit hit))
-        {
-            return;
-        }
-
         ShipUnit targetShip =
             hit.collider.GetComponentInParent<ShipUnit>();
 
         if (targetShip == null)
-            return;
+            return false;
 
         if (!targetShip.IsSpawned)
-            return;
+            return false;
 
         if (targetShip.isDead.Value)
-            return;
+            return false;
 
         // Follow tylko w³asnego statku.
         if (!targetShip.IsMine())
-            return;
+            return false;
 
-        bool queueCommand =
-            GameInputManager.Instance.QueueCommandPressed;
-
+        bool issuedCommand = false;
 
         foreach (ShipUnit ship in selectedShips)
         {
@@ -1678,11 +1647,6 @@ public class ShipSelectionController : MonoBehaviour
             if (ship == targetShip)
                 continue;
 
-
-            // =====================================================
-            // VISUAL
-            // =====================================================
-
             if (queueCommand)
             {
                 ship.QueueVisualFollowCommand(
@@ -1694,16 +1658,15 @@ public class ShipSelectionController : MonoBehaviour
                     targetShip);
             }
 
-
-            // =====================================================
-            // SERVER
-            // =====================================================
-
             ship.FollowServerRpc(
                 new NetworkObjectReference(
                     targetShip.NetworkObject),
                 queueCommand);
+
+            issuedCommand = true;
         }
+
+        return issuedCommand;
     }
 
     private void RefreshFollowTargetMarkers()
@@ -1765,7 +1728,7 @@ public class ShipSelectionController : MonoBehaviour
         if (GameInputManager.Instance == null)
             return;
 
-        if (!GameInputManager.Instance.EscortPressed)
+        if (!GameInputManager.Instance.Escort)
             return;
 
         if (EventSystem.current != null &&
@@ -1810,7 +1773,7 @@ public class ShipSelectionController : MonoBehaviour
 
 
         bool queueCommand =
-            GameInputManager.Instance.QueueCommandPressed;
+            GameInputManager.Instance.QueueCommand;
 
 
         foreach (ShipUnit ship in selectedShips)
@@ -1858,12 +1821,61 @@ public class ShipSelectionController : MonoBehaviour
         }
     }
 
+    private bool TryAttackTarget(
+    RaycastHit hit,
+    bool queueCommand)
+    {
+        ShipUnit targetShip =
+            hit.collider.GetComponentInParent<ShipUnit>();
+
+        if (targetShip == null ||
+            !targetShip.IsSpawned ||
+            targetShip.isDead.Value ||
+            targetShip.IsMine())
+        {
+            return false;
+        }
+
+        foreach (ShipUnit ship in selectedShips)
+        {
+            if (ship == null)
+                continue;
+
+            if (!ship.IsMine())
+                continue;
+
+            if (!ship.IsSpawned)
+                continue;
+
+            if (ship.isDead.Value)
+                continue;
+
+            if (queueCommand)
+            {
+                ship.QueueVisualAttackCommand(
+                    targetShip);
+            }
+            else
+            {
+                ship.SetVisualAttackCommand(
+                    targetShip);
+            }
+
+            ship.AttackServerRpc(
+                new NetworkObjectReference(
+                    targetShip.NetworkObject),
+                queueCommand);
+        }
+
+        return true;
+    }
+
     private void TryBackToBase()
     {
         if (GameInputManager.Instance == null)
             return;
 
-        if (!GameInputManager.Instance.BackToBasePressed)
+        if (!GameInputManager.Instance.BackToBase)
             return;
 
         if (selectedShips.Count == 0)
@@ -1872,7 +1884,7 @@ public class ShipSelectionController : MonoBehaviour
 
         bool queueCommand =
             GameInputManager.Instance
-                .QueueCommandPressed;
+                .QueueCommand;
 
 
         BaseSafeZone ownSafeZone =
@@ -2010,7 +2022,7 @@ public class ShipSelectionController : MonoBehaviour
         if (GameInputManager.Instance == null)
             return;
 
-        if (!GameInputManager.Instance.DockPressed)
+        if (!GameInputManager.Instance.Dock)
             return;
 
         if (selectedShips.Count == 0)
@@ -2024,10 +2036,30 @@ public class ShipSelectionController : MonoBehaviour
         if (GameInputManager.Instance == null)
             return;
 
-        if (!GameInputManager.Instance.AllArmyPressed)
+        if (!GameInputManager.Instance.SelectAllArmy)
             return;
 
+        bool doubleClick =
+            Time.unscaledTime -
+            lastSelectAllArmyTime <=
+            doubleClickTime;
+
+        lastSelectAllArmyTime =
+            Time.unscaledTime;
+
+        // Zawsze zaznaczamy ca³¹ armiê.
         SelectAllArmy();
+
+        // Drugie szybkie naciœniêcie
+        // centruje kamerê na zaznaczeniu.
+        if (doubleClick)
+        {
+            CenterCameraOnSelectedShips();
+
+            // Reset, ¿eby trzeci szybki klik
+            // nie zosta³ kolejnym double-clickiem.
+            lastSelectAllArmyTime = -10f;
+        }
     }
 
     private void SelectAllArmy()
@@ -2161,7 +2193,7 @@ public class ShipSelectionController : MonoBehaviour
 
         bool queueCommand =
             GameInputManager.Instance != null &&
-            GameInputManager.Instance.QueueCommandPressed;
+            GameInputManager.Instance.QueueCommand;
 
         ShowMoveCommandMarker(target);
 
@@ -2373,4 +2405,404 @@ public class ShipSelectionController : MonoBehaviour
         }
     }
 
+    private void CenterCameraOnSelectedShips()
+    {
+        if (selectedShips.Count == 0)
+            return;
+
+        Vector3 center =
+            Vector3.zero;
+
+        int validShipCount = 0;
+
+        foreach (ShipUnit ship in selectedShips)
+        {
+            if (ship == null)
+                continue;
+
+            if (!ship.IsMine())
+                continue;
+
+            if (!ship.IsSpawned)
+                continue;
+
+            if (ship.isDead.Value)
+                continue;
+
+            center +=
+                ship.transform.position;
+
+            validShipCount++;
+        }
+
+        if (validShipCount == 0)
+            return;
+
+        center /=
+            validShipCount;
+
+        RtsCameraController cameraController =
+            Camera.main != null
+                ? Camera.main.GetComponent<RtsCameraController>()
+                : null;
+
+        if (cameraController == null)
+            return;
+
+        cameraController.MoveViewToWorldPosition(
+            center);
+    }
+
+    private void TrySelectStation()
+    {
+        if (GameInputManager.Instance == null)
+            return;
+
+        if (!GameInputManager.Instance.SelectStation)
+            return;
+
+        PlayerBaseUnit ownBase =
+            FindOwnBase();
+
+        if (ownBase == null)
+            return;
+
+        bool doubleClick =
+            Time.unscaledTime -
+            lastSelectStationTime <=
+            doubleClickTime;
+
+        lastSelectStationTime =
+            Time.unscaledTime;
+
+        SelectBase(ownBase);
+
+        if (doubleClick)
+        {
+            CenterCameraOnBase(ownBase);
+
+            lastSelectStationTime = -10f;
+        }
+    }
+
+    private PlayerBaseUnit FindOwnBase()
+    {
+        PlayerBaseUnit[] bases =
+            FindObjectsByType<PlayerBaseUnit>(
+                FindObjectsSortMode.None);
+
+        foreach (PlayerBaseUnit playerBase in bases)
+        {
+            if (playerBase == null)
+                continue;
+
+            UnitOwner owner =
+                playerBase.GetComponent<UnitOwner>();
+
+            if (owner == null)
+                continue;
+
+            if (!owner.IsMine())
+                continue;
+
+            return playerBase;
+        }
+
+        return null;
+    }
+
+    private void SelectBase(
+    PlayerBaseUnit playerBase)
+    {
+        if (playerBase == null)
+            return;
+
+        ClearSelection();
+
+        selectedBase =
+            playerBase;
+
+        selectedObject =
+            playerBase.gameObject;
+
+        SelectionTarget baseSelection =
+            playerBase.GetComponent<SelectionTarget>();
+
+        if (baseSelection != null)
+            baseSelection.SetSelected(true);
+
+        if (basePanel != null)
+            basePanel.SetActive(true);
+
+        if (corePanelUI != null)
+        {
+            corePanelUI.SetCore(
+                selectedBase.GetComponent<BaseCore>());
+        }
+
+        if (coreEnergyUI != null)
+        {
+            coreEnergyUI.SetEnergyProduction(
+                selectedBase.GetComponent<BaseEnergyProduction>());
+        }
+
+        BaseEnergyGenerator[] generators =
+            selectedBase.GetComponents<BaseEnergyGenerator>();
+
+        foreach (BaseEnergyGenerator generator in generators)
+        {
+            int index =
+                generator.GetGeneratorIndex() - 1;
+
+            if (generatorUIs != null &&
+                index >= 0 &&
+                index < generatorUIs.Length)
+            {
+                generatorUIs[index]
+                    .SetGenerator(generator);
+            }
+        }
+
+        if (hangarPanelUI != null)
+        {
+            hangarPanelUI.SetHangar(
+                selectedBase.GetComponent<BaseHangar>());
+        }
+    }
+
+    private void CenterCameraOnBase(
+    PlayerBaseUnit playerBase)
+    {
+        if (playerBase == null)
+            return;
+
+        RtsCameraController cameraController =
+            Camera.main != null
+                ? Camera.main.GetComponent<RtsCameraController>()
+                : null;
+
+        if (cameraController == null)
+            return;
+
+        cameraController.MoveViewToWorldPosition(
+            playerBase.transform.position);
+    }
+
+    private void TryActivateControlGroups()
+    {
+        if (GameInputManager.Instance == null)
+            return;
+
+        if (GameInputManager.Instance.ActivateSelectionFromControlGroup2)
+        {
+            HandleControlGroup(
+                2,
+                ref lastControlGroup2Time);
+
+            return;
+        }
+
+        if (GameInputManager.Instance.ActivateSelectionFromControlGroup3)
+        {
+            HandleControlGroup(
+                3,
+                ref lastControlGroup3Time);
+
+            return;
+        }
+
+        if (GameInputManager.Instance.ActivateSelectionFromControlGroup4)
+        {
+            HandleControlGroup(
+                4,
+                ref lastControlGroup4Time);
+
+            return;
+        }
+
+        if (GameInputManager.Instance.ActivateSelectionFromControlGroup5)
+        {
+            HandleControlGroup(
+                5,
+                ref lastControlGroup5Time);
+        }
+    }
+
+    private void HandleControlGroup(
+    int groupNumber,
+    ref float lastActivationTime)
+    {
+        // SET + numer = nadpisanie grupy.
+        if (GameInputManager.Instance.SetControlGroupFromSelection)
+        {
+            SetControlGroup(groupNumber);
+            lastActivationTime = -10f;
+            return;
+        }
+
+        // QUEUE + numer = dodaj/usuñ zaznaczone jednostki.
+        if (GameInputManager.Instance.QueueCommand)
+        {
+            ToggleSelectionInControlGroup(groupNumber);
+            lastActivationTime = -10f;
+            return;
+        }
+
+        // Zwyk³e naciœniêcie = aktywacja grupy.
+        bool doubleClick =
+            Time.unscaledTime - lastActivationTime <=
+            doubleClickTime;
+
+        lastActivationTime = Time.unscaledTime;
+
+        SelectControlGroup(groupNumber);
+
+        if (doubleClick)
+        {
+            CenterCameraOnSelectedShips();
+            lastActivationTime = -10f;
+        }
+    }
+
+    private void SetControlGroup(int groupNumber)
+    {
+        if (!controlGroups.ContainsKey(groupNumber))
+            return;
+
+        controlGroups[groupNumber].Clear();
+
+        foreach (ShipUnit ship in selectedShips)
+        {
+            if (ship == null ||
+                !ship.IsSpawned ||
+                ship.isDead.Value ||
+                !ship.IsMine())
+            {
+                continue;
+            }
+
+            controlGroups[groupNumber].Add(ship);
+        }
+
+        Debug.Log(
+            "[CONTROL GROUP] Group " +
+            groupNumber +
+            " set with " +
+            controlGroups[groupNumber].Count +
+            " ships.");
+    }
+
+    private void ToggleSelectionInControlGroup(
+    int groupNumber)
+    {
+        if (!controlGroups.ContainsKey(groupNumber))
+            return;
+
+        List<ShipUnit> group =
+            controlGroups[groupNumber];
+
+        foreach (ShipUnit ship in selectedShips)
+        {
+            if (ship == null ||
+                !ship.IsSpawned ||
+                ship.isDead.Value ||
+                !ship.IsMine())
+            {
+                continue;
+            }
+
+            if (group.Contains(ship))
+                group.Remove(ship);
+            else
+                group.Add(ship);
+        }
+
+        Debug.Log(
+            "[CONTROL GROUP] Group " +
+            groupNumber +
+            " now has " +
+            group.Count +
+            " ships.");
+    }
+
+    private void SelectControlGroup(int groupNumber)
+    {
+        if (!controlGroups.ContainsKey(groupNumber))
+            return;
+
+        ClearSelection();
+
+        foreach (ShipUnit ship in controlGroups[groupNumber])
+        {
+            if (ship == null ||
+                !ship.IsSpawned ||
+                ship.isDead.Value ||
+                !ship.IsMine())
+            {
+                continue;
+            }
+
+            selectedShips.Add(ship);
+            ship.SetSelectedLocal(true);
+        }
+
+        UpdatePrimarySelectedShip();
+    }
+
+    private void TryUseSkills()
+    {
+        if (GameInputManager.Instance == null)
+            return;
+
+        if (selectedShips.Count == 0)
+            return;
+
+        if (GameInputManager.Instance.UseSkill1)
+        {
+            TryUseSkillOnSelectedShips(1);
+            return;
+        }
+
+        if (GameInputManager.Instance.UseSkill2)
+        {
+            TryUseSkillOnSelectedShips(2);
+            return;
+        }
+
+        if (GameInputManager.Instance.UseSkill3)
+        {
+            TryUseSkillOnSelectedShips(3);
+            return;
+        }
+
+        if (GameInputManager.Instance.UseSkill4)
+        {
+            TryUseSkillOnSelectedShips(4);
+        }
+    }
+
+    private void TryUseSkillOnSelectedShips(
+        int skillIndex)
+    {
+        foreach (ShipUnit ship in selectedShips)
+        {
+            if (ship == null)
+                continue;
+
+            if (!ship.IsMine())
+                continue;
+
+            if (!ship.IsSpawned)
+                continue;
+
+            if (ship.isDead.Value)
+                continue;
+
+            Debug.Log(
+                "[SHIP SKILL] " +
+                ship.name +
+                " tried to use skill " +
+                skillIndex);
+        }
+    }
 }

@@ -182,4 +182,38 @@ public class ModuleInventoryPanelUI :
     }
 
 
+    public ModuleDefinition FindModuleByBind(
+    BaseModuleBind inputBind,
+    ModuleTier tier)
+    {
+        if (inventory == null)
+            FindLocalInventory();
+
+        if (inventory == null)
+            return null;
+
+        if (ModuleDatabase.Instance == null)
+            return null;
+
+        foreach (FixedString64Bytes moduleId
+                 in inventory.modules)
+        {
+            ModuleDefinition module =
+                ModuleDatabase.Instance.GetModule(
+                    moduleId.ToString());
+
+            if (module == null)
+                continue;
+
+            if (module.inputBind != inputBind)
+                continue;
+
+            if (module.tier != tier)
+                continue;
+
+            return module;
+        }
+
+        return null;
+    }
 }

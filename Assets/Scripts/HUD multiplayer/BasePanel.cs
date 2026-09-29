@@ -19,28 +19,89 @@ public class BasePanelTabs : MonoBehaviour
     [Header("Title")]
     [SerializeField] private TMP_Text titleText;
 
+    private int currentTabIndex = 0;
+
+    private readonly string[] tabOrder =
+    {
+        "Hangar",
+        "Assembly",
+        "LAB",
+        "CORE"
+    };
+
     private void Start()
     {
-        labButton.onClick.AddListener(() => ShowTab("LAB"));
-        hangarButton.onClick.AddListener(() => ShowTab("Hangar"));
-        assemblyButton.onClick.AddListener(() => ShowTab("Assembly"));
-        coreButton.onClick.AddListener(() => ShowTab("CORE"));
+        labButton.onClick.AddListener(
+            () => ShowTab("LAB"));
+
+        hangarButton.onClick.AddListener(
+            () => ShowTab("Hangar"));
+
+        assemblyButton.onClick.AddListener(
+            () => ShowTab("Assembly"));
+
+        coreButton.onClick.AddListener(
+            () => ShowTab("CORE"));
 
         ShowTab("Hangar");
     }
 
+    private void Update()
+    {
+        if (GameInputManager.Instance == null)
+            return;
+
+        if (GameInputManager.Instance.ChangeStationTab)
+        {
+            ShowNextTab();
+        }
+    }
+
+    private void ShowNextTab()
+    {
+        currentTabIndex++;
+
+        if (currentTabIndex >= tabOrder.Length)
+        {
+            currentTabIndex = 0;
+        }
+
+        ShowTab(
+            tabOrder[currentTabIndex]);
+    }
+
     private void ShowTab(string tabName)
     {
-        labPanel.SetActive(tabName == "LAB");
-        hangarPanel.SetActive(tabName == "Hangar");
-        assemblyPanel.SetActive(tabName == "Assembly");
-        corePanel.SetActive(tabName == "CORE");
+        labPanel.SetActive(
+            tabName == "LAB");
 
-        labButton.interactable = tabName != "LAB";
-        hangarButton.interactable = tabName != "Hangar";
-        assemblyButton.interactable = tabName != "Assembly";
-        coreButton.interactable = tabName != "CORE";
+        hangarPanel.SetActive(
+            tabName == "Hangar");
+
+        assemblyPanel.SetActive(
+            tabName == "Assembly");
+
+        corePanel.SetActive(
+            tabName == "CORE");
+
+        labButton.interactable =
+            tabName != "LAB";
+
+        hangarButton.interactable =
+            tabName != "Hangar";
+
+        assemblyButton.interactable =
+            tabName != "Assembly";
+
+        coreButton.interactable =
+            tabName != "CORE";
 
         titleText.text = tabName;
+
+        // Synchronizacja indeksu równie¿ przy klikaniu myszk¹.
+        currentTabIndex =
+            System.Array.IndexOf(
+                tabOrder,
+                tabName);
     }
 }
