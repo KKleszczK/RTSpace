@@ -18,6 +18,7 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 1cda347549f0f25409fff539d339085b, type: 3}
   researchedIcon: {fileID: 21300000, guid: d702479ed6ea81f4383a7e5844263a05, type: 3}
   tier: 2
+  inputBind: 10
   baseMetalCost: 100
   baseEnergyCost: 100
   baseResearchTime: 40

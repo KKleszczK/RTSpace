@@ -92,6 +92,10 @@ public class ShipSelectionController : MonoBehaviour
 
     private void Start()
     {
+
+        InitializeControlGroups();
+
+
         if (dockShipButton != null)
         {
             dockShipButton.gameObject.SetActive(false);
@@ -661,7 +665,11 @@ public class ShipSelectionController : MonoBehaviour
                     ui.SetGenerator(null);
             }
         }
+
+        RefreshContextInput();
     }
+
+
     public void OnDockShipClicked()
     {
         IssueDockCommandForSelection();
@@ -720,6 +728,8 @@ public class ShipSelectionController : MonoBehaviour
         {
             selectedShip = null;
         }
+
+        RefreshContextInput();
     }
 
     private bool IsShiftPressed()
@@ -2112,6 +2122,7 @@ public class ShipSelectionController : MonoBehaviour
 
 
         UpdateDockButton();
+        RefreshContextInput();
     }
 
     private void UpdateShipPreselection()
@@ -2568,6 +2579,7 @@ public class ShipSelectionController : MonoBehaviour
             hangarPanelUI.SetHangar(
                 selectedBase.GetComponent<BaseHangar>());
         }
+        RefreshContextInput();
     }
 
     private void CenterCameraOnBase(
@@ -2804,5 +2816,25 @@ public class ShipSelectionController : MonoBehaviour
                 " tried to use skill " +
                 skillIndex);
         }
+    }
+
+    private void RefreshContextInput()
+    {
+        if (GameInputManager.Instance == null)
+            return;
+
+        if (selectedBase != null)
+        {
+            GameInputManager.Instance.SetBaseInputActive(true);
+            return;
+        }
+
+        if (selectedShips.Count > 0)
+        {
+            GameInputManager.Instance.SetShipsInputActive(true);
+            return;
+        }
+
+        GameInputManager.Instance.ClearContextInput();
     }
 }

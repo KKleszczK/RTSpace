@@ -18,6 +18,7 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 3dd68358756fa84499b3c2483f95abc5, type: 3}
   tier: 1
   type: 1
+  inputBind: 6
   metalCost: 60
   energyCost: 5
   craftTime: 5
