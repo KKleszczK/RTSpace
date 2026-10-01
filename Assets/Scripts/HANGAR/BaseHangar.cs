@@ -308,10 +308,6 @@ public class BaseHangar : NetworkBehaviour
 
         if (dockedShips.Count >= MaxDockedShips)
         {
-            Debug.LogWarning(
-                $"[SHIP BUILD WAITING] Hangar jest pe³ny. " +
-                $"docked={dockedShips.Count}/{MaxDockedShips}");
-
             return;
         }
 

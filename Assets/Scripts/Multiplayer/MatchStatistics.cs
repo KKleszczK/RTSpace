@@ -221,11 +221,6 @@ public class MatchStatistics : MonoBehaviour
 
             stats.lastTotalEnergy =
                 stats.totalEnergy;
-
-            Debug.Log(
-                $"[STATS INCOME] Player={stats.clientId} | " +
-                $"Metal +{metalIncome} | " +
-                $"Energy +{energyIncome}");
         }
     }
 
@@ -303,10 +298,6 @@ public class MatchStatistics : MonoBehaviour
                 continue;
 
             stats.damageDealt += damage;
-
-            Debug.Log(
-                $"[STATS] Player={stats.clientId} " +
-                $"Damage Dealt={stats.damageDealt}");
 
             return;
         }

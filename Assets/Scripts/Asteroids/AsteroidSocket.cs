@@ -620,12 +620,6 @@ public class AsteroidSocket : NetworkBehaviour
 
             resources.AddMetal(metalAmount);
 
-            Debug.Log(
-                $"[MINING] Dodano {metalAmount} metalu " +
-                $"graczowi {ownerId}.",
-                ship
-            );
-
             return;
         }
 

@@ -937,15 +937,6 @@ public class ShipWeaponManager : NetworkBehaviour
             hullDamage,
             shieldDamage);
 
-        if (showDebugLogs)
-        {
-            Debug.Log(
-                $"[LASER] {ship.name} atakuje " +
-                $"{target.DamageTransform.name}. " +
-                $"Hull={hullDamage:0.##}, " +
-                $"Shield={shieldDamage:0.##}",
-                ship);
-        }
     }
 
     private void ClearLaserTarget(
@@ -1326,15 +1317,6 @@ public class ShipWeaponManager : NetworkBehaviour
 
         AddStackAfterAttack(
             weapon);
-
-        if (showDebugLogs)
-        {
-            Debug.Log(
-                $"[PROJECTILE] {ship.name} wystrzeli³ w " +
-                $"{target.DamageTransform.name}. " +
-                $"Speed={weapon.Definition.projectileSpeed:0.##}",
-                ship);
-        }
     }
 
     // =========================================================
@@ -1742,14 +1724,6 @@ public class ShipWeaponManager : NetworkBehaviour
 
         RecalculateStackMovementSpeed();
 
-        if (showDebugLogs)
-        {
-            Debug.Log(
-                $"[STACK] {ship.name} | " +
-                $"slot={weapon.SlotIndex} | " +
-                $"stacks={weapon.CurrentStacks}/{maxStacks}",
-                ship);
-        }
     }
 
     // =========================================================
