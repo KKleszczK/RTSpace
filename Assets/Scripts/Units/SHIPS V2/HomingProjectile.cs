@@ -183,10 +183,19 @@ public class HomingProjectile : NetworkBehaviour
         if (target == null)
             return false;
 
+        if (target is Object unityObject &&
+            unityObject == null)
+        {
+            return false;
+        }
+
         if (target.IsDead)
             return false;
 
-        if (target.DamageTransform == null)
+        Transform damageTransform =
+            target.DamageTransform;
+
+        if (damageTransform == null)
             return false;
 
         return true;

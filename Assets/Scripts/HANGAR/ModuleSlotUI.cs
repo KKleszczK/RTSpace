@@ -526,17 +526,6 @@ public class ModuleSlotUI :
 
     private void OnDisable()
     {
-        Debug.LogWarning(
-            $"[SLOT DISABLED] " +
-            $"slot={slotIndex}, dragging={isDragging}");
-
-        /*
-         * Panel hangaru mo¿e chwilowo wy³¹czaæ slot podczas odœwie¿ania.
-         * Nie resetujemy wtedy aktywnego draga, poniewa¿ powodowa³o to:
-         *
-         * dragging=False
-         * dragGhost=False
-         */
         if (!isDragging)
             ResetDragState();
     }

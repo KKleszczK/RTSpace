@@ -330,13 +330,6 @@ public class PlayerModuleCrafting : NetworkBehaviour
                 0f,
                 MaxSpeedBonusPercent);
 
-        Debug.Log(
-    $"[CRAFT SPEED] " +
-    $"Player={OwnerClientId} | " +
-    $"SafeZone={(safeZone != null ? safeZone.name : "NULL")} | " +
-    $"AssemblyBonus={assemblyBonusPercent}% | " +
-    $"BaseTime={baseCraftTime}");
-
         float timeMultiplier =
             1f -
             assemblyBonusPercent / 100f;
@@ -344,9 +337,6 @@ public class PlayerModuleCrafting : NetworkBehaviour
         float finalCraftTime =
             baseCraftTime *
             timeMultiplier;
-
-        Debug.Log(
-    $"[CRAFT SPEED] FinalTime={finalCraftTime}s");
 
         // =====================================================
         // INSTANT CRAFT
