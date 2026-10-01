@@ -18,9 +18,10 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 90bf5d71d46715d4caed5789a668fe39, type: 3}
   tier: 1
   type: 1
+  inputBind: 0
   metalCost: 1
   energyCost: 1
-  craftTime: 1
+  craftTime: 36000
   maxCopiesPerPlayer: 1
   exclusive: 0
   unlockedByDefault: 1
