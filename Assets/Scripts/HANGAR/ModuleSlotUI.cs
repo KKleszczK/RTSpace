@@ -321,14 +321,8 @@ public class ModuleSlotUI :
     }
 
     public void OnDrag(
-        PointerEventData eventData)
+    PointerEventData eventData)
     {
-        Debug.Log(
-            $"[SLOT DRAG MOVE] " +
-            $"slot={slotIndex}, " +
-            $"dragging={isDragging}, " +
-            $"dragGhost={dragGhost != null}");
-
         if (!isDragging)
             return;
 
