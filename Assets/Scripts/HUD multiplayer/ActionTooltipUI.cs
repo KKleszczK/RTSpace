@@ -605,7 +605,7 @@ public class ActionTooltipUI : MonoBehaviour
             definition.baseEnergyCost.ToString();
 
         variant1TimeText.text =
-            $"{researchTime:0.#} s";
+            $"{researchTime:0.#}";
 
         variant1RequirementsText.text =
             requirements;
@@ -628,7 +628,7 @@ public class ActionTooltipUI : MonoBehaviour
             definition.baseEnergyCost.ToString();
 
         variant2TimeText.text =
-            $"{researchTime:0.#} s";
+            $"{researchTime:0.#}";
 
         variant2DescriptionText.text =
             definition.description;
@@ -652,7 +652,7 @@ public class ActionTooltipUI : MonoBehaviour
             definition.baseEnergyCost.ToString();
 
         variant3TimeText.text =
-            $"{researchTime:0.#} s";
+            $"{researchTime:0.#}";
 
         variant3RequirementsText.text =
             requirements;
