@@ -143,7 +143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2790202906
+  GlobalObjectIdHash: 4004284659
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -375,14 +375,64 @@ MonoBehaviour:
   owner: {fileID: 4312695449792705201}
   safeZoneRange: 7
   updateInterval: 1
-  hullRepairEnabled: 1
-  hullRepairInterval: 1
-  hullRepairAmount: 5
-  hullRepairMetalCost: 0
-  shieldRechargeEnabled: 1
-  shieldRechargeInterval: 1
-  shieldRechargeAmount: 10
-  shieldRechargeEnergyCost: 30
+  HullRegenCostType: 1
+  ShieldRegenCostType: 0
+  core: {fileID: 2520353419286221697}
+  baseUnit: {fileID: 2847361218970221703}
+  RegenInterval1: 1
+  HullRegenFlat1: 5
+  HullRegenFlatCost1: 1
+  HullRegenProcent1: 1
+  HullRegenProcentRatioCost1: 1
+  ShieldRegenFlat1: 5
+  ShieldRegenFlatCost1: 1
+  ShieldRegenProcent1: 1
+  ShieldRegenProcentRatioCost1: 1
+  RegenInterval2: 1
+  HullRegenFlat2: 10
+  HullRegenFlatCost2: 2
+  HullRegenProcent2: 1
+  HullRegenProcentRatioCost2: 1
+  ShieldRegenFlat2: 10
+  ShieldRegenFlatCost2: 2
+  ShieldRegenProcent2: 1
+  ShieldRegenProcentRatioCost2: 1
+  RegenInterval3: 1
+  HullRegenFlat3: 20
+  HullRegenFlatCost3: 4
+  HullRegenProcent3: 1
+  HullRegenProcentRatioCost3: 1
+  ShieldRegenFlat3: 20
+  ShieldRegenFlatCost3: 4
+  ShieldRegenProcent3: 1
+  ShieldRegenProcentRatioCost3: 1
+  BaseRegenInterval1: 1
+  BaseHullRegenFlat1: 0
+  BaseHullRegenFlatCost1: 0
+  BaseHullRegenProcent1: 1
+  BaseHullRegenProcentRatioCost1: 10
+  BaseShieldRegenFlat1: 0
+  BaseShieldRegenFlatCost1: 0
+  BaseShieldRegenProcent1: 1
+  BaseShieldRegenProcentRatioCost1: 10
+  BaseRegenInterval2: 1
+  BaseHullRegenFlat2: 0
+  BaseHullRegenFlatCost2: 0
+  BaseHullRegenProcent2: 1
+  BaseHullRegenProcentRatioCost2: 10
+  BaseShieldRegenFlat2: 0
+  BaseShieldRegenFlatCost2: 0
+  BaseShieldRegenProcent2: 1
+  BaseShieldRegenProcentRatioCost2: 10
+  BaseRegenInterval3: 1
+  BaseHullRegenFlat3: 0
+  BaseHullRegenFlatCost3: 0
+  BaseHullRegenProcent3: 1
+  BaseHullRegenProcentRatioCost3: 10
+  BaseShieldRegenFlat3: 0
+  BaseShieldRegenFlatCost3: 0
+  BaseShieldRegenProcent3: 1
+  BaseShieldRegenProcentRatioCost3: 10
   AssemblySpeedBonusPercent:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0

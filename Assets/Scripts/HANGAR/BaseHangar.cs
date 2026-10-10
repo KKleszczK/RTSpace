@@ -325,7 +325,9 @@ public class BaseHangar : NetworkBehaviour
                 normalModule1 = default,
                 normalModule2 = default,
                 normalModule3 = default,
-                classModule = default
+                classModule = default,
+                hpPercent = 1f,
+                currentShield = 0
             };
 
         dockedShips.Add(newShip);

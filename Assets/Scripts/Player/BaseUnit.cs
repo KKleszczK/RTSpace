@@ -98,85 +98,53 @@ public class BaseUnit : NetworkBehaviour, IDamageable
     // RESEARCH
     // =========================================================
 
-    public void RecalculateResearchStats(
-        bool fullRestore = false)
+    public void RecalculateResearchStats(bool fullRestore = false)
     {
         if (!IsServer)
             return;
 
-        int oldMaxHp =
-            maxHp.Value;
+        int oldMaxHp = maxHp.Value;
+        int oldMaxShield = maxShield.Value;
 
-        PlayerUpgradeStats upgrades =
-            FindPlayerUpgradeStats();
+        PlayerUpgradeStats upgrades = FindPlayerUpgradeStats();
 
         float hpResearchFlat = 0f;
         float shieldResearchFlat = 0f;
 
         if (upgrades != null)
         {
-            hpResearchFlat =
-                upgrades.stationHpFlat.Value;
-
-            shieldResearchFlat =
-                upgrades.stationShieldFlat.Value;
+            hpResearchFlat = upgrades.stationHpFlat.Value;
+            shieldResearchFlat = upgrades.stationShieldFlat.Value;
         }
 
-        maxHp.Value =
-            Mathf.Max(
-                1,
-                Mathf.RoundToInt(
-                    baseMaxHp +
-                    hpResearchFlat));
+        maxHp.Value = Mathf.Max(1, Mathf.RoundToInt(baseMaxHp + hpResearchFlat));
+        maxShield.Value = Mathf.Max(0, Mathf.RoundToInt(baseMaxShield + shieldResearchFlat));
 
-        maxShield.Value =
-            Mathf.Max(
-                0,
-                Mathf.RoundToInt(
-                    baseMaxShield +
-                    shieldResearchFlat));
-
+        // Start gry - pe³ne HP i Shield
         if (fullRestore)
         {
-            hp.Value =
-                maxHp.Value;
-
-            shield.Value =
-                maxShield.Value;
-
+            hp.Value = maxHp.Value;
+            shield.Value = maxShield.Value;
             return;
         }
 
-        // HP research dodaje ró¿nicê od razu.
-        int hpDifference =
-            maxHp.Value -
-            oldMaxHp;
+        // Ró¿nica wynikaj¹ca z researchu
+        int hpDifference = maxHp.Value - oldMaxHp;
+        int shieldDifference = maxShield.Value - oldMaxShield;
 
-        if (hpDifference > 0)
-        {
-            hp.Value =
-                Mathf.Min(
-                    maxHp.Value,
-                    hp.Value +
-                    hpDifference);
-        }
-        else
-        {
-            hp.Value =
-                Mathf.Min(
-                    hp.Value,
-                    maxHp.Value);
-        }
+        // Aktualne HP zwiêksza siê o ró¿nicê maksimum
+        hp.Value = Mathf.Clamp(
+            hp.Value + hpDifference,
+            0,
+            maxHp.Value
+        );
 
-        /*
-         * Analogicznie jak przy statkach:
-         * research Shield zwiêksza maksimum,
-         * ale NIE ³aduje aktualnej tarczy.
-         */
-        shield.Value =
-            Mathf.Min(
-                shield.Value,
-                maxShield.Value);
+        // Aktualny Shield zwiêksza siê o ró¿nicê maksimum
+        shield.Value = Mathf.Clamp(
+            shield.Value + shieldDifference,
+            0,
+            maxShield.Value
+        );
     }
 
     private PlayerUpgradeStats

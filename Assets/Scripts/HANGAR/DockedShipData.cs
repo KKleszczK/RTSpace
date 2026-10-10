@@ -15,6 +15,9 @@ public struct DockedShipData :
     public FixedString64Bytes normalModule3;
     public FixedString64Bytes classModule;
 
+    public float hpPercent;
+    public int currentShield;
+
     public FixedString64Bytes GetModule(int slotIndex)
     {
         return slotIndex switch
@@ -94,6 +97,9 @@ public struct DockedShipData :
         serializer.SerializeValue(ref normalModule2);
         serializer.SerializeValue(ref normalModule3);
         serializer.SerializeValue(ref classModule);
+
+        serializer.SerializeValue(ref hpPercent);
+        serializer.SerializeValue(ref currentShield);
     }
 
     public bool Equals(DockedShipData other)
@@ -103,7 +109,9 @@ public struct DockedShipData :
             && normalModule1.Equals(other.normalModule1)
             && normalModule2.Equals(other.normalModule2)
             && normalModule3.Equals(other.normalModule3)
-            && classModule.Equals(other.classModule);
+            && classModule.Equals(other.classModule)
+            && hpPercent.Equals(other.hpPercent)
+            && currentShield.Equals(other.currentShield);
     }
 
     public override bool Equals(object obj)
@@ -120,6 +128,8 @@ public struct DockedShipData :
             normalModule1,
             normalModule2,
             normalModule3,
-            classModule);
+            classModule,
+            hpPercent,
+            currentShield);
     }
 }

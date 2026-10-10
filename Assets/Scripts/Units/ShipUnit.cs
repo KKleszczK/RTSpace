@@ -623,11 +623,15 @@ public class ShipUnit : NetworkBehaviour, IDamageable
             weaponManager.InitializeWeaponsFromShipModules();
         }
 
-        hp.Value =
-            maxHp.Value;
+        hp.Value = Mathf.Clamp(
+            Mathf.RoundToInt(maxHp.Value * Mathf.Clamp01(data.hpPercent)),
+            0,
+            maxHp.Value);
 
-        shield.Value =
-            maxShield.Value;
+        shield.Value = Mathf.Clamp(
+            data.currentShield,
+            0,
+            maxShield.Value);
 
         isDead.Value =
             false;
@@ -667,7 +671,13 @@ public class ShipUnit : NetworkBehaviour, IDamageable
                 normalModule3.Value,
 
             classModule =
-                classModule.Value
+                classModule.Value,
+
+            hpPercent = maxHp.Value > 0
+                ? Mathf.Clamp01((float)hp.Value / maxHp.Value)
+                : 1f,
+
+            currentShield = shield.Value
         };
     }
 
@@ -2065,36 +2075,25 @@ public class ShipUnit : NetworkBehaviour, IDamageable
         if (!IsServer)
             return;
 
-        int oldMaxHp =
-            maxHp.Value;
+        float hpPercent = maxHp.Value > 0
+            ? Mathf.Clamp01((float)hp.Value / maxHp.Value)
+            : 1f;
+
+        int oldShield = shield.Value;
 
         CalculateDeployedModuleStats();
 
-        int hpDifference =
-            maxHp.Value - oldMaxHp;
+        hp.Value = Mathf.Clamp(
+            Mathf.RoundToInt(maxHp.Value * hpPercent),
+            0,
+            maxHp.Value
+        );
 
-        // HP dostaje wzrost wynikaj¹cy z researchu.
-        if (hpDifference > 0)
-        {
-            hp.Value =
-                Mathf.Min(
-                    maxHp.Value,
-                    hp.Value + hpDifference);
-        }
-        else
-        {
-            hp.Value =
-                Mathf.Min(
-                    hp.Value,
-                    maxHp.Value);
-        }
-
-        // Shield NIE dostaje dodatkowych punktów.
-        // Zmienia siê wy³¹cznie jego maksimum.
-        shield.Value =
-            Mathf.Min(
-                shield.Value,
-                maxShield.Value);
+        shield.Value = Mathf.Clamp(
+            oldShield,
+            0,
+            maxShield.Value
+        );
     }
 
     private PlayerUpgradeStats FindPlayerUpgradeStats(
