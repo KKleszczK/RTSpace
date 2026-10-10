@@ -339,50 +339,59 @@ public class BaseUnit : NetworkBehaviour, IDamageable
     // HEAL / SHIELD
     // =========================================================
 
-    public void Heal(
-        float amount)
+
+    public void Heal(float amount)
     {
-        if (!IsServer)
+        if (!IsServer || isDead.Value)
             return;
 
-        if (isDead.Value)
-            return;
+        int oldHp = hp.Value;
 
-        int finalAmount =
-            Mathf.Max(
-                0,
-                Mathf.RoundToInt(amount));
+        int finalAmount = Mathf.Max(0, Mathf.RoundToInt(amount));
 
-        hp.Value =
-            Mathf.Min(
-                maxHp.Value,
-                hp.Value +
-                finalAmount);
+        hp.Value = Mathf.Min(
+            maxHp.Value,
+            hp.Value + finalAmount
+        );
+
+        int actualHeal = hp.Value - oldHp;
+
+        if (actualHeal > 0)
+            ShowHealTextClientRpc("+" + actualHeal, false);
     }
 
-    public void RestoreShield(
-        float amount)
+    public void RestoreShield(float amount)
     {
-        if (!IsServer)
+        if (!IsServer || isDead.Value || maxShield.Value <= 0)
             return;
 
-        if (isDead.Value)
-            return;
+        int oldShield = shield.Value;
 
-        if (maxShield.Value <= 0)
-            return;
+        int finalAmount = Mathf.Max(0, Mathf.RoundToInt(amount));
 
-        int finalAmount =
-            Mathf.Max(
-                0,
-                Mathf.RoundToInt(amount));
+        shield.Value = Mathf.Min(
+            maxShield.Value,
+            shield.Value + finalAmount
+        );
 
-        shield.Value =
-            Mathf.Min(
-                maxShield.Value,
-                shield.Value +
-                finalAmount);
+        int actualRestore = shield.Value - oldShield;
+
+        if (actualRestore > 0)
+            ShowHealTextClientRpc("+" + actualRestore, true);
     }
+
+
+    [ClientRpc]
+    private void ShowHealTextClientRpc(string value, bool isShield)
+    {
+        Color color = isShield
+            ? Color.cyan
+            : Color.green;
+
+        ShowCombatTextLocal(value, color);
+    }
+
+
 
     // =========================================================
     // DEATH
